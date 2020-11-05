@@ -1,12 +1,53 @@
 <html lang="nl_NL">
-   <head>
-      <meta charset="utf-8">
-      <title> justBoerenbridgeJs </title>
-   </head>
+    <head>
+        <meta charset="utf-8">
+        <title> justBoerenbridgeJs </title>
+    </head>
 
-   <body>
-      <div id="main">
-      </div>
-      <script type="text/javascript" src="./main.js"></script>
-   </body>
+    <body>
+        <div id="startScreen">
+            <h1>Welkom bij justBoerenbridge!</h1>
+            <label for="fileInput" id="fileInputLabel">Bestaand spel openen?</label><br/>
+            <input type="file" id="fileInput" onchange="return showProceedGameButton()"><br/>
+            <button type="submit" id="proceedGameButton" onclick="return openExistingGame()" style="display:none">
+                Verdergaan met spel
+            </button><br/><br/><br/>
+            <button type="submit" onclick="return toPlayers()">Nieuw spel</button>
+        </div>
+        <div id="playerScreen" style="display:none">
+            <h1>Spelers</h1>
+            <form id="playerForm" class="playerClass">
+                <label for="playerForm">Vul hier de namen van de spelers in:</label><br/><br/>
+                <input type="text" id="player1" placeholder="Speler 1"/><br/>
+                <input type="text" id="player2" placeholder="Speler 2"
+                       onchange="return showNextPlayerField(2, this.value)"/>
+                <input type="text" id="player3" placeholder="Speler 3"
+                       onchange="return showNextPlayerField(3, this.value)" style="display:none"/>
+                <input type="text" id="player4" placeholder="Speler 4"
+                       onchange="return showNextPlayerField(4, this.value)" style="display:none"/>
+            </form>
+            <button type="submit" onclick="return toBids()">Naar bieden</button>
+            <button type="submit" onclick="return toTakes()">Naar halen</button>
+            <button type="submit" onclick="return toScores()">Naar score</button>
+        </div>
+        <div id="bidScreen" style="display:none">
+            <h1>Bieden</h1>
+            <input type="number" id="testInput" onchange="return updateBidsPlaced()">
+            <p id="bidsPlaced">0</p>
+            <button type="submit" onclick="return toTakes()">Naar halen</button>
+            <button type="submit" onclick="return toScores()">Naar score</button>
+        </div>
+        <div id="takeScreen" style="display:none">
+            <h1>Halen</h1>
+            <button type="submit" onclick="return toBids()">Naar bieden</button>
+            <button type="submit" onclick="return toScores()">Naar score</button>
+        </div>
+        <div id="scoreBoard" style="display:none">
+            <h1>Scorebord</h1>
+            <button type="submit" onclick="return toBids()">Naar bieden</button>
+            <button type="submit" onclick="return toTakes()">Naar halen</button>
+        </div>
+        <!--<script type="text/javascript" src="main.js"></script>-->
+    </body>
+    <script type="text/javascript" src="background.js"></script>
 </html>
