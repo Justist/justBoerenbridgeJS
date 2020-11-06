@@ -1,53 +1,179 @@
 <html lang="nl_NL">
-    <head>
-        <meta charset="utf-8">
-        <title> justBoerenbridgeJs </title>
-    </head>
+<head>
+   <meta charset="utf-8">
+   <title> justBoerenbridgeJs </title>
+</head>
 
-    <body>
-        <div id="startScreen">
-            <h1>Welkom bij justBoerenbridge!</h1>
-            <label for="fileInput" id="fileInputLabel">Bestaand spel openen?</label><br/>
-            <input type="file" id="fileInput" onchange="return showProceedGameButton()"><br/>
-            <button type="submit" id="proceedGameButton" onclick="return openExistingGame()" style="display:none">
-                Verdergaan met spel
-            </button><br/><br/><br/>
-            <button type="submit" onclick="return toPlayers()">Nieuw spel</button>
-        </div>
-        <div id="playerScreen" style="display:none">
-            <h1>Spelers</h1>
-            <form id="playerForm" class="playerClass">
-                <label for="playerForm">Vul hier de namen van de spelers in:</label><br/><br/>
-                <input type="text" id="player1" placeholder="Speler 1"/><br/>
-                <input type="text" id="player2" placeholder="Speler 2"
-                       onchange="return showNextPlayerField(2, this.value)"/>
-                <input type="text" id="player3" placeholder="Speler 3"
-                       onchange="return showNextPlayerField(3, this.value)" style="display:none"/>
-                <input type="text" id="player4" placeholder="Speler 4"
-                       onchange="return showNextPlayerField(4, this.value)" style="display:none"/>
-            </form>
-            <button type="submit" onclick="return toBids()">Naar bieden</button>
-            <button type="submit" onclick="return toTakes()">Naar halen</button>
-            <button type="submit" onclick="return toScores()">Naar score</button>
-        </div>
-        <div id="bidScreen" style="display:none">
-            <h1>Bieden</h1>
-            <input type="number" id="testInput" onchange="return updateBidsPlaced()">
-            <p id="bidsPlaced">0</p>
-            <button type="submit" onclick="return toTakes()">Naar halen</button>
-            <button type="submit" onclick="return toScores()">Naar score</button>
-        </div>
-        <div id="takeScreen" style="display:none">
-            <h1>Halen</h1>
-            <button type="submit" onclick="return toBids()">Naar bieden</button>
-            <button type="submit" onclick="return toScores()">Naar score</button>
-        </div>
-        <div id="scoreBoard" style="display:none">
-            <h1>Scorebord</h1>
-            <button type="submit" onclick="return toBids()">Naar bieden</button>
-            <button type="submit" onclick="return toTakes()">Naar halen</button>
-        </div>
-        <!--<script type="text/javascript" src="main.js"></script>-->
-    </body>
-    <script type="text/javascript" src="background.js"></script>
+<body>
+<div id="startScreen">
+   <h1>Welkom bij justBoerenbridge!</h1>
+   <label for="fileInput" id="fileInputLabel">Bestaand spel openen?</label><br/>
+   <input type="file" id="fileInput" onchange="return showProceedGameButton()"><br/>
+   <button type="submit"
+           id="proceedGameButton"
+           onclick="return openExistingGame()"
+           style="display:none">
+      Verdergaan met spel
+   </button>
+   <br/><br/><br/>
+   <button type="submit" onclick="return toPlayers()">Nieuw spel</button>
+</div>
+<div id="playerScreen" style="display:none">
+   <h1>Spelers</h1>
+   <form id="playerForm" class="playerClass">
+      <label for="playerForm">Vul hier de namen van de spelers in:</label><br/><br/>
+      <input type="text" id="player1" placeholder="Speler 1"/><br/>
+      <input type="text" id="player2" placeholder="Speler 2"
+             onchange="return showNextPlayerField(2, this.value)"/>
+      <input type="text" id="player3" placeholder="Speler 3"
+             onchange="return showNextPlayerField(3, this.value)" style="display:none"/>
+      <input type="text" id="player4" placeholder="Speler 4"
+             onchange="return showNextPlayerField(4, this.value)" style="display:none"/>
+   </form>
+   <button type="submit" onclick="return toBids()">Naar bieden</button>
+   <button type="submit" onclick="return toTakes()">Naar halen</button>
+   <button type="submit" onclick="return toScores()">Naar score</button>
+</div>
+<div id="bidScreen" style="display:none">
+   <h1>Bieden</h1>
+   <h2 id="bidRoundNumberTitle">Ronde 1</h2>
+   <table class="table" id="bidInput" style="text-align: center;">
+      <tbody>
+      <tr playerId=0>
+         <td style="width: 50%;text-align: right;vertical-align: middle;">Speler 1</td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            0
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            1
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            2
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            3
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            4
+         </td>
+      </tr>
+      <tr playerId=1>
+         <td style="width: 50%;text-align: right;vertical-align: middle;">Speler 2</td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            0
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            1
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            2
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            3
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            4
+         </td>
+      </tr>
+      <tr playerId=2>
+         <td style="width: 50%;text-align: right;vertical-align: middle;">Speler 3</td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            0
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            1
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            2
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            3
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            4
+         </td>
+      </tr>
+      <tr playerId=3>
+         <td style="width: 50%;text-align: right;vertical-align: middle;">Speler 4</td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            0
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            1
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            2
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            3
+         </td>
+         <td style="background: url('./images/nummer-knoppen-blauw-leeg-off.jpg') center /
+            contain no-repeat;color: #ffffff;" onclick="return clickBidButton(this.parentNode,
+                                                                              this.innerHTML.trim())">
+            4
+         </td>
+      </tr>
+      <tr>
+         <td style="width: 50%;text-align: right;vertical-align: middle;">Totaal geboden</td>
+         <td id="bidsPlaced">0</td>
+         <td>/</td>
+         <td id="cardsThisRoundBidForm">1</td>
+      </tr>
+      </tbody>
+   </table>
+
+   <button type="submit" onclick="return toTakes()">Naar halen</button>
+   <button type="submit" onclick="return toScores()">Naar score</button>
+</div>
+<div id="takeScreen" style="display:none">
+   <h1>Halen</h1>
+   <button type="submit" onclick="return toBids()">Naar bieden</button>
+   <button type="submit" onclick="return toScores()">Naar score</button>
+</div>
+<div id="scoreBoard" style="display:none">
+   <h1>Scorebord</h1>
+   <button type="submit" onclick="return toBids()">Naar bieden</button>
+   <button type="submit" onclick="return toTakes()">Naar halen</button>
+</div>
+<!--<script type="text/javascript" src="main.js"></script>-->
+</body>
+<script type="text/javascript" src="background.js"></script>
 </html>
