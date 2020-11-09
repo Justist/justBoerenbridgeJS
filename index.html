@@ -1,664 +1,663 @@
 <!DOCTYPE html>
-<html lang="nl_NL">
+<html>
 
 <head>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-   <title>justBoerenbridgeJS</title>
-   <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-   <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
-   <link rel="stylesheet" href="assets/css/styles.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>BBdef</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
 <body>
-<div id="endOfGameScreen" class="contact-clean">
-   <form method="post">
-      <h2 class="text-center">Einde spel</h2>
-      <div class="form-group">
-         <div class="table-responsive">
-            <table class="table" id="endScoreTable" class="alignCenter">
-               <thead>
-               <tr>
-                  <th>Positie</th>
-                  <th>Naam</th>
-                  <th><strong>Punten</strong><br></th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td>1</td>
-                  <td>Simon</td>
-                  <td>128</td>
-               </tr>
-               <tr>
-                  <td>2</td>
-                  <td>Roland</td>
-                  <td>127</td>
-               </tr>
-               <tr>
-                  <td>3</td>
-                  <td>Aad</td>
-                  <td>56</td>
-               </tr>
-               <tr>
-                  <td>4</td>
-                  <td>Arnold</td>
-                  <td>54</td>
-               </tr>
-               </tbody>
-            </table>
-         </div>
-         <p class="alignCenter">Allerhoogste score xx punten door yyy</p>
-         <p class="alignCenter">Aantal schoppenrondjes xx<br></p>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="endGameButtonsTable">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
-                        Spel afsluiten en opslaan
-                     </button>
-                  </th>
-                  <th style="text-align: left;">
-                     <button class="btn btn-primary" type="button"
-                             onclick="return toScores()">
-                        Stand
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-      </div>
-   </form>
-</div>
-<div id="gameRulesScreen" class="contact-clean">
-   <form method="post">
-      <h2 class="text-center">Spelregels &amp; telling</h2>
-      <div class="form-group">
-         <p><strong>Korte speluitleg&nbsp;&nbsp;</strong>
-            Bij boerenbridge worden er 21 rondes gespeeld. Wie de meeste rondes goed voorspeld heeft
-            hoeveel slagen hij gaat winnen, wint het spel. De eerste ronden wordt er met &eacute;&eacute;n
-            kaart
-            gespeeld, de tweede ronde twee etc, tot en met ronde 10.<br>
-            <strong>Spelverloop&nbsp;&nbsp;</strong>Het
-            doel van het spel is om iedere ronde goed te voorspellen hoeveel slagen je gaat winnen.
-            Er worden 21 rondes gespeeld. In de eerste wordt er met &eacute;&eacute;n kaart
-            gespeeld, in de tweede
-            ronde twee, dit gaat door tot ronde tien. Ronde elf en twaalf worden beide met tien
-            kaarten gespeeld, echter wordt in ronde 11 zonder troef gespeeld. Vanaf ronde 13 tot en
-            met ronde 21 wordt er iedere ronde met een kaart&nbsp;<em>minder</em>&nbsp;gespeeld. De
-            spelronde begint met het delen van het aantal kaarten waarmee deze ronde gespeeld wordt.
-            Hierna wordt de troefkaart omgedraaid. Nadat dit is gedaan en de spelers hun kaarten
-            hebben gezien, gaan de spelers voorspellen hoeveel slagen ze gaan
-            winnen.&nbsp;<br>
-            <strong>Slagronde&nbsp;&nbsp;</strong>De eerste keer wordt er een
-            speler gekozen die mag beginnen. De volgende ronde mag de speler die links van de vorige
-            deler zit uitkomen. Je wint een slag als je de hoogste uitgekomen kaart speelt, of de
-            hoogste troefkaart (De hoogste troefkaart in de ronde wint altijd). De speler
-            is&nbsp;<strong>verplicht</strong>&nbsp;om de speler die als eerste uitkomt te volgen
-            (=bekennen). Kan hij niet volgen, dan&nbsp;<em>mag</em>&nbsp;hij een troefkaart spelen
-            om een slag te winnen.
-         </p>
-         <p><strong>Puntentelling</strong><br>
-            <strong>Juiste voorspelling</strong>: Heb je na het einde van een ronde de juiste
-                                                voorspelling, dan krijg je 10 punten.
-                                                Voor iedere slag die je hebt gewonnen krijg je 3
-                                                punten extra.
-            <br>
-            <strong>Onjuiste voorspelling</strong>: Is je voorspelling incorrect, dan heb je 3
-                                                minpunten per aantal dat je er naast zat. Was je
-                                                voorspelling dat je 4 slagen zou winnen, maar heb
-                                                je er maar 2? Dan heb je (4 - 2 ) x 3 = 6 minpunten.
-         </p>
-         <p><strong>Schoppen troef?&nbsp;</strong>Dan worden alle behaalde of verloren&nbsp; punten
-                                                  verdubbeld!<br></p>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="gamerulesButtonTable">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return uitSpelregels()">
-                        gelezen
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-      </div>
-   </form>
-</div>
-<div id="scoreboardScreen" class="contact-clean">
-   <form method="post">
-      <h2 class="text-center">Stand</h2>
-      <p class="alignCenter">Spel van 23-10-2020 (19.45 - 21.10)</p>
-      <div class="form-group">
-         <div class="table-responsive">
-            <table class="table" id="gegevens" class="alignCenter">
-               <thead>
-               <tr>
-                  <th>Krtn</th>
-                  <th><strong>&spades;</strong><br></th>
-                  <th>Simon</th>
-                  <th><strong>Arnold</strong><br></th>
-                  <th><strong>Iduna</strong><br></th>
-                  <th><strong>Aad</strong><br></th>
-                  <th><strong>Roland</strong><br></th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td></td>
-                  <td></td>
-                  <td>67</td>
-                  <td>128</td>
-                  <td>8</td>
-                  <td>29</td>
-                  <td>56</td>
-               </tr>
-               <tr>
-                  <td>1</td>
-                  <td><strong>&spades;</strong><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>2</td>
-                  <td><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>3</td>
-                  <td><strong>&spades;</strong><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>3</td>
-                  <td>&nbsp;12</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>4</td>
-                  <td><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>5</td>
-                  <td><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;12</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>6</td>
-                  <td><strong>&spades;</strong><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               </tbody>
-            </table>
-         </div>
-         <code>Spel nog niet af</code>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="scoreboardToBidButtonTable">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toBids()">
-                        Verder spelen
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-         <code>Spel afgelopen</code>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="scoreboardToOtherButtonsTable">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toNewGame()">
-                        Nieuw spel
-                     </button>
-                  </th>
-                  <th>
-                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
-                        Overzicht
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-      </div>
-   </form>
-</div>
-<div id="takeScreen" class="contact-clean">
-   <form method="post" id="takeForm">
-      <h2 class="text-center">Halen</h2>
-      <div class="form-group">
-         <div class="table-responsive">
-            <table class="table aligncenter" id="takeInputTable">
-               <thead>
-               <tr>
-                  <th style="width: 30%; text-align: right;">Naam</th>
-                  <th style="padding: 12px;">Geboden</th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Iduna</td>
-                  <td><strong>3</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Arnold</td>
-                  <td><strong>0</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Simon</td>
-                  <td><strong>1</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Sam</td>
-                  <td><strong>2</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Roland</td>
-                  <td><strong>0</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               </tbody>
-            </table>
-         </div>
-         <div class="table-responsive">
-            <table class="table" id="invoer" class="alignCenter">
-               <thead>
-               <tr></tr>
-               </thead>
-               <tbody>
-               <tr></tr>
-               </tbody>
-            </table>
-         </div>
-         <p class="alignCenter"><strong>Schoppen wel / niet troef</strong><br></p>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="takeButtons">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toBids();">
-                        Bieden
-                     </button>
-                  </th>
-                  <th>
-                     <button class="btn btn-primary" type="button" onclick="return toScores();">
-                        Stand
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-         <code>Indien laatste ronde geweest:</code>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="buttons">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toEndGame()">
-                        Einde spel
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-      </div>
-   </form>
-</div>
-<div id="overviewScreen" class="contact-clean">
-   <form method="post">
-      <h2 class="text-center">Overzicht</h2>
-      <div class="table-responsive" class="alignCenter">
-         <table class="table" id="overviewButtonsTable">
-            <thead class="alignCenter">
-            <tr class="alignCenter">
-               <th class="alignCenter">
-                  <button class="btn btn-primary" type="button" onclick="return toNewGame()">
-                     Nieuw spel
-                  </button>
-               </th>
-               <th>
-                  <button class="btn btn-primary" type="button" onclick="return toGameRules();">
-                     Regels &amp; telling
-                  </button>
-               </th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-         </table>
-      </div>
-      <div class="form-group">
-         <div class="table-responsive">
-            <table class="table" id="overviewDataTable" class="alignCenter">
-               <thead>
-               <tr>
-                  <th>Speeldatum</th>
-                  <th>Winnaar</th>
-                  <th><strong>Score</strong><br></th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td onclick="toScores()">23-12-2023 (klik)</td>
-                  <td>Piet</td>
-                  <td>128</td>
-               </tr>
-               <tr>
-                  <td onclick="toScores()">16-03-2020 (klik)<br></td>
-                  <td>Truus</td>
-                  <td>162</td>
-               </tr>
-               <tr>
-                  <td onclick="toScores()">31-02-2020 (klik)<br></td>
-                  <td>Sjaan</td>
-                  <td>324</td>
-               </tr>
-               <tr>
-                  <td onclick="toScores()">04-08-1876 (klik)<br></td>
-                  <td>Truus</td>
-                  <td>65</td>
-               </tr>
-               </tbody>
-            </table>
-         </div>
-         <p><br></p>
-      </div>
-   </form>
-</div>
-<div id="bidScreen" class="contact-clean">
-   <form method="post" id="bidForm" onsubmit="return storeBids()">
-      <h2 class="text-center">Bieden</h2>
-      <p class="alignCenter">5e&nbsp; ronde, Iduna deelt 5 kaarten</p>
-      <p class="alignCenter">
-         <label>
-            <strong>&spades;&nbsp;</strong>troef<strong>&nbsp;&nbsp;</strong>
-            <input type="radio"
-                   name="schoppenTroef">
-         </label>
-         &nbsp;
-         &nbsp; &nbsp;&nbsp;
-         <label>
-            <input type="radio" name="schoppenTroef">
-            &nbsp;&nbsp;Andere troef
-         </label>
-
-         <br>
-      </p>
-      <p class="alignCenter"></p>
-      <div class="form-group">
-         <div class="table-responsive">
-            <table class="table alignCenter" id="bidInputTable">
-               <!--filled with javascript-->
-            </table>
-         </div>
-         <div class="table-responsive">
-            <table class="table">
-               <thead>
-               <tr></tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td style="width: 50%;text-align: right;">Totaal geboden<br></td>
-                  <td>xx van yy<br></td>
-               </tr>
-               <tr></tr>
-               </tbody>
-            </table>
-         </div>
-         <div class="alert alert-success" role="alert">
-            <span>
-               Je moet aangeven welke kleur troef is !
-            </span>
-         </div>
-         <div class="alert alert-success" role="alert">
-            <span>
-               Aantal geboden slagen (xx) mag niet gelijk zijn aan aantal te halen slagen!
-            </span>
-         </div>
-         <div class="table-responsive" class="alignCenter">
-            <table class="table" id="bidScreenButtonsTable">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toTakes()">
-                        Halen
-                     </button>
-                  </th>
-                  <th>
-                     <button class="btn btn-primary" type="button" onclick="return toScores()">
-                        Stand
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-      </div>
-   </form>
-</div>
-<div id="newGameScreen" class="contact-clean">
-   <form method="post" id="newGameForm">
-      <h2 class="text-center">Nieuw spel</h2>
-      <div class="form-group nameForm">
-         <div class="table-responsive nameTableDiv">
-            <table class="table nameTable" id="newGameInputTable">
-               <tbody>
-               <tr id="trNameInputPlayer1">
-                  <td class="nameTableFirstCell">1</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer1"
-                            placeholder="Naam deelnemer">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer2">
-                  <td class="nameTableFirstCell">2</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer2"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(2, this.value)">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer3" class="hidden">
-                  <td class="nameTableFirstCell">3</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer3"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(3, this.value)">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer4" class="hidden">
-                  <td class="nameTableFirstCell">4</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer4"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(4, this.value)">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer5" class="hidden">
-                  <td class="nameTableFirstCell">5</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer5"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(5, this.value)">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer6" class="hidden">
-                  <td class="nameTableFirstCell">6</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer6"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(6, this.value)">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer7" class="hidden">
-                  <td class="nameTableFirstCell">7</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer7"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(7, this.value)">
-                  </td>
-               </tr>
-               <tr id="trNameInputPlayer8" class="hidden">
-                  <td class="nameTableFirstCell">8</td>
-                  <td class="alignCenter">
-                     <input class="form-control nameInput"
-                            type="text"
-                            id="nameInputPlayer8"
-                            placeholder="Naam deelnemer"
-                            onchange="return showNextPlayerField(8, this.value)">
-                  </td>
-               </tr>
-               </tbody>
-            </table>
-         </div>
-         <div class="form-check alignCenter">
-            <input class="form-check-input"
-                   type="checkbox"
-                   id="formCheck-2">
-            <label class="form-check-label"
-                   for="formCheck-2">
-               Middelste ronde zonder troef?
-               <br>
-            </label>
-         </div>
-         <div class="table-responsive alignCenter">
-            <table class="table" id="newGameButtonTable">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return storePlayers()">
-                        Start 1e ronde
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>
-      </div>
-   </form>
-</div>
+    <div id="leegVoorbeeld" class="contact-clean verborgen">
+        <form method="post">
+            <h2 class="text-center">Basispagina</h2><code>Checkbox met label</code>
+            <div class="form-check" style="text-align: center;"><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Schoppen troef&nbsp;<strong>♠</strong><br></label></div><code>Tabel met numerieke invoer</code>
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table" id="invoer" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;text-align: right;">Naam</th>
+                                <th style="width: 50%;text-align: left;">Aantal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="width: 50%;text-align: right;vertical-align: middle;">Naam deelnemer</td>
+                                <td><input class="form-control" type="number" style="width: 80px;" min="0" max="10" step="1"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><code>Tabel met tekstinvoer</code>
+                <div class="table-responsive">
+                    <table class="table" id="invoer" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Naam (deze rij kan weggelaten worden)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input class="form-control" type="text" id="Naam" style="width: 300px;" placeholder="Naam deelnemer"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><code>Tabel met gegevens (stand)</code>
+                <div class="table-responsive">
+                    <table class="table" id="gegevens" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Krtn</th>
+                                <th><strong>♠</strong><br></th>
+                                <th>Naam</th>
+                                <th><strong>Naam</strong><br></th>
+                                <th><strong>Naam</strong><br></th>
+                                <th><strong>Naam</strong><br></th>
+                                <th><strong>Naam</strong><br></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>34</td>
+                                <td></td>
+                                <td>67</td>
+                                <td>128</td>
+                                <td>8</td>
+                                <td>29</td>
+                                <td>56</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>♠</strong><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>&nbsp;6</td>
+                                <td>66</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><code>Tekstblok (paragraph)</code>
+                <p><strong>Lorem&nbsp;</strong><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean <br>commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et<br>justo. Nullam dictum felis eu pede mollis pretium. Integer
+                    tincidunt.<br></p><code>Tabel met buttons</code>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarNieuwSpel();">nieuw spel</button></th>
+                                <th><button class="btn btn-primary" type="button">knop</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="eindeSpel" class="contact-clean verborgen">
+        <form method="post">
+            <h2 class="text-center">Einde spel</h2>
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table" id="gegevens" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Positie</th>
+                                <th>Naam</th>
+                                <th><strong>Punten</strong><br></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td id="eindeSpelLijstNaam-1">leeg</td>
+                                <td>128</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td id="eindeSpelLijstNaam-2">leeg</td>
+                                <td>127</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td id="eindeSpelLijstNaam-3">leeg</td>
+                                <td>56</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td id="eindeSpelLijstNaam-4">leeg</td>
+                                <td>54</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td id="eindeSpelLijstNaam-5">leeg</td>
+                                <td>54</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="text-align: center;">Allerhoogste score xx punten door yyy</p>
+                <p style="text-align: center;">Aantal schoppenrondjes xx<br></p>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarOverzicht();">spel afsluiten en opslaan</button></th>
+                                <th style="text-align: left;"><button class="btn btn-primary" type="button" onclick="naarStand();">stand</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="spelregels" class="contact-clean verborgen">
+        <form method="post"><a href="#spelregels"></a>
+            <h2 class="text-center">Spelregels &amp; telling</h2>
+            <div class="form-group">
+                <p><strong>Korte speluitleg&nbsp;&nbsp;</strong>Bij boerenbridge worden er 21 rondes gespeeld. Wie de meeste rondes goed voorspeld heeft hoeveel slagen hij gaat winnen, wint het spel. De eerste ronden wordt er met één kaart gespeeld, de tweede
+                    ronde twee etc, tot en met ronde 10.<br><strong>Spelverloop&nbsp;&nbsp;</strong>Het doel van het spel is om iedere ronde goed te voorspellen hoeveel slagen je gaat winnen. Er worden 21 rondes gespeeld. In de eerste wordt er met één
+                    kaart gespeeld, in de tweede ronde twee, dit gaat door tot ronde tien. Ronde elf en twaalf worden beide met tien kaarten gespeeld, echter wordt in ronde 11 zonder troef gespeeld. Vanaf ronde 13 tot en met ronde 21 wordt er iedere ronde
+                    met een kaart&nbsp;<em>minder</em>&nbsp;gespeeld. De spelronde begint met het delen van het aantal kaarten waarmee deze ronde gespeeld wordt. Hierna wordt de troefkaart omgedraaid. Nadat dit is gedaan en de spelers hun kaarten hebben
+                    gezien, gaan de spelers voorspellen hoeveel slagen ze gaan winnen.&nbsp;<br><strong>Slagronde&nbsp;&nbsp;</strong>De eerste keer wordt er een speler gekozen die mag beginnen. De volgende ronde mag de speler die links van de vorige
+                    deler zit uitkomen. Je wint een slag als je de hoogste uitgekomen kaart speelt, of de hoogste troefkaart (De hoogste troefkaart in de ronde wint altijd). De speler is&nbsp;<strong>verplicht</strong>&nbsp;om de speler die als eerste
+                    uitkomt te volgen (=bekennen). Kan hij niet volgen, dan&nbsp;<em>mag</em>&nbsp;hij een troefkaart spelen om een slag te winnen.</p>
+                <p><strong>Puntentelling</strong><br><strong>Juiste voorspelling</strong>: Heb je na het einde van een ronde de juiste voorspelling, dan krijg je 10 punten. Voor iedere slag die je hebt gewonnen krijg je 3 punten extra.<br><br><strong>Onjuiste voorspelling</strong>:
+                    Is je voorspelling incorrect, dan heb je 3 minpunten per aantal dat je er naast zat. Was je voorspelling dat je 4 slagen zou winnen, maar heb je er maar 2? Dan heb je (4 - 2 ) x 3 = 6 minpunten.</p>
+                <p><strong>Schoppen troef?&nbsp;</strong>Dan worden alle behaalde of verloren&nbsp; punten verdubbeld !<br></p>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="uitSpelregels();">gelezen</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="stand" class="contact-clean verborgen">
+        <form method="post">
+            <h2 class="text-center">Stand</h2>
+            <p id="datumEnTijd" class="text-center">Spel van 23-10-2020 (19.45 - 21.10)</p>
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table" id="gegevens" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Krtn</th>
+                                <th><strong>♠</strong><br></th>
+                                <th id="standLijstNaam-1">leeg</th>
+                                <th id="standLijstNaam-2">leeg</th>
+                                <th id="standLijstNaam-3">leeg</th>
+                                <th id="standLijstNaam-4">leeg</th>
+                                <th id="standLijstNaam-5">leeg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>67</td>
+                                <td>128</td>
+                                <td>8</td>
+                                <td>29</td>
+                                <td>56</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>♠</strong><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>&nbsp;6</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>&nbsp;6</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>♠</strong><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td>&nbsp;12</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>&nbsp;6</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>&nbsp;12</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><strong>♠</strong><br></td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>&nbsp;6</td>
+                                <td>3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><code>Spel nog niet af</code>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarBieden();">verder spelen</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div><code>Spel afgelopen</code>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarNieuwSpel();">nieuw spel</button></th>
+                                <th><button class="btn btn-primary" type="button" onclick="naarOverzicht();">overzicht</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="rondeHalen" class="contact-clean verborgen">
+        <form method="post">
+            <h2 class="text-center">Halen</h2>
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table" id="invoer" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;text-align: right;">Naam</th>
+                                <th style="padding: 12px;">Geboden</th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                                <th style="/*width: 50%;*/text-align: left;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="halenNaam-1" class="halenLijstNaam">leeg</td>
+                                <td><strong>✔ 3</strong></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td id="halenNaam-2" class="halenLijstNaam">leeg</td>
+                                <td><strong>❌ 0</strong></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td id="halenNaam-3" class="halenLijstNaam">leeg</td>
+                                <td><strong>❌ 1</strong></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td id="halenNaam-4" class="halenLijstNaam">leeg</td>
+                                <td><strong>✔ 2</strong><br></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td id="halenNaam-5" class="halenLijstNaam">leeg</td>
+                                <td><strong>✔ 0</strong><br></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table class="table" id="invoer" style="text-align: center;">
+                        <thead>
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            <tr></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="meldingSchoppenTroef" class="textCenter"><strong>Schoppen was troef, alles telt dubbel !</strong><br></p>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarBieden();">bieden</button></th>
+                                <th><button class="btn btn-primary" type="button" onclick="naarStand();">stand</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div><code>Indien laatste ronde geweest:</code>
+                <div class="table-responsive" style="text-align: center;">
+                    <table class="table" id="buttons">
+                        <thead style="text-align: center;">
+                            <tr style="text-align: center;">
+                                <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarEindeSpel();">einde spel</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="overzicht" class="contact-clean">
+        <form method="post">
+            <h2 class="text-center">Overzicht</h2>
+            <div class="table-responsive textCenter">
+                <table class="table" id="buttons">
+                    <thead style="text-align: center;">
+                        <tr style="text-align: center;">
+                            <th style="text-align: center;"><button class="btn btn-primary" type="button" onclick="naarNieuwSpel();">nieuw spel</button></th>
+                            <th><button class="btn btn-primary" type="button" onclick="naarSpelregels();">regels &amp; telling</button></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table , textCenter" id="gegevens">
+                        <thead>
+                            <tr>
+                                <th>Speeldatum</th>
+                                <th>Winnaar</th>
+                                <th><strong>Score</strong><br></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td onclick="naarStand()">23-12-2023 (klik)</td>
+                                <td>Piet</td>
+                                <td>128</td>
+                            </tr>
+                            <tr>
+                                <td onclick="naarStand()">16-03-2020 (klik)<br></td>
+                                <td>Truus</td>
+                                <td>162</td>
+                            </tr>
+                            <tr>
+                                <td onclick="naarStand()">31-02-2020 (klik)<br></td>
+                                <td>Sjaan</td>
+                                <td>324</td>
+                            </tr>
+                            <tr>
+                                <td onclick="naarStand()">04-08-1876 (klik)<br></td>
+                                <td>Truus</td>
+                                <td>65</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><br></p>
+            </div>
+        </form>
+    </div>
+    <div id="rondeBieden" class="contact-clean verborgen">
+        <form method="post">
+            <h2 class="text-center">Bieden</h2>
+            <p class="text-center">5e&nbsp; ronde, Iduna deelt 5 kaarten</p>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-right celTekstRechts" onclick="document.getElementById(&quot;radioSchoppenTroefAan&quot;).checked = true;  document.getElementById(&quot;alertTroef&quot;).style.display=&#39;none&#39;; document.getElementById(&quot;meldingSchoppenTroef&quot;).style.display=&#39;block&#39;;"><strong>♠&nbsp;</strong>schoppentroef<strong>&nbsp;</strong><input type="radio" id="radioSchoppenTroefAan" name="schoppenTroef"><br></td>
+                            <td class="celTekstLinks" onclick="document.getElementById(&quot;radioSchoppenTroefUit&quot;).checked = true;  document.getElementById(&quot;alertTroef&quot;).style.display=&#39;none&#39;;  document.getElementById(&quot;meldingSchoppenTroef&quot;).style.display=&#39;none&#39;;"><input type="radio" id="radioSchoppenTroefUit" name="schoppenTroef">&nbsp;Een andere troef<br></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table" id="invoer">
+                        <thead>
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="biedenLijstScore">132</td>
+                                <td id="biedenNaam-1" class="biedenLijstNaam">leeg</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td class="biedenLijstScore">56</td>
+                                <td id="biedenNaam-2" class="biedenLijstNaam">leeg<br></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td class="biedenLijstScore">104</td>
+                                <td id="biedenNaam-3" class="biedenLijstNaam">leeg<br></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td class="biedenLijstScore">45</td>
+                                <td id="biedenNaam-4" class="biedenLijstNaam">leeg<br></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr>
+                                <td class="biedenLijstScore">45</td>
+                                <td id="biedenNaam-5" class="biedenLijstNaam">leeg<br></td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
+                                <td class="unavailable" onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
+                                <td onclick="clickBidButton(this.parentNode, this.innerHTML.trim())">10</td>
+                            </tr>
+                            <tr></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-center">Totaal geboden&nbsp;xx van yy mogelijke slagen<br></p>
+                <div class="alert alert-success" role="alert" id="alertTroef"><span>Je moet nog aangeven of schoppen wel of niet troef is !</span></div>
+                <div class="table-responsive text-center">
+                    <table class="table" id="buttons">
+                        <thead class="textCenter">
+                            <tr>
+                                <th><button class="btn btn-primary" type="button" onclick="naarHalen();">halen</button></th>
+                                <th><button class="btn btn-primary" type="button" onclick="naarStand();">stand</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="nieuwSpel" class="contact-clean verborgen">
+        <form method="post"><a name="NieuwSpel"></a>
+            <h2 class="text-center">Nieuw spel</h2>
+            <div class="form-group text-center">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Start delen</th>
+                                <th></th>
+                                <th>Spelers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="vertAlignMiddle" onclick="document.getElementById(&quot;radioDeler-1&quot;).checked = true;"><input type="radio" id="radioDeler-1" class="vertAlignMiddle" name="eersteDeler"></td>
+                                <td class="vertAlignMiddle">1</td>
+                                <td class="vertAlignMiddle"><select class="form-control" id="naamKeuze-1"></select></td>
+                            </tr>
+                            <tr>
+                                <td class="vertical-align: middle" onclick="document.getElementById(&quot;radioDeler-2&quot;).checked = true;"><input type="radio" id="radioDeler-2" name="eersteDeler"></td>
+                                <td>2</td>
+                                <td><select class="form-control" id="naamKeuze-2"></select></td>
+                            </tr>
+                            <tr>
+                                <td onclick="document.getElementById(&quot;radioDeler-3&quot;).checked = true;"><input type="radio" id="radioDeler-3" name="eersteDeler"></td>
+                                <td>3</td>
+                                <td><select class="form-control" id="naamKeuze-3"></select></td>
+                            </tr>
+                            <tr>
+                                <td onclick="document.getElementById(&quot;radioDeler-4&quot;).checked = true;"><input type="radio" id="radioDeler-4" name="eersteDeler"></td>
+                                <td>4</td>
+                                <td><select class="form-control" id="naamKeuze-4"></select></td>
+                            </tr>
+                            <tr>
+                                <td onclick="document.getElementById(&quot;radioDeler-5&quot;).checked = true;"><input type="radio" id="radioDeler-5" name="eersteDeler"></td>
+                                <td>5</td>
+                                <td><select class="form-control" id="naamKeuze-5"></select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="form-check text-center"><input class="form-check-input" type="checkbox" id="formCheck-2"><label class="form-check-label" for="formCheck-2" onclick="document.getElementById(&quot;formCheck-2&quot;).click;">Middelste ronde zonder troef ?<br></label></div>
+                <div class="table-responsive">
+                    <table class="table" id="buttons">
+                        <thead>
+                            <tr>
+                                <th><button class="btn btn-primary" type="button" onclick="namenOvernemen(); naarBieden();">start 1e ronde</button></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bbdef.js"></script>
 </body>
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/background.js"></script>
+
 </html>
