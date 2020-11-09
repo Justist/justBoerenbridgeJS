@@ -128,7 +128,7 @@ function createTableHead(table, rowData) {
          row.appendChild(th);
       }
       return row;
-   }catch (e) {
+   } catch (e) {
       alert("createTableHead " + e.message);
       return false;
    }
@@ -159,19 +159,32 @@ function showProceedGameButton() {
    }
 }
 
-function openExistingGame() {
-   return false;
+function getCurrentCards() {
+   try {
+      let currentCards = window.currentRound;
+      //TODO Change this so it also works if there is no round without trump
+      if (currentCards === window.maxCards + 1) {
+         currentCards = window.maxCards;
+      } else if (currentCards > window.maxCards) {
+         currentCards = ((window.maxCards + 1) * 2) - window.currentRound;
+      }
+      return currentCards;
+   } catch (e) {
+      alert("getCurrentCards " + e.message);
+      return false;
+   }
 }
 
 function hideAllNextPlayerFields(number) {
+   let field;
    try {
       for (let i = number + 1; i <= window.maxPlayers; i++) {
-         let field = document.getElementById("trNameInputPlayer" + i.toString());
+         field = document.getElementById("trNameInputPlayer" + i.toString());
          field.classList.add("hidden");
       }
       return true;
    } catch (e) {
-      alert(e.message);
+      alert("hideAllNextPlayerFields " + e.message);
       return false;
    }
 }
@@ -212,17 +225,18 @@ function storePlayers() {
 }
 
 function getTypeInputFields(parent, type) {
-   return parent.querySelectorAll("input[type=" + type + "]");
+   try {
+      return parent.querySelectorAll("input[type=" + type + "]");
+   } catch (e) {
+      alert("getTypeInputFields " + e.message);
+      return false;
+   }
 }
 
 function createBidTable() {
    try {
       let formTable = document.getElementById("bidInputTable");
-
-      let currentCards = window.currentRound;
-      if (currentCards > window.maxCards) {
-         currentCards = ((window.maxCards + 1) * 2) - window.currentRound;
-      }
+      let currentCards = getCurrentCards();
 
       for (let i = 0; i < window.players.length; i++) {
          let row = formTable.insertRow();
@@ -239,7 +253,7 @@ function createBidTable() {
          for (let number = 0; number <= currentCards; number++) {
             let numberCell = row.insertCell(-1);
             numberCell.setAttribute("onclick", "return clickBidButton(this.parentNode,"
-                                               + " this.innerHTML.trim())");
+                                               + " this.innerHTML.trim(), " + i.toString() + ")");
             numberCell.innerHTML = number.toString();
          }
       }
@@ -267,13 +281,16 @@ function clearBidsPlayer(player) {
    }
 }
 
-function clickBidButton(parent, number) {
+function clickBidButton(parent, numberString, playerIndexString) {
    try {
       clearBidsPlayer(parent);
-      let numberAsInt = parseInt(number, 10);
+      let numberAsInt = parseInt(numberString, 10);
+      let playerIndexInt = parseInt(playerIndexString, 10);
       let indexToHighlight = parent.children[numberAsInt + 2];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");
+      window.currentBids[playerIndexInt] = numberAsInt;
+      updateBidsPlaced();
       return true;
    } catch (e) {
       alert("clickBidButton " + e.message);
@@ -282,17 +299,23 @@ function clickBidButton(parent, number) {
 }
 
 function updateBidsPlaced() {
-   let bidsPlaced = document.getElementById("bidsPlaced");
-   let sumBids = 0;
-   for (let bid of window.currentBids) {
-      if (bid) { sumBids += bid; }
+   try {
+      let bidInfoRow = document.getElementById("bidInfoRow");
+      let sumBids = 0;
+      let currentCards = getCurrentCards();
+      for (let bid of window.currentBids) {
+         if (bid) { sumBids += bid; }
+      }
+      bidInfoRow.innerHTML = sumBids.toString() + " / " + currentCards.toString();
+      return true;
+   } catch (e) {
+      alert("updateBidsPlaced " + e.message);
+      return false;
    }
-   bidsPlaced.innerHTML = sumBids.toString();
-   return true;
 }
 
 window.onload = function() {
    while (!document.getElementById("newGameScreen")) { }
-   // Check for existing save game
+   //TODO Check for existing save game
    toNewGame();
 };
