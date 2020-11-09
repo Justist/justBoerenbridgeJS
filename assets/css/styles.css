@@ -1,0 +1,48 @@
+.highlighted {
+    background: rgb(5, 90, 218);
+    color: rgb(255, 255, 255);
+}
+
+.unhighlighted {
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+}
+
+.nameForm {
+    padding: 47px;
+    width: 100%;
+    text-align: center;
+}
+
+.nameTableDiv {
+    width: 95%;
+}
+
+.nameTable {
+    text-align: center;
+}
+
+.nameTableFirstCell {
+    vertical-align: middle;
+    width: 50px;
+}
+
+.nameInput {
+    width: 300px;
+}
+
+.alignCenter {
+    text-align: center;
+}
+
+.hidden {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+
+.bidName {
+    width: 30%;
+    text-align: center;
+    vertical-align: middle;
+}
