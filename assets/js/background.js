@@ -239,25 +239,26 @@ function createPlayersTable() {
          let nameChoiceCell = row.insertCell(1);
          nameChoiceCell.classList.add("vertCenter");
 
-         let nameSelectElement = document.createElement("select");
+         let nameSelectElement = document.createElement("input");
          nameSelectElement.classList.add("form-control");
          nameSelectElement.setAttribute("id", "nameChoice-" + playerIndex.toString());
+         nameSelectElement.setAttribute("list", "nameList");
+         nameSelectElement.setAttribute("placeholder", "Kies een speler of typ een naam");
          nameSelectElement.setAttribute("onchange",
                                         "return showNextPlayerField("
                                         + playerIndex.toString()
                                         + ", this.value)");
+         nameChoiceCell.appendChild(nameSelectElement);
 
-         let option = document.createElement("option");
-         option.setAttribute("value", "");
-         option.textContent = "Kies een speler";
-         nameSelectElement.appendChild(option);
+         let nameList = document.createElement("datalist");
+         nameList.setAttribute("id", "nameList");
          for (let nameIndex = 0; nameIndex < window.regularPlayers.length; nameIndex++) {
             let option = document.createElement("option");
             option.setAttribute("value", window.regularPlayers[nameIndex]);
             option.textContent = window.regularPlayers[nameIndex];
-            nameSelectElement.appendChild(option);
+            nameList.appendChild(option);
          }
-         nameChoiceCell.appendChild(nameSelectElement);
+         nameChoiceCell.appendChild(nameList);
       }
       return true;
    } catch (e) {
@@ -296,7 +297,7 @@ function showNextPlayerField(index, value) {
 function storePlayers() {
    try {
       let playerForm = document.getElementById("newGameForm");
-      let selectFields = getElementTypeFields(playerForm, "select");
+      let selectFields = getElementTypeFields(playerForm, "input");
       console.log(selectFields);
       for (let field of selectFields) {
          let name = field.value;
