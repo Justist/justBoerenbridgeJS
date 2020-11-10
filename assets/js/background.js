@@ -296,9 +296,9 @@ function showNextPlayerField(index, value) {
 function storePlayers() {
    try {
       let playerForm = document.getElementById("newGameForm");
-      let inputFields = getTypeInputFields(playerForm, "text");
-      console.log(inputFields);
-      for (let field of inputFields) {
+      let selectFields = getElementTypeFields(playerForm, "select");
+      console.log(selectFields);
+      for (let field of selectFields) {
          let name = field.value;
          console.log("name: " + name);
          if (name) { window.players.push(name); } else { break; } //If there is an empty field
@@ -313,6 +313,15 @@ function storePlayers() {
       return toBids();
    } catch (e) {
       alert("storePlayers " + e.message);
+      return false;
+   }
+}
+
+function getElementTypeFields(parent, elementType) {
+   try {
+      return parent.querySelectorAll(elementType.toString());
+   } catch (e) {
+      alert("getElementTypeFields " + e.message);
       return false;
    }
 }
