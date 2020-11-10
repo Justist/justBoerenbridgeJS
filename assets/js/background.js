@@ -7,6 +7,13 @@ window.currentBids = [];
 window.currentRound = 1;
 window.maxCards = -1; //Updated later on
 
+window.regularPlayers =
+   ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
+
+String.prototype.format = function() {
+   return [...arguments].reduce((p, c) => p.replace(/%s/, c), this);
+};
+
 function setEverythingToNone() {
    try {
       for (let page of ["newGameScreen",
@@ -50,7 +57,16 @@ function toNewGame() {
       setEverythingToNone();
       let newGame = document.getElementById("newGameScreen");
       newGame.classList.remove("hidden");
-      return true;
+
+      let dateTimeScoreBoard = document.getElementById("dateTimeScoreBoard");
+      let dateTime = new Date();
+      dateTimeScoreBoard.innerHTML =
+         "Spel van %s - %s - %s (%s:%s)".format(dateTime.getDate().toString(),
+                                                (dateTime.getMonth() + 1).toString(),
+                                                dateTime.getFullYear().toString(),
+                                                dateTime.getHours().toString(),
+                                                dateTime.getMinutes().toString());
+      return createPlayersTable();
    } catch (e) {
       alert("toNewGame " + e.toString());
       return false;
@@ -62,8 +78,7 @@ function toBids() {
       setEverythingToNone();
       let bid = document.getElementById("bidScreen");
       bid.classList.remove("hidden");
-      createBidTable();
-      return true;
+      return createBidTable();
    } catch (e) {
       alert("toBids " + e.toString());
       return false;
@@ -85,7 +100,7 @@ function toTakes() {
 function toScores() {
    try {
       setEverythingToNone();
-      let scores = document.getElementById("scoreBoard");
+      let scores = document.getElementById("scoreboardScreen");
       scores.classList.remove("hidden");
       return true;
    } catch (e) {
@@ -175,6 +190,82 @@ function getCurrentCards() {
    }
 }
 
+function unCheckOtherRadioButtons(parent) {
+   try {
+      let radioButtons = getTypeInputFields(parent, "radio");
+      for (let button of radioButtons) {
+         button.checked = false;
+      }
+      return true;
+   } catch (e) {
+      alert("unCheckOtherRadioButtons " + e.message);
+      return false;
+   }
+}
+
+// noinspection JSUnusedGlobalSymbols
+function clickRadioButton(number) {
+   try {
+      let clickedButton = document.getElementById("radioDealer-" + number.toString());
+      let playerTable = document.getElementById("newGameInputTable");
+      unCheckOtherRadioButtons(playerTable);
+      clickedButton.checked = true;
+      return true;
+   } catch (e) {
+      alert("clickRadioButton " + e.message);
+      return false;
+   }
+}
+
+function createPlayersTable() {
+   try {
+      let playerTable = document.getElementById("newGameInputTable");
+
+      for (let playerIndex = 0; playerIndex < 8; playerIndex++) {
+         let row = playerTable.insertRow();
+         if (playerIndex > 1) { row.classList.add("hidden"); }
+         row.setAttribute("id", "playerRow" + playerIndex);
+         let dealerCell = row.insertCell(0);
+         dealerCell.classList.add("vertCenter");
+         dealerCell.setAttribute("onclick",
+                                 "return clickRadioButton(" + playerIndex.toString() + ")");
+
+         let radioButton = document.createElement("input");
+         radioButton.setAttribute("type", "radio");
+         radioButton.setAttribute("id", "radioDealer-" + playerIndex.toString());
+         radioButton.classList.add("vertCenter");
+         dealerCell.appendChild(radioButton);
+
+         let nameChoiceCell = row.insertCell(1);
+         nameChoiceCell.classList.add("vertCenter");
+
+         let nameSelectElement = document.createElement("select");
+         nameSelectElement.classList.add("form-control");
+         nameSelectElement.setAttribute("id", "nameChoice-" + playerIndex.toString());
+         nameSelectElement.setAttribute("onchange",
+                                        "return showNextPlayerField("
+                                        + playerIndex.toString()
+                                        + ", this.value)");
+
+         let option = document.createElement("option");
+         option.setAttribute("value", "");
+         option.textContent = "Kies een speler";
+         nameSelectElement.appendChild(option);
+         for (let nameIndex = 0; nameIndex < window.regularPlayers.length; nameIndex++) {
+            let option = document.createElement("option");
+            option.setAttribute("value", window.regularPlayers[nameIndex]);
+            option.textContent = window.regularPlayers[nameIndex];
+            nameSelectElement.appendChild(option);
+         }
+         nameChoiceCell.appendChild(nameSelectElement);
+      }
+      return true;
+   } catch (e) {
+      alert("createPlayersTable " + e.message);
+      return false;
+   }
+}
+
 function hideAllNextPlayerFields(number) {
    let field;
    try {
@@ -189,11 +280,13 @@ function hideAllNextPlayerFields(number) {
    }
 }
 
-function showNextPlayerField(number, value) {
+// noinspection JSUnusedGlobalSymbols
+function showNextPlayerField(index, value) {
    let nextField;
    try {
-      nextField = document.getElementById("trNameInputPlayer" + (number + 1).toString());
-      if (value) { nextField.classList.remove("hidden"); } else { hideAllNextPlayerFields(number); }
+      nextField = document.getElementById("playerRow" + (index + 1).toString());
+      if (value) { nextField.classList.remove("hidden"); } else { hideAllNextPlayerFields(index); }
+      return true;
    } catch (e) {
       return false;
    }

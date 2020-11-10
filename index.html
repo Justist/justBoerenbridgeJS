@@ -133,20 +133,20 @@
 </div>
 <div id="scoreboardScreen" class="contact-clean">
    <form method="post">
-      <h2 class="text-center">Stand</h2>
-      <p class="alignCenter">Spel van 23-10-2020 (19.45 - 21.10)</p>
+      <h2 class="alignCenter">Stand</h2>
+      <p id="dateTimeScoreBoard" class="alignCenter">Spel van 23-10-2020 (19.45 - 21.10)</p>
       <div class="form-group">
          <div class="table-responsive">
-            <table class="table" id="gegevens" class="alignCenter">
+            <table class="table alignCenter" id="scoreDataTable">
                <thead>
                <tr>
                   <th>Krtn</th>
-                  <th><strong>&spades;</strong><br></th>
-                  <th>Simon</th>
-                  <th><strong>Arnold</strong><br></th>
-                  <th><strong>Iduna</strong><br></th>
-                  <th><strong>Aad</strong><br></th>
-                  <th><strong>Roland</strong><br></th>
+                  <th><strong>♠</strong><br></th>
+                  <th id="standLijstNaam-1">leeg</th>
+                  <th id="standLijstNaam-2">leeg</th>
+                  <th id="standLijstNaam-3">leeg</th>
+                  <th id="standLijstNaam-4">leeg</th>
+                  <th id="standLijstNaam-5">leeg</th>
                </tr>
                </thead>
                <tbody>
@@ -161,7 +161,7 @@
                </tr>
                <tr>
                   <td>1</td>
-                  <td><strong>&spades;</strong><br></td>
+                  <td><strong>♠</strong><br></td>
                   <td>3</td>
                   <td>4</td>
                   <td>5</td>
@@ -179,7 +179,7 @@
                </tr>
                <tr>
                   <td>3</td>
-                  <td><strong>&spades;</strong><br></td>
+                  <td><strong>♠</strong><br></td>
                   <td>3</td>
                   <td>4</td>
                   <td>3</td>
@@ -206,7 +206,7 @@
                </tr>
                <tr>
                   <td>6</td>
-                  <td><strong>&spades;</strong><br></td>
+                  <td><strong>♠</strong><br></td>
                   <td>3</td>
                   <td>4</td>
                   <td>5</td>
@@ -513,12 +513,7 @@
                Je moet aangeven welke kleur troef is !
             </span>
          </div>
-         <div class="alert alert-success" role="alert">
-            <span>
-               Aantal geboden slagen (xx) mag niet gelijk zijn aan aantal te halen slagen!
-            </span>
-         </div>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="bidScreenButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -546,7 +541,7 @@
       <div class="form-group nameForm">
          <div class="table-responsive nameTableDiv">
             <table class="table nameTable" id="newGameInputTable">
-               <tbody>
+               <!--<tbody>
                <tr id="trNameInputPlayer1">
                   <td class="nameTableFirstCell">1</td>
                   <td class="alignCenter">
@@ -626,7 +621,7 @@
                             onchange="return showNextPlayerField(8, this.value)">
                   </td>
                </tr>
-               </tbody>
+               </tbody>-->
             </table>
          </div>
          <div class="form-check alignCenter">
