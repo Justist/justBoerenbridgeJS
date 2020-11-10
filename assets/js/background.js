@@ -297,7 +297,7 @@ function showNextPlayerField(index, value) {
 function storePlayers() {
    try {
       let playerForm = document.getElementById("newGameForm");
-      let selectFields = getElementTypeFields(playerForm, "input");
+      let selectFields = getElementTypeFields(playerForm, "input[list]");
       console.log(selectFields);
       for (let field of selectFields) {
          let name = field.value;
