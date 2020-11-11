@@ -16,7 +16,7 @@
       <h2 class="text-center">Einde spel</h2>
       <div class="form-group">
          <div class="table-responsive">
-            <table class="table" id="endScoreTable" class="alignCenter">
+            <table class="table alignCenter" id="endScoreTable">
                <thead>
                <tr>
                   <th>Positie</th>
@@ -50,7 +50,7 @@
          </div>
          <p class="alignCenter">Allerhoogste score xx punten door yyy</p>
          <p class="alignCenter">Aantal schoppenrondjes xx<br></p>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="endGameButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -114,7 +114,7 @@
          </p>
          <p><strong>Schoppen troef?&nbsp;</strong>Dan worden alle behaalde of verloren&nbsp; punten
                                                   verdubbeld!<br></p>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="gamerulesButtonTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -228,7 +228,6 @@
                   </th>
                </tr>
                </thead>
-               <tbody></tbody>
             </table>
          </div>
          <code>Spel afgelopen</code>
@@ -248,7 +247,6 @@
                   </th>
                </tr>
                </thead>
-               <tbody></tbody>
             </table>
          </div>
       </div>
@@ -260,119 +258,28 @@
       <div class="form-group">
          <div class="table-responsive">
             <table class="table aligncenter" id="takeInputTable">
-               <thead>
-               <tr>
-                  <th style="width: 30%; text-align: right;">Naam</th>
-                  <th style="padding: 12px;">Geboden</th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-                  <th style="text-align: left;"></th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Iduna</td>
-                  <td><strong>3</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Arnold</td>
-                  <td><strong>0</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Simon</td>
-                  <td><strong>1</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Sam</td>
-                  <td><strong>2</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               <tr>
-                  <td style="width: 30%;text-align: right;vertical-align: middle;">Roland</td>
-                  <td><strong>0</strong></td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">0</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">1</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">2</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">3</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">4</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">5</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">6</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">7</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">8</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">9</td>
-                  <td onclick="return clickBidButton(this.parentNode, this.innerHTML.trim())">10
-                  </td>
-               </tr>
-               </tbody>
+               <!-- filled with javascript -->
             </table>
          </div>
+         <p class="alignCenter" id="spadeTrumpTakeScreen">
+            <strong>Schoppen wel / niet troef</strong>
+            <br>
+         </p>
          <div class="table-responsive">
-            <table class="table" id="invoer" class="alignCenter">
+            <table class="table">
                <thead>
                <tr></tr>
                </thead>
                <tbody>
+               <tr>
+                  <td class="bidInfoRow">Totaal gehaald<br></td>
+                  <td id="takeInfoRow">0 / 1<br></td>
+               </tr>
                <tr></tr>
                </tbody>
             </table>
          </div>
-         <p class="alignCenter"><strong>Schoppen wel / niet troef</strong><br></p>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="takeButtons">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -392,7 +299,7 @@
             </table>
          </div>
          <code>Indien laatste ronde geweest:</code>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="buttons">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -518,13 +425,13 @@
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toTakes()">
-                        Halen
+                     <button class="btn btn-primary" type="button" onclick="return storeBids()">
+                        Naar Halen
                      </button>
                   </th>
                   <th>
                      <button class="btn btn-primary" type="button" onclick="return toScores()">
-                        Stand
+                        Naar Stand
                      </button>
                   </th>
                </tr>
@@ -547,9 +454,9 @@
          <div class="form-check alignCenter">
             <input class="form-check-input"
                    type="checkbox"
-                   id="formCheck-2">
+                   id="checkNoTrumpMiddleRound">
             <label class="form-check-label"
-                   for="formCheck-2">
+                   for="checkNoTrumpMiddleRound">
                Middelste ronde zonder troef?
                <br>
             </label>
@@ -565,7 +472,6 @@
                   </th>
                </tr>
                </thead>
-               <tbody></tbody>
             </table>
          </div>
       </div>

@@ -1,9 +1,11 @@
 window.maxPlayers = 8;
 window.players = [];
+window.currentDealerIndex = -1;
 window.bids = { 0 : [] };
 window.takes = { 0 : [] };
 window.scores = { 0 : [] };
 window.currentBids = [];
+window.currentTakes = [];
 window.currentRound = 1;
 window.maxCards = -1; //Updated later on
 
@@ -47,10 +49,9 @@ function updateBidRoundLabels() {
       "Ronde " + window.currentRound.toString();
 }
 
-function hideUnavailableBidOptions() {
-   let bid = document.getElementById("bidScreen");
-
-}
+/*function hideUnavailableBidOptions() {
+ let bid = document.getElementById("bidScreen");
+ }*/
 
 function toNewGame() {
    try {
@@ -76,8 +77,8 @@ function toNewGame() {
 function toBids() {
    try {
       setEverythingToNone();
-      let bid = document.getElementById("bidScreen");
-      bid.classList.remove("hidden");
+      let screen = document.getElementById("bidScreen");
+      screen.classList.remove("hidden");
       return createBidTable();
    } catch (e) {
       alert("toBids " + e.toString());
@@ -90,7 +91,7 @@ function toTakes() {
       setEverythingToNone();
       let take = document.getElementById("takeScreen");
       take.classList.remove("hidden");
-      return true;
+      return createTakeTable();
    } catch (e) {
       alert("toTakes " + e.toString());
       return false;
@@ -270,8 +271,8 @@ function createPlayersTable() {
 function hideAllNextPlayerFields(number) {
    let field;
    try {
-      for (let i = number + 1; i <= window.maxPlayers; i++) {
-         field = document.getElementById("trNameInputPlayer" + i.toString());
+      for (let i = number + 1; i < window.maxPlayers; i++) {
+         field = document.getElementById("playerRow" + i.toString());
          field.classList.add("hidden");
       }
       return true;
@@ -295,17 +296,34 @@ function showNextPlayerField(index, value) {
 
 // noinspection JSUnusedGlobalSymbols
 function storePlayers() {
+   let localPlayers = [];
+   let localDealerIndex = 0;
    try {
       let playerForm = document.getElementById("newGameForm");
+      let radioFields = getTypeInputFields(playerForm, "radio");
+      let anySelected = false;
+      for (let fieldIndex in radioFields) {
+         if (radioFields[fieldIndex].checked) {
+            localDealerIndex = fieldIndex;
+            anySelected = true;
+         }
+      }
+
       let selectFields = getElementTypeFields(playerForm, "input[list]");
-      console.log(selectFields);
       for (let field of selectFields) {
          let name = field.value;
-         console.log("name: " + name);
-         if (name) { window.players.push(name); } else { break; } //If there is an empty field
-                                                                  // followed by filled in fields,
-                                                                  // ignore those
+         if (name) { localPlayers.push(name); } else { break; } //If there is an empty field
+         // followed by filled in fields,
+         // ignore those
       }
+
+      if (! anySelected || localDealerIndex > localPlayers.length) {
+         alert("Geen (valide) beginspeler gekozen!");
+         return false;
+      }
+
+      window.players = localPlayers;
+      window.currentDealerIndex = localDealerIndex;
       window.jsonFileName = window.players.join("");
       window.maxCards = Math.floor(52 / window.players.length);
       for (let player of window.players) {
@@ -329,38 +347,63 @@ function getElementTypeFields(parent, elementType) {
 
 function getTypeInputFields(parent, type) {
    try {
-      return parent.querySelectorAll("input[type=" + type + "]");
+      return getElementTypeFields(parent, "input[type=" + type + "]");
    } catch (e) {
       alert("getTypeInputFields " + e.message);
       return false;
    }
 }
 
-function createBidTable() {
+function createBidTakeTable(bidOrTake) {
+   let table, playerId, cellName;
    try {
-      let formTable = document.getElementById("bidInputTable");
+      table = bidOrTake + "InputTable";
+      playerId = bidOrTake + "Player";
+      cellName = bidOrTake + "Name";
+
+      let formTable = document.getElementById(table);
       let currentCards = getCurrentCards();
 
       for (let i = 0; i < window.players.length; i++) {
          let row = formTable.insertRow();
-         row.setAttribute("id", "bidPlayer" + i);
+         row.setAttribute("id", playerId + i.toString());
 
          let nameCell = row.insertCell(0);
-         nameCell.classList.add("bidName");
+         nameCell.classList.add(cellName);
          nameCell.innerHTML = window.players[i];
 
          let scoreCell = row.insertCell(1);
          let score = window.scores[window.currentRound - 1][i];
          if (score) { scoreCell.innerHTML = score.toString(); } else { scoreCell.innerHTML = "0"; }
 
+         if (bidOrTake === "take") {
+            let bidCell = row.insertCell(2);
+            bidCell.innerHTML = window.bids[window.currentRound][i];
+         }
+
          for (let number = 0; number <= currentCards; number++) {
             let numberCell = row.insertCell(-1);
-            numberCell.setAttribute("onclick", "return clickBidButton(this.parentNode,"
-                                               + " this.innerHTML.trim(), " + i.toString() + ")");
+            numberCell.setAttribute("onclick", "return clickBidOrTakeButton(this.parentNode, "
+                                               + number.toString()
+                                               + ", "
+                                               + i.toString()
+                                               + ", \'"
+                                               + bidOrTake.toString()
+                                               + "\')");
             numberCell.innerHTML = number.toString();
          }
       }
-      createStretchTableHead(formTable, ["Spelers", "Scores", "Bieden"], (currentCards + 1));
+      return formTable;
+   } catch (e) {
+      alert("createBidTakeTable " + e.message);
+      return false;
+   }
+}
+
+function createBidTable() {
+   try {
+      let formTable = createBidTakeTable("bid");
+      createStretchTableHead(formTable, ["Spelers", "Scores", "Bieden"], (getCurrentCards() + 1));
       return true;
    } catch (e) {
       alert("createBidTable " + e.message);
@@ -369,7 +412,7 @@ function createBidTable() {
 
 }
 
-function clearBidsPlayer(player) {
+function clearHighLightsPlayer(player) {
    try {
       for (let child of player.children) {
          if (child.getAttribute("class")) {
@@ -379,46 +422,68 @@ function clearBidsPlayer(player) {
       }
       return true;
    } catch (e) {
-      alert("clearBidsPlayer " + e.message);
+      alert("clearHighLightsPlayer " + e.message);
       return false;
    }
 }
 
-function clickBidButton(parent, numberString, playerIndexString) {
+// noinspection JSUnusedGlobalSymbols
+function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake) {
    try {
-      clearBidsPlayer(parent);
+      clearHighLightsPlayer(parent);
       let numberAsInt = parseInt(numberString, 10);
       let playerIndexInt = parseInt(playerIndexString, 10);
-      let indexToHighlight = parent.children[numberAsInt + 2];
+      let offset = bidOrTake === "bid" ? 2 : 3;
+      let indexToHighlight = parent.children[numberAsInt + offset];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");
-      window.currentBids[playerIndexInt] = numberAsInt;
-      updateBidsPlaced();
-      return true;
+      (bidOrTake === "bid") ? window.currentBids[playerIndexInt] = numberAsInt : window.currentTakes[playerIndexInt] =
+         numberAsInt;
+      return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
-      alert("clickBidButton " + e.message);
+      alert("clickBidOrTakeButton " + e.message);
       return false;
    }
 }
 
-function updateBidsPlaced() {
+function updateBidsOrTakesPlaced(bidOrTake) {
    try {
-      let bidInfoRow = document.getElementById("bidInfoRow");
+      let infoRow = document.getElementById(bidOrTake === "bid" ? "bidInfoRow" : "takeInfoRow");
       let sumBids = 0;
-      let currentCards = getCurrentCards();
-      for (let bid of window.currentBids) {
-         if (bid) { sumBids += bid; }
+      for (let num of bidOrTake === "bid" ? window.currentBids : window.currentTakes) {
+         if (num) { sumBids += num; }
       }
-      bidInfoRow.innerHTML = sumBids.toString() + " / " + currentCards.toString();
+      infoRow.innerHTML = sumBids.toString() + " / " + getCurrentCards().toString();
       return true;
    } catch (e) {
-      alert("updateBidsPlaced " + e.message);
+      alert("updateBidsOrTakesPlaced " + e.message);
+      return false;
+   }
+}
+
+function storeBids() {
+   try {
+      window.bids[window.currentRound] = window.currentBids;
+      return toTakes();
+   } catch (e) {
+      alert("storeBids " + e.message);
+      return false;
+   }
+}
+
+function createTakeTable() {
+   try {
+      let formTable = createBidTakeTable("take");
+      createStretchTableHead(formTable, ["Spelers", "Scores", "Geboden", "Gehaald"], (getCurrentCards() + 1));
+      return true;
+   } catch (e) {
+      alert("createTakeTable " + e.message);
       return false;
    }
 }
 
 window.onload = function() {
-   while (!document.getElementById("newGameScreen")) { }
+   while (! document.getElementById("newGameScreen")) { }
    //TODO Check for existing save game
    toNewGame();
 };
