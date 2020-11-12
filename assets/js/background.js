@@ -127,7 +127,7 @@ function toScores() {
       setEverythingToNone();
       let scores = document.getElementById("scoreboardScreen");
       scores.classList.remove("hidden");
-      return true;
+      return createScoreBoard();
    } catch (e) {
       alert("toScores " + e.toString());
       return false;
@@ -342,8 +342,6 @@ function storePlayers() {
          else { break; }
       }
 
-      console.log(fieldIndex);
-      console.log(localPlayers.size);
       // localPlayers is a set, so if there are duplicate names fieldIndex is larger than the set
       if (fieldIndex > localPlayers.size) {
          alert("Dubbele namen zijn niet toegestaan!");
@@ -564,16 +562,72 @@ function updateScores() {
    }
 }
 
-function storeTakes() {
+function storeTakes(bidButtonPressed) {
    try {
       window.takes[window.currentRound] = window.currentTakes;
       let updatedScores = updateScores();
       window.currentRound++;
       window.currentDealerIndex++;
       window.currentDealerIndex %= window.players.length;
-      return updatedScores && toBids();
+      return updatedScores && (bidButtonPressed ? toBids() : toScores());
    } catch (e) {
       alert("storeTakes " + e.message);
+      return false;
+   }
+}
+
+// noinspection JSUnusedGlobalSymbols
+function clickScoreCell(element, round, playerIndex) {
+   try {
+      let clicked = element.getAttribute("clicked");
+      if (clicked === "true") {
+         element.innerHTML = window.scores[round][playerIndex];
+         element.setAttribute("clicked", "false");
+      } else if (clicked === "false") {
+         element.innerHTML =
+            "%s / %s".format(window.bids[round][playerIndex], window.takes[round][playerIndex]);
+         element.setAttribute("clicked", "true");
+      } else {
+         throw new Error("The clicked attribute of scoreCell should not be something else than true or false!");
+      }
+      return true;
+   } catch (e) {
+      alert("clickScoreCell " + e.message);
+      return false;
+   }
+}
+
+function createScoreBoard() {
+   try {
+      let scoreTable = document.getElementById("scoreDataTable");
+      removeAllContent(scoreTable);
+      let totalScores = calculateTotalScores();
+      for (let round = 0; round < window.currentRound; round++) {
+         let scoreRow = scoreTable.insertRow();
+         let roundCell = scoreRow.insertCell(0);
+         roundCell.innerHTML = round === 0 ? "" : round.toString();
+         let spadeCell = scoreRow.insertCell(1);
+         spadeCell.innerHTML = window.spadeTrump[round] ? "♠" : "";
+         for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
+            let scoreCell = scoreRow.insertCell(-1);
+
+            if (round === 0) {
+               scoreCell.innerHTML = "<strong>" + totalScores[playerIndex].toString() + "</strong>";
+            } else {
+               scoreCell.innerHTML = window.scores[round][playerIndex];
+               scoreCell.setAttribute("clicked", "false");
+               scoreCell.setAttribute("onclick",
+                                      "return clickScoreCell(this, "
+                                      + round.toString()
+                                      + ", "
+                                      + playerIndex.toString()
+                                      + ")");
+            }
+         }
+      }
+      return createTableHead(scoreTable, ["Ronde", "♠", ...window.players]);
+   } catch (e) {
+      alert("createScoreBoard " + e.message);
       return false;
    }
 }

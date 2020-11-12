@@ -134,86 +134,11 @@
 <div id="scoreboardScreen" class="contact-clean">
    <form method="post">
       <h2 class="alignCenter">Stand</h2>
-      <p id="dateTimeScoreBoard" class="alignCenter">Spel van 23-10-2020 (19.45 - 21.10)</p>
+      <p id="dateTimeScoreBoard" class="alignCenter">Spel van datum</p>
       <div class="form-group">
          <div class="table-responsive">
             <table class="table alignCenter" id="scoreDataTable">
-               <thead>
-               <tr>
-                  <th>Krtn</th>
-                  <th><strong>&spades;</strong><br></th>
-                  <th id="standLijstNaam-1">leeg</th>
-                  <th id="standLijstNaam-2">leeg</th>
-                  <th id="standLijstNaam-3">leeg</th>
-                  <th id="standLijstNaam-4">leeg</th>
-                  <th id="standLijstNaam-5">leeg</th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td></td>
-                  <td></td>
-                  <td>67</td>
-                  <td>128</td>
-                  <td>8</td>
-                  <td>29</td>
-                  <td>56</td>
-               </tr>
-               <tr>
-                  <td>1</td>
-                  <td><strong>&spades;</strong><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>2</td>
-                  <td><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>3</td>
-                  <td><strong>&spades;</strong><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>3</td>
-                  <td>&nbsp;12</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>4</td>
-                  <td><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>5</td>
-                  <td><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;12</td>
-                  <td>3</td>
-               </tr>
-               <tr>
-                  <td>6</td>
-                  <td><strong>&spades;</strong><br></td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>5</td>
-                  <td>&nbsp;6</td>
-                  <td>3</td>
-               </tr>
-               </tbody>
+               <!-- filled with javascript -->
             </table>
          </div>
          <code>Spel nog niet af</code>
@@ -285,13 +210,17 @@
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return storeTakes();">
-                        Bieden
+                     <button class="btn btn-primary"
+                             type="button"
+                             onclick="return storeTakes(true)">
+                        Naar Bieden
                      </button>
                   </th>
                   <th>
-                     <button class="btn btn-primary" type="button" onclick="return toScores();">
-                        Stand
+                     <button class="btn btn-primary"
+                             type="button"
+                             onclick="return storeTakes(false)">
+                        Naar Score
                      </button>
                   </th>
                </tr>
@@ -429,11 +358,6 @@
                   <th class="alignCenter">
                      <button class="btn btn-primary" type="button" onclick="return storeBids()">
                         Naar Halen
-                     </button>
-                  </th>
-                  <th>
-                     <button class="btn btn-primary" type="button" onclick="return toScores()">
-                        Naar Stand
                      </button>
                   </th>
                </tr>
