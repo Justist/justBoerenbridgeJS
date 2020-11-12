@@ -385,16 +385,18 @@ function createBidTakeTable(bidOrTake) {
       let formTable = document.getElementById(table);
       let currentCards = getCurrentCards();
 
+      let currentScores = calculateTotalScores();
+
       for (let i = 0; i < window.players.length; i++) {
          let row = formTable.insertRow();
          row.setAttribute("id", playerId + i.toString());
 
          let nameCell = row.insertCell(0);
          nameCell.classList.add(cellName);
-         nameCell.innerHTML = window.players[i];
+         nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this should contain strings
 
          let scoreCell = row.insertCell(1);
-         let score = window.scores[window.currentRound - 1][i];
+         let score = currentScores[i];
          if (score) { scoreCell.innerHTML = score.toString(); } else { scoreCell.innerHTML = "0"; }
 
          if (bidOrTake === "take") {
@@ -508,6 +510,23 @@ function createTakeTable() {
       return true;
    } catch (e) {
       alert("createTakeTable " + e.message);
+      return false;
+   }
+}
+
+function calculateTotalScores() {
+   let totalScores = [], sum;
+   try {
+      for (let playerIndex in window.players) {
+         sum = 0;
+         for (let round in window.scores) {
+            sum += window.scores[round][playerIndex];
+         }
+         totalScores[playerIndex] = sum;
+      }
+      return totalScores;
+   } catch (e) {
+      alert("calculateTotalScores " + e.message);
       return false;
    }
 }
