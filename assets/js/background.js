@@ -68,11 +68,19 @@ function toNewGame() {
       let dateTimeScoreBoard = document.getElementById("dateTimeScoreBoard");
       let dateTime = new Date();
       dateTimeScoreBoard.innerHTML =
-         "Spel van %s - %s - %s (%s:%s)".format(dateTime.getDate().toString(),
-                                                (dateTime.getMonth() + 1).toString(),
+         "Spel van %s - %s - %s (%s:%s)".format(("00" + dateTime.getDate().toString()).slice(-2),
+                                                ("00" + (dateTime.getMonth() + 1).toString()).slice(-2),
                                                 dateTime.getFullYear().toString(),
-                                                dateTime.getHours().toString(),
-                                                dateTime.getMinutes().toString());
+                                                ("00" + dateTime.getHours().toString()).slice(-2),
+                                                ("00" + dateTime.getMinutes().toString()).slice(-2));
+
+      // TODO: Fix this string to make it readable and have singular length values have leading zeroes
+      window.jsonFileName = "bb%s_%s_%s_%s_%s".format(dateTime.getFullYear().toString(),
+                                                      ("00" + (dateTime.getMonth() + 1).toString()).slice(-2),
+                                                      ("00" + dateTime.getDate().toString()).slice(-2),
+                                                      ("00" + dateTime.getHours().toString()).slice(-2),
+                                                      ("00" + dateTime.getMinutes().toString()).slice(-2));
+
       return createPlayersTable();
    } catch (e) {
       alert("toNewGame " + e.toString());
@@ -338,7 +346,6 @@ function storePlayers() {
 
       window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
-      window.jsonFileName = window.players.join("");
       window.maxCards = Math.floor(52 / window.players.length);
       for (let _ of window.players) {
          window.scores[0].push(0);
@@ -470,11 +477,11 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
 function updateBidsOrTakesPlaced(bidOrTake) {
    try {
       let infoRow = document.getElementById(bidOrTake === "bid" ? "bidInfoRow" : "takeInfoRow");
-      let sumBids = 0;
+      let sum = 0;
       for (let num of bidOrTake === "bid" ? window.currentBids : window.currentTakes) {
-         if (num) { sumBids += num; }
+         if (num) { sum += num; }
       }
-      infoRow.innerHTML = sumBids.toString() + " / " + getCurrentCards().toString();
+      infoRow.innerHTML = sum.toString() + " / " + getCurrentCards().toString();
       return true;
    } catch (e) {
       alert("updateBidsOrTakesPlaced " + e.message);
@@ -501,6 +508,41 @@ function createTakeTable() {
       return true;
    } catch (e) {
       alert("createTakeTable " + e.message);
+      return false;
+   }
+}
+
+function updateScores() {
+   try {
+      let localScores = [];
+      for (let playerIndex in window.players) {
+         if (window.currentBids[playerIndex] === window.currentTakes[playerIndex]) {
+            localScores[playerIndex] =
+               10 + (window.currentBids[playerIndex] * 3);
+         } else {
+            localScores[playerIndex] =
+               (-Math.abs(window.currentBids[playerIndex] - window.currentTakes[playerIndex]) * 3);
+         }
+         if (window.spadeTrump[window.currentRound]) { localScores[playerIndex] *= 2; }
+      }
+      window.scores[window.currentRound] = localScores;
+      return true;
+   } catch (e) {
+      alert("updateScores " + e.message);
+      return false;
+   }
+}
+
+function storeTakes() {
+   try {
+      window.takes[window.currentRound] = window.currentTakes;
+      let updatedScores = updateScores();
+      window.currentRound++;
+      window.currentDealerIndex++;
+      window.currentDealerIndex %= window.players.length;
+      return updatedScores && toBids();
+   } catch (e) {
+      alert("storeTakes " + e.message);
       return false;
    }
 }
