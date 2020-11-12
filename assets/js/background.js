@@ -19,6 +19,14 @@ String.prototype.format = function() {
    return [...arguments].reduce((p, c) => p.replace(/%s/, c), this);
 };
 
+function removeAllContent(parent) {
+   try {
+      while (parent.firstChild) { parent.removeChild(parent.lastChild); }
+   } catch (e) {
+      alert("removeAllContent " + e.message);
+   }
+}
+
 function setEverythingToNone() {
    try {
       for (let page of ["newGameScreen",
@@ -48,7 +56,7 @@ function updateRoundInfo(bidOrTake) {
                                                   bidOrTake === "bid" ? "t" : "de",
                                                   getCurrentCards().toString(),
                                                   getCurrentCards() > 1 ? "en" : "");
-      return true;
+      return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
       alert("updateRoundInfo " + e.message);
       return false;
@@ -91,6 +99,7 @@ function toNewGame() {
 function toBids() {
    try {
       setEverythingToNone();
+      window.currentBids = [];
       let screen = document.getElementById("bidScreen");
       screen.classList.remove("hidden");
       return updateRoundInfo("bid") && createBidTable();
@@ -103,6 +112,7 @@ function toBids() {
 function toTakes() {
    try {
       setEverythingToNone();
+      window.currentTakes = [];
       let take = document.getElementById("takeScreen");
       take.classList.remove("hidden");
       return updateRoundInfo("take") && createTakeTable();
@@ -234,6 +244,7 @@ function clickRadioButton(number) {
 function createPlayersTable() {
    try {
       let playerTable = document.getElementById("newGameInputTable");
+      removeAllContent(playerTable);
 
       for (let playerIndex = 0; playerIndex < 8; playerIndex++) {
          let row = playerTable.insertRow();
@@ -383,6 +394,7 @@ function createBidTakeTable(bidOrTake) {
       cellName = bidOrTake + "Name";
 
       let formTable = document.getElementById(table);
+      removeAllContent(formTable);
       let currentCards = getCurrentCards();
 
       let currentScores = calculateTotalScores();
