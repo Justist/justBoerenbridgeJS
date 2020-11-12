@@ -1,12 +1,15 @@
 window.maxPlayers = 8;
 window.players = [];
-window.currentDealerIndex = -1;
+window.currentDealerIndex = -1; // Updated later on
+// Content is mostly just for show, as the first round is 1
 window.bids = { 0 : [] };
 window.takes = { 0 : [] };
 window.scores = { 0 : [] };
+window.spadeTrump = { 0 : false };
 window.currentBids = [];
 window.currentTakes = [];
 window.currentRound = 1;
+window.roundWithoutTrump = true;
 window.maxCards = -1; //Updated later on
 
 window.regularPlayers =
@@ -36,17 +39,20 @@ function setEverythingToNone() {
    }
 }
 
-function updateBidRoundLabels() {
-   let maxCards = Math.floor(52 / window.players.length);
-   let currentCards = window.currentRound;
-   if (window.currentRound === maxCards + 1) {
-      currentCards = maxCards;
-   } else if (window.currentRound > maxCards + 1) {
-      currentCards = (2 * (maxCards + 1)) - window.currentRound;
+function updateRoundInfo(bidOrTake) {
+   try {
+      let id = bidOrTake + "ScreenTopInfo";
+      document.getElementById(id).innerHTML =
+         "%se ronde, %s deel%s %s kaart%s".format(window.currentRound.toString(),
+                                                  window.players[window.currentDealerIndex],
+                                                  bidOrTake === "bid" ? "t" : "de",
+                                                  getCurrentCards().toString(),
+                                                  getCurrentCards() > 1 ? "en" : "");
+      return true;
+   } catch (e) {
+      alert("updateRoundInfo " + e.message);
+      return false;
    }
-   document.getElementById("cardsThisRoundBidForm").innerHTML = currentCards.toString();
-   document.getElementById("bidRoundNumberTitle").innerHTML =
-      "Ronde " + window.currentRound.toString();
 }
 
 /*function hideUnavailableBidOptions() {
@@ -79,7 +85,7 @@ function toBids() {
       setEverythingToNone();
       let screen = document.getElementById("bidScreen");
       screen.classList.remove("hidden");
-      return createBidTable();
+      return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
       alert("toBids " + e.toString());
       return false;
@@ -91,7 +97,7 @@ function toTakes() {
       setEverythingToNone();
       let take = document.getElementById("takeScreen");
       take.classList.remove("hidden");
-      return createTakeTable();
+      return updateRoundInfo("take") && createTakeTable();
    } catch (e) {
       alert("toTakes " + e.toString());
       return false;
@@ -178,11 +184,10 @@ function showProceedGameButton() {
 function getCurrentCards() {
    try {
       let currentCards = window.currentRound;
-      //TODO Change this so it also works if there is no round without trump
-      if (currentCards === window.maxCards + 1) {
+      if (window.roundWithoutTrump && currentCards === window.maxCards + 1) {
          currentCards = window.maxCards;
       } else if (currentCards > window.maxCards) {
-         currentCards = ((window.maxCards + 1) * 2) - window.currentRound;
+         currentCards = ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - window.currentRound;
       }
       return currentCards;
    } catch (e) {
@@ -228,11 +233,11 @@ function createPlayersTable() {
          row.setAttribute("id", "playerRow" + playerIndex);
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
-         dealerCell.setAttribute("onclick",
-                                 "return clickRadioButton(" + playerIndex.toString() + ")");
+         //dealerCell.setAttribute("onclick", "return clickRadioButton(" + playerIndex.toString() + ")");
 
          let radioButton = document.createElement("input");
          radioButton.setAttribute("type", "radio");
+         radioButton.setAttribute("name", "firstDealer");
          radioButton.setAttribute("id", "radioDealer-" + playerIndex.toString());
          radioButton.classList.add("vertCenter");
          dealerCell.appendChild(radioButton);
@@ -296,7 +301,7 @@ function showNextPlayerField(index, value) {
 
 // noinspection JSUnusedGlobalSymbols
 function storePlayers() {
-   let localPlayers = [];
+   let localPlayers = new Set();
    let localDealerIndex = 0;
    try {
       let playerForm = document.getElementById("newGameForm");
@@ -310,23 +315,32 @@ function storePlayers() {
       }
 
       let selectFields = getElementTypeFields(playerForm, "input[list]");
-      for (let field of selectFields) {
-         let name = field.value;
-         if (name) { localPlayers.push(name); } else { break; } //If there is an empty field
-         // followed by filled in fields,
-         // ignore those
+      let fieldIndex;
+      for (fieldIndex = 0; fieldIndex < selectFields.length; fieldIndex++) {
+         let name = selectFields[fieldIndex].value;
+         if (name) { localPlayers.add(name); }
+         //If there is an empty field followed by filled in fields, ignore those
+         else { break; }
       }
 
-      if (! anySelected || localDealerIndex > localPlayers.length) {
+      console.log(fieldIndex);
+      console.log(localPlayers.size);
+      // localPlayers is a set, so if there are duplicate names fieldIndex is larger than the set
+      if (fieldIndex > localPlayers.size) {
+         alert("Dubbele namen zijn niet toegestaan!");
+         return false;
+      }
+
+      if (! anySelected || localDealerIndex > localPlayers.size) {
          alert("Geen (valide) beginspeler gekozen!");
          return false;
       }
 
-      window.players = localPlayers;
+      window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
       window.jsonFileName = window.players.join("");
       window.maxCards = Math.floor(52 / window.players.length);
-      for (let player of window.players) {
+      for (let _ of window.players) {
          window.scores[0].push(0);
       }
       return toBids();
@@ -393,6 +407,13 @@ function createBidTakeTable(bidOrTake) {
             numberCell.innerHTML = number.toString();
          }
       }
+
+      if (bidOrTake === "take") {
+         let spadeText = document.getElementById("spadeTrumpTakeScreen");
+         spadeText.innerHTML =
+            "<strong>%s</strong>".format(window.spadeTrump[window.currentRound] ? "Schoppenrondje!" : "Normale ronde");
+      }
+
       return formTable;
    } catch (e) {
       alert("createBidTakeTable " + e.message);
@@ -464,6 +485,8 @@ function updateBidsOrTakesPlaced(bidOrTake) {
 function storeBids() {
    try {
       window.bids[window.currentRound] = window.currentBids;
+      let spadeField = document.getElementById("spadeRadioButton");
+      window.spadeTrump[window.currentRound] = spadeField.checked;
       return toTakes();
    } catch (e) {
       alert("storeBids " + e.message);

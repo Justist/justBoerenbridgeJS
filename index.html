@@ -141,7 +141,7 @@
                <thead>
                <tr>
                   <th>Krtn</th>
-                  <th><strong>♠</strong><br></th>
+                  <th><strong>&spades;</strong><br></th>
                   <th id="standLijstNaam-1">leeg</th>
                   <th id="standLijstNaam-2">leeg</th>
                   <th id="standLijstNaam-3">leeg</th>
@@ -161,7 +161,7 @@
                </tr>
                <tr>
                   <td>1</td>
-                  <td><strong>♠</strong><br></td>
+                  <td><strong>&spades;</strong><br></td>
                   <td>3</td>
                   <td>4</td>
                   <td>5</td>
@@ -179,7 +179,7 @@
                </tr>
                <tr>
                   <td>3</td>
-                  <td><strong>♠</strong><br></td>
+                  <td><strong>&spades;</strong><br></td>
                   <td>3</td>
                   <td>4</td>
                   <td>3</td>
@@ -206,7 +206,7 @@
                </tr>
                <tr>
                   <td>6</td>
-                  <td><strong>♠</strong><br></td>
+                  <td><strong>&spades;</strong><br></td>
                   <td>3</td>
                   <td>4</td>
                   <td>5</td>
@@ -217,7 +217,7 @@
             </table>
          </div>
          <code>Spel nog niet af</code>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="scoreboardToBidButtonTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -231,7 +231,7 @@
             </table>
          </div>
          <code>Spel afgelopen</code>
-         <div class="table-responsive" class="alignCenter">
+         <div class="table-responsive alignCenter">
             <table class="table" id="scoreboardToOtherButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
@@ -255,6 +255,7 @@
 <div id="takeScreen" class="contact-clean">
    <form method="post" id="takeForm">
       <h2 class="text-center">Halen</h2>
+      <p class="alignCenter" id="takeScreenTopInfo">5e&nbsp; ronde, Iduna deelde 5 kaarten</p>
       <div class="form-group">
          <div class="table-responsive">
             <table class="table aligncenter" id="takeInputTable">
@@ -379,17 +380,18 @@
 <div id="bidScreen" class="contact-clean">
    <form method="post" id="bidForm" onsubmit="return storeBids()">
       <h2 class="text-center">Bieden</h2>
-      <p class="alignCenter">5e&nbsp; ronde, Iduna deelt 5 kaarten</p>
+      <p class="alignCenter" id="bidScreenTopInfo">5e&nbsp; ronde, Iduna deelt 5 kaarten</p>
       <p class="alignCenter">
-         <label>
+         <label for="spadeRadioButton">
             <strong>&spades;&nbsp;</strong>troef<strong>&nbsp;&nbsp;</strong>
             <input type="radio"
-                   name="schoppenTroef">
+                   name="schoppenTroef"
+                   id="spadeRadioButton">
          </label>
          &nbsp;
          &nbsp; &nbsp;&nbsp;
-         <label>
-            <input type="radio" name="schoppenTroef">
+         <label for="otherTrumpRadioButton">
+            <input type="radio" name="schoppenTroef" id="otherTrumpRadioButton">
             &nbsp;&nbsp;Andere troef
          </label>
 
