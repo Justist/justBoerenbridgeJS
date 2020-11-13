@@ -100,8 +100,11 @@ function toBids() {
    try {
       setEverythingToNone();
       window.currentBids = [];
-      let screen = document.getElementById("bidScreen");
+      let screen = document.getElementById("bidScreen"), alert = document.getElementById("spadeTrumpSelectAlert");
       screen.classList.remove("hidden");
+      alert.classList.remove("hidden");
+      let spadeRadioButtons = getTypeInputFields(document.getElementById("spadeRadioButtonsP"), "radio");
+      for (let button of spadeRadioButtons) { button.checked = false; }
       return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
       alert("toBids " + e.toString());
@@ -214,29 +217,13 @@ function getCurrentCards() {
    }
 }
 
-function unCheckOtherRadioButtons(parent) {
+function removeSpadeTrumpSelectAlert() {
    try {
-      let radioButtons = getTypeInputFields(parent, "radio");
-      for (let button of radioButtons) {
-         button.checked = false;
-      }
+      let alert = document.getElementById("spadeTrumpSelectAlert");
+      alert.classList.add("hidden");
       return true;
    } catch (e) {
-      alert("unCheckOtherRadioButtons " + e.message);
-      return false;
-   }
-}
-
-// noinspection JSUnusedGlobalSymbols
-function clickRadioButton(number) {
-   try {
-      let clickedButton = document.getElementById("radioDealer-" + number.toString());
-      let playerTable = document.getElementById("newGameInputTable");
-      unCheckOtherRadioButtons(playerTable);
-      clickedButton.checked = true;
-      return true;
-   } catch (e) {
-      alert("clickRadioButton " + e.message);
+      alert("removeSpadeTrumpSelectAlert " + e.message);
       return false;
    }
 }
@@ -252,7 +239,6 @@ function createPlayersTable() {
          row.setAttribute("id", "playerRow" + playerIndex);
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
-         //dealerCell.setAttribute("onclick", "return clickRadioButton(" + playerIndex.toString() + ")");
 
          let radioButton = document.createElement("input");
          radioButton.setAttribute("type", "radio");
@@ -285,7 +271,8 @@ function createPlayersTable() {
          }
          nameChoiceCell.appendChild(nameList);
       }
-      return true;
+
+      return createTableHead(playerTable, ["Eerste deler", "Namen spelers"]);
    } catch (e) {
       alert("createPlayersTable " + e.message);
       return false;
@@ -328,7 +315,8 @@ function storePlayers() {
       let anySelected = false;
       for (let fieldIndex in radioFields) {
          if (radioFields[fieldIndex].checked) {
-            localDealerIndex = fieldIndex;
+            // Apparently this is a string, and it works with that, but I am very confused
+            localDealerIndex = parseInt(fieldIndex, 10);
             anySelected = true;
          }
       }
@@ -348,7 +336,10 @@ function storePlayers() {
          return false;
       }
 
-      if (! anySelected || localDealerIndex > localPlayers.size) {
+      console.log(localDealerIndex + 1);
+      console.log(localPlayers.size);
+      console.log((localDealerIndex + 1) > localPlayers.size);
+      if ((! anySelected) || ((localDealerIndex + 1) > localPlayers.size)) {
          alert("Geen (valide) beginspeler gekozen!");
          return false;
       }
@@ -490,10 +481,20 @@ function updateBidsOrTakesPlaced(bidOrTake) {
    try {
       let infoRow = document.getElementById(bidOrTake === "bid" ? "bidInfoRow" : "takeInfoRow");
       let sum = 0;
+      let currentCards = getCurrentCards();
       for (let num of bidOrTake === "bid" ? window.currentBids : window.currentTakes) {
          if (num) { sum += num; }
       }
-      infoRow.innerHTML = sum.toString() + " / " + getCurrentCards().toString();
+      infoRow.innerHTML = sum.toString() + " / " + currentCards.toString();
+      let toTakesButton = document.getElementById("toTakesButton");
+      let bidsEqualAlert = document.getElementById("bidsEqualAlert");
+      if (sum === currentCards) {
+         toTakesButton.classList.add("hidden");
+         if (bidsEqualAlert.classList.contains("hidden")) { bidsEqualAlert.classList.remove("hidden"); }
+      } else {
+         if (toTakesButton.classList.contains("hidden")) { toTakesButton.classList.remove("hidden"); }
+         if (! bidsEqualAlert.classList.contains("hidden")) { bidsEqualAlert.classList.add("hidden"); }
+      }
       return true;
    } catch (e) {
       alert("updateBidsOrTakesPlaced " + e.message);
@@ -506,7 +507,8 @@ function storeBids() {
       window.bids[window.currentRound] = window.currentBids;
       let spadeField = document.getElementById("spadeRadioButton");
       window.spadeTrump[window.currentRound] = spadeField.checked;
-      return toTakes();
+      let spadeAlert = document.getElementById("spadeTrumpSelectAlert");
+      return spadeAlert.classList.contains("hidden") && toTakes();
    } catch (e) {
       alert("storeBids " + e.message);
       return false;
@@ -588,7 +590,8 @@ function clickScoreCell(element, round, playerIndex) {
             "%s / %s".format(window.bids[round][playerIndex], window.takes[round][playerIndex]);
          element.setAttribute("clicked", "true");
       } else {
-         throw new Error("The clicked attribute of scoreCell should not be something else than true or false!");
+         alert("clickScoreCell The clicked attribute of scoreCell should not be something else than true or false!");
+         return false;
       }
       return true;
    } catch (e) {

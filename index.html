@@ -249,7 +249,7 @@
 <div id="overviewScreen" class="contact-clean">
    <form method="post">
       <h2 class="text-center">Overzicht</h2>
-      <div class="table-responsive" class="alignCenter">
+      <div class="table-responsive alignCenter">
          <table class="table" id="overviewButtonsTable">
             <thead class="alignCenter">
             <tr class="alignCenter">
@@ -270,7 +270,7 @@
       </div>
       <div class="form-group">
          <div class="table-responsive">
-            <table class="table" id="overviewDataTable" class="alignCenter">
+            <table class="table alignCenter" id="overviewDataTable">
                <thead>
                <tr>
                   <th>Speeldatum</th>
@@ -310,17 +310,21 @@
    <form method="post" id="bidForm" onsubmit="return storeBids()">
       <h2 class="text-center">Bieden</h2>
       <p class="alignCenter" id="bidScreenTopInfo">5e&nbsp; ronde, Iduna deelt 5 kaarten</p>
-      <p class="alignCenter">
+      <p class="alignCenter" id="spadeRadioButtonsP">
          <label for="spadeRadioButton">
             <strong>&spades;&nbsp;</strong>troef<strong>&nbsp;&nbsp;</strong>
             <input type="radio"
                    name="schoppenTroef"
-                   id="spadeRadioButton">
+                   id="spadeRadioButton"
+                   onclick="return removeSpadeTrumpSelectAlert()">
          </label>
          &nbsp;
          &nbsp; &nbsp;&nbsp;
          <label for="otherTrumpRadioButton">
-            <input type="radio" name="schoppenTroef" id="otherTrumpRadioButton">
+            <input type="radio"
+                   name="schoppenTroef"
+                   id="otherTrumpRadioButton"
+                   onclick="return removeSpadeTrumpSelectAlert()">
             &nbsp;&nbsp;Andere troef
          </label>
 
@@ -346,9 +350,14 @@
                </tbody>
             </table>
          </div>
-         <div class="alert alert-success" role="alert">
+         <div class="alert alert-success" role="alert" id="spadeTrumpSelectAlert">
             <span>
-               Je moet aangeven welke kleur troef is !
+               Je moet aangeven welke kleur troef is!
+            </span>
+         </div>
+         <div class="alert alert-success hidden" role="alert" id="bidsEqualAlert">
+            <span>
+               Aantal geboden slagen mag niet gelijk zijn aan aantal te halen slagen!
             </span>
          </div>
          <div class="table-responsive alignCenter">
@@ -356,7 +365,8 @@
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return storeBids()">
+                     <button class="btn btn-primary" type="button" id="toTakesButton"
+                             onclick="return storeBids()">
                         Naar Halen
                      </button>
                   </th>
