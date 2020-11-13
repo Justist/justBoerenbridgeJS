@@ -1,12 +1,426 @@
+<!DOCTYPE html>
 <html lang="nl_NL">
-   <head>
-      <meta charset="utf-8">
-      <title> justBoerenbridgeJs </title>
-   </head>
 
-   <body>
-      <div id="main">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+   <title>justBoerenbridgeJS</title>
+   <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
+   <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+<div id="endOfGameScreen" class="contact-clean">
+   <form method="post">
+      <h2 class="text-center">Einde spel</h2>
+      <div class="form-group">
+         <div class="table-responsive">
+            <table class="table alignCenter" id="endScoreTable">
+               <thead>
+               <tr>
+                  <th>Positie</th>
+                  <th>Naam</th>
+                  <th><strong>Punten</strong><br></th>
+               </tr>
+               </thead>
+               <tbody>
+               <tr>
+                  <td>1</td>
+                  <td>Simon</td>
+                  <td>128</td>
+               </tr>
+               <tr>
+                  <td>2</td>
+                  <td>Roland</td>
+                  <td>127</td>
+               </tr>
+               <tr>
+                  <td>3</td>
+                  <td>Aad</td>
+                  <td>56</td>
+               </tr>
+               <tr>
+                  <td>4</td>
+                  <td>Arnold</td>
+                  <td>54</td>
+               </tr>
+               </tbody>
+            </table>
+         </div>
+         <p class="alignCenter">Allerhoogste score xx punten door yyy</p>
+         <p class="alignCenter">Aantal schoppenrondjes xx<br></p>
+         <div class="table-responsive alignCenter">
+            <table class="table" id="endGameButtonsTable">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
+                        Spel afsluiten en opslaan
+                     </button>
+                  </th>
+                  <th style="text-align: left;">
+                     <button class="btn btn-primary" type="button"
+                             onclick="return toScores()">
+                        Stand
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+               <tbody></tbody>
+            </table>
+         </div>
       </div>
-      <script type="text/javascript" src="./main.js"></script>
-   </body>
+   </form>
+</div>
+<div id="gameRulesScreen" class="contact-clean">
+   <form method="post">
+      <h2 class="text-center">Spelregels &amp; telling</h2>
+      <div class="form-group">
+         <p><strong>Korte speluitleg&nbsp;&nbsp;</strong>
+            Het doel van het spel is te voorspellen hoeveel slagen men in een bepaalde spelronde kan
+            behalen. Elke spelronde begint met het uitdelen van een gegeven hoeveelheid kaarten aan
+            iedere speler.<br/>
+            Iedere speler geeft aan hoeveel slagen hij of zij denkt te gaan winnen, te beginnen bij
+            de speler links van de deler. De hoogste bieder bepaalt de troef.
+            De persoon die als laatst moet zeggen hoeveel slagen hij haalt (de gever dus), mag niet
+            het aantal slagen zeggen die de som zou doen uitkomen (voorbeeld: in ronde 7 krijgt
+            ieder 7 kaarten. Speler 1 zegt dat hij geen slagen haalt, speler 2 zegt drie slagen en
+            speler 3 zegt twee slagen. Speler 4, die laatst zit, mag dus niet zeggen dat hij twee
+            slagen gaat halen, want 0+3+2+2=7).
+            <br/>
+            In de eerste spelronde wordt er &eacute;&eacute;n kaart uitgedeeld aan iedere speler. In
+            de tweede ronde worden twee kaarten uitgedeeld aan iedere speler, in de derde spelronde
+            drie, enzovoort. Dit gaat door totdat er net voldoende kaarten zijn om het spel te laten
+            doorgaan (bijvoorbeeld met vijf spelers is het maximaal aantal uitgedeelde kaarten per
+            speler gelijk aan 10). Na de spelronde met het maximale aantal kaarten wordt er in de
+            volgende spelronden terug afgebouwd, tot de laatste ronde met &eacute;&eacute;n kaart
+            per speler. De speler met het hoogste aantal punten na de laatste ronde wint het spel.
+            <br/>
+            De spelrichting is met de wijzers van de klok mee. Een speler is verplicht kleur te
+            bekennen, maar niet verplicht om een troef te spelen als hij de gevraagde kleur niet
+            heeft.
+            <br/>
+            Optie:<br/>
+            Een extra tussenronde: Na de 10e ronde bij boerenbridge kan je nog een ronde spelen met
+            10 kaarten zonder troef. Daarna volgt nogmaals een ronde met 10 kaarten maar dan weer
+            met troef. Vervolgens wordt weer afgeteld naar 1 kaart.
+
+         </p>
+         <p><strong>Puntentelling</strong><br/>
+            <strong>Goed</strong>: Heb je na het einde van een ronde de juiste voorspelling, dan
+                                 krijg je 10 punten. Voor iedere slag die je hebt gewonnen krijg je
+                                 3 punten extra.
+
+            <br/>
+            <strong>Fout</strong>: Zit je voorspelling ernaast, dan heb je 3 minpunten per kaart die
+                                 je er naast zat. Was je voorspelling dat je 4 slagen zou winnen,
+                                 maar heb je er maar 2? Dan heb je (4 - 2 ) x 3 = 6 minpunten.
+
+         </p>
+         <p><strong>Schoppen troef?&nbsp;</strong>Dan worden alle behaalde of verloren&nbsp; punten
+                                                  verdubbeld!<br/></p>
+         <div class="table-responsive alignCenter">
+            <table class="table" id="gamerulesButtonTable">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
+                        Terug naar overzicht
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+               <tbody></tbody>
+            </table>
+         </div>
+      </div>
+   </form>
+</div>
+<div id="scoreboardScreen" class="contact-clean">
+   <form method="post">
+      <h2 class="alignCenter">Stand</h2>
+      <p id="dateTimeScoreBoard" class="alignCenter">Spel van datum</p>
+      <div class="form-group">
+         <div class="table-responsive">
+            <table class="table alignCenter" id="scoreDataTable">
+               <!-- filled with javascript -->
+            </table>
+         </div>
+         <div class="table-responsive alignCenter" id="scoreboardToBidButton">
+            <table class="table">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary" type="button" onclick="return toBids()">
+                        Verder spelen
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+            </table>
+         </div>
+         <div class="table-responsive alignCenter hidden" id="scoreboardToOtherButtons">
+            <table class="table">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary" type="button" onclick="return toNewGame()">
+                        Nieuw spel
+                     </button>
+                  </th>
+                  <th>
+                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
+                        Overzicht
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+            </table>
+         </div>
+      </div>
+   </form>
+</div>
+<div id="takeScreen" class="contact-clean">
+   <form method="post" id="takeForm">
+      <h2 class="text-center">Halen</h2>
+      <p class="alignCenter" id="takeScreenTopInfo">Ronde X, Deler Y deelt Z kaarten</p>
+      <div class="form-group">
+         <div class="table-responsive">
+            <table class="table aligncenter" id="takeInputTable">
+               <!-- filled with javascript -->
+            </table>
+         </div>
+         <p class="alignCenter" id="spadeTrumpTakeScreen">
+            <strong>Schoppen wel / niet troef</strong>
+            <br>
+         </p>
+         <div class="table-responsive">
+            <table class="table">
+               <thead>
+               <tr></tr>
+               </thead>
+               <tbody>
+               <tr>
+                  <td class="bidInfoRow">Totaal gehaald<br></td>
+                  <td id="takeInfoRow">0 / 1<br></td>
+               </tr>
+               <tr></tr>
+               </tbody>
+            </table>
+         </div>
+         <div class="alert alert-success" role="alert" id="takesEqualAlert">
+            <span>
+               Aantal gehaalde slagen is ongelijk aan aantal te halen slagen!
+            </span>
+         </div>
+         <div class="alert alert-success hidden" role="alert" id="takesFilledAlert">
+            <span>
+               Nog niet alle gehaalde slagen zijn ingevoerd!
+            </span>
+         </div>
+         <div class="table-responsive alignCenter">
+            <table class="table" id="takeScreenButtonsTable">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary"
+                             type="button"
+                             onclick="return storeTakes(true)">
+                        Naar Bieden
+                     </button>
+                  </th>
+                  <th>
+                     <button class="btn btn-primary"
+                             type="button"
+                             onclick="return storeTakes(false)">
+                        Naar Score
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+               <tbody></tbody>
+            </table>
+         </div>
+      </div>
+   </form>
+</div>
+<div id="overviewScreen" class="contact-clean">
+   <form method="post">
+      <h2 class="text-center">Overzicht</h2>
+      <div class="table-responsive alignCenter">
+         <table class="table" id="overviewButtonsTable">
+            <thead class="alignCenter">
+            <tr class="alignCenter">
+               <th class="alignCenter">
+                  <button class="btn btn-primary" type="button" onclick="return toNewGame()">
+                     Nieuw spel
+                  </button>
+               </th>
+               <th>
+                  <button class="btn btn-primary" type="button" onclick="return toGameRules();">
+                     Regels &amp; telling
+                  </button>
+               </th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+         </table>
+      </div>
+      <code>DIT IS ALLEMAAL NOG WORK IN PROGRESS!</code>
+      <div class="form-group">
+         <div class="table-responsive">
+            <table class="table alignCenter" id="overviewDataTable">
+               <thead>
+               <tr>
+                  <th>Speeldatum</th>
+                  <th>Winnaar</th>
+                  <th><strong>Score</strong><br></th>
+               </tr>
+               </thead>
+               <tbody>
+               <tr>
+                  <td onclick="toScores()">23-12-2023 (klik)</td>
+                  <td>Piet</td>
+                  <td>128</td>
+               </tr>
+               <tr>
+                  <td onclick="toScores()">16-03-2020 (klik)<br></td>
+                  <td>Truus</td>
+                  <td>162</td>
+               </tr>
+               <tr>
+                  <td onclick="toScores()">31-02-2020 (klik)<br></td>
+                  <td>Sjaan</td>
+                  <td>324</td>
+               </tr>
+               <tr>
+                  <td onclick="toScores()">04-08-1876 (klik)<br></td>
+                  <td>Truus</td>
+                  <td>65</td>
+               </tr>
+               </tbody>
+            </table>
+         </div>
+         <p><br></p>
+      </div>
+   </form>
+</div>
+<div id="bidScreen" class="contact-clean">
+   <form method="post" id="bidForm" onsubmit="return storeBids()">
+      <h2 class="text-center">Bieden</h2>
+      <p class="alignCenter" id="bidScreenTopInfo">Ronde X, Deler Y deelt Z kaarten</p>
+      <p class="alignCenter" id="spadeRadioButtonsP">
+         <label for="spadeRadioButton">
+            <strong>&spades;&nbsp;</strong>troef<strong>&nbsp;&nbsp;</strong>
+            <input type="radio"
+                   name="schoppenTroef"
+                   id="spadeRadioButton"
+                   onclick="return clickSpadeRadioButton()">
+         </label>
+         &nbsp;
+         &nbsp; &nbsp;&nbsp;
+         <label for="otherTrumpRadioButton">
+            <input type="radio"
+                   name="schoppenTroef"
+                   id="otherTrumpRadioButton"
+                   onclick="return clickSpadeRadioButton()">
+            &nbsp;&nbsp;Andere troef
+         </label>
+
+         <br>
+      </p>
+      <div class="form-group">
+         <div class="table-responsive">
+            <table class="table alignCenter" id="bidInputTable">
+               <!--filled with javascript-->
+            </table>
+         </div>
+         <div class="table-responsive">
+            <table class="table">
+               <thead>
+               <tr></tr>
+               </thead>
+               <tbody>
+               <tr>
+                  <td class="bidInfoRow">Totaal geboden<br></td>
+                  <td id="bidInfoRow">0 / 1<br></td>
+               </tr>
+               <tr></tr>
+               </tbody>
+            </table>
+         </div>
+         <div class="alert alert-success" role="alert" id="spadeTrumpSelectAlert">
+            <span>
+               Je moet aangeven welke kleur troef is!
+            </span>
+         </div>
+         <div class="alert alert-success hidden" role="alert" id="bidsEqualAlert">
+            <span>
+               Aantal geboden slagen mag niet gelijk zijn aan aantal te halen slagen!
+            </span>
+         </div>
+         <div class="alert alert-success" role="alert" id="bidsFilledAlert">
+            <span>
+               Nog niet iedereen heeft geboden!
+            </span>
+         </div>
+         <div class="table-responsive alignCenter">
+            <table class="table hidden" id="bidScreenButtonsTable">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary" type="button"
+                             onclick="return storeBids()">
+                        Naar Halen
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+               <tbody></tbody>
+            </table>
+         </div>
+      </div>
+   </form>
+</div>
+<div id="newGameScreen" class="contact-clean">
+   <form method="post" id="newGameForm">
+      <h2 class="text-center">Nieuw spel</h2>
+      <div class="form-group nameForm">
+         <div class="table-responsive nameTableDiv">
+            <table class="table nameTable" id="newGameInputTable">
+               <!-- filled with javascript -->
+            </table>
+         </div>
+         <div class="form-check alignCenter">
+
+            <label class="form-check-label"
+                   for="checkNoTrumpMiddleRound">
+               <input class="form-check-input"
+                      type="checkbox"
+                      id="checkNoTrumpMiddleRound">
+               Middelste ronde zonder troef?
+               <br>
+            </label>
+         </div>
+         <div class="table-responsive alignCenter">
+            <table class="table" id="newGameButtonTable">
+               <thead class="alignCenter">
+               <tr class="alignCenter">
+                  <th class="alignCenter">
+                     <button class="btn btn-primary" type="button" onclick="return storePlayers()">
+                        Start 1e ronde
+                     </button>
+                  </th>
+               </tr>
+               </thead>
+            </table>
+         </div>
+      </div>
+   </form>
+</div>
+</body>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/background.js"></script>
 </html>
