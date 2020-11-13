@@ -2,7 +2,12 @@ window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
 String.prototype.format = function() {
-   return [...arguments].reduce((p, c) => p.replace(/%s/, c), this);
+   try {
+      return [...arguments].reduce((p, c) => p.replace(/%s/, c), this);
+   } catch (e) {
+      alert("String.prototype.format " + e.message);
+      return false;
+   }
 };
 
 function removeAllContent(parent) {
@@ -210,16 +215,6 @@ function createStretchTableHead(table, rowData, stretch) {
    }
 }
 
-function showProceedGameButton() {
-   let fileChooser = document.getElementById("fileInput");
-   let button = document.getElementById("proceedGameButton");
-   if (fileChooser.value) {
-      button.classList.remove("hidden");
-   } else {
-      button.classList.add("hidden");
-   }
-}
-
 function getCurrentCards() {
    try {
       let currentCards = window.currentRound;
@@ -232,17 +227,6 @@ function getCurrentCards() {
       return currentCards;
    } catch (e) {
       alert("getCurrentCards " + e.message);
-      return false;
-   }
-}
-
-function removeSpadeTrumpSelectAlert() {
-   try {
-      let alert = document.getElementById("spadeTrumpSelectAlert");
-      alert.classList.add("hidden");
-      return true;
-   } catch (e) {
-      alert("removeSpadeTrumpSelectAlert " + e.message);
       return false;
    }
 }
@@ -423,7 +407,6 @@ function createBidTakeTable(bidOrTake) {
       let currentCards = getCurrentCards();
 
       let currentScores = calculateTotalScores();
-      let lastRowIndex = 0;
       for (let i = 0; i < window.players.length; i++) {
          let row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
                                                                              - (window.currentDealerIndex
@@ -432,8 +415,8 @@ function createBidTakeTable(bidOrTake) {
 
          let nameCell = row.insertCell(0);
          nameCell.classList.add(cellName);
-         nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this
-         // should contain strings
+         nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this should
+                                                            // contain strings
          if (i === window.currentDealerIndex) {
             nameCell.innerHTML += "*";
          }
