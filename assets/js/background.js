@@ -592,9 +592,9 @@ function createTakeTable() {
 function calculateTotalScores() {
    let totalScores = [], sum;
    try {
-      for (let playerIndex in window.players) {
+      for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
          sum = 0;
-         for (let round in window.scores) {
+         for (let round = 0; round < window.currentRound; round++) {
             sum += window.scores[round][playerIndex];
          }
          totalScores[playerIndex] = sum;
@@ -609,7 +609,7 @@ function calculateTotalScores() {
 function updateScores() {
    try {
       let localScores = [];
-      for (let playerIndex in window.players) {
+      for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
          if (window.currentBids[playerIndex] === window.currentTakes[playerIndex]) {
             localScores[playerIndex] =
                10 + (window.currentBids[playerIndex] * 3);
