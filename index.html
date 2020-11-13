@@ -78,42 +78,48 @@
       <h2 class="text-center">Spelregels &amp; telling</h2>
       <div class="form-group">
          <p><strong>Korte speluitleg&nbsp;&nbsp;</strong>
-            Bij boerenbridge worden er 21 rondes gespeeld. Wie de meeste rondes goed voorspeld heeft
-            hoeveel slagen hij gaat winnen, wint het spel. De eerste ronden wordt er met &eacute;&eacute;n
-            kaart
-            gespeeld, de tweede ronde twee etc, tot en met ronde 10.<br>
-            <strong>Spelverloop&nbsp;&nbsp;</strong>Het
-            doel van het spel is om iedere ronde goed te voorspellen hoeveel slagen je gaat winnen.
-            Er worden 21 rondes gespeeld. In de eerste wordt er met &eacute;&eacute;n kaart
-            gespeeld, in de tweede
-            ronde twee, dit gaat door tot ronde tien. Ronde elf en twaalf worden beide met tien
-            kaarten gespeeld, echter wordt in ronde 11 zonder troef gespeeld. Vanaf ronde 13 tot en
-            met ronde 21 wordt er iedere ronde met een kaart&nbsp;<em>minder</em>&nbsp;gespeeld. De
-            spelronde begint met het delen van het aantal kaarten waarmee deze ronde gespeeld wordt.
-            Hierna wordt de troefkaart omgedraaid. Nadat dit is gedaan en de spelers hun kaarten
-            hebben gezien, gaan de spelers voorspellen hoeveel slagen ze gaan
-            winnen.&nbsp;<br>
-            <strong>Slagronde&nbsp;&nbsp;</strong>De eerste keer wordt er een
-            speler gekozen die mag beginnen. De volgende ronde mag de speler die links van de vorige
-            deler zit uitkomen. Je wint een slag als je de hoogste uitgekomen kaart speelt, of de
-            hoogste troefkaart (De hoogste troefkaart in de ronde wint altijd). De speler
-            is&nbsp;<strong>verplicht</strong>&nbsp;om de speler die als eerste uitkomt te volgen
-            (=bekennen). Kan hij niet volgen, dan&nbsp;<em>mag</em>&nbsp;hij een troefkaart spelen
-            om een slag te winnen.
+            Het doel van het spel is te voorspellen hoeveel slagen men in een bepaalde spelronde kan
+            behalen. Elke spelronde begint met het uitdelen van een gegeven hoeveelheid kaarten aan
+            iedere speler.<br/>
+            Iedere speler geeft aan hoeveel slagen hij of zij denkt te gaan winnen, te beginnen bij
+            de speler links van de deler. De hoogste bieder bepaalt de troef.
+            De persoon die als laatst moet zeggen hoeveel slagen hij haalt (de gever dus), mag niet
+            het aantal slagen zeggen die de som zou doen uitkomen (voorbeeld: in ronde 7 krijgt
+            ieder 7 kaarten. Speler 1 zegt dat hij geen slagen haalt, speler 2 zegt drie slagen en
+            speler 3 zegt twee slagen. Speler 4, die laatst zit, mag dus niet zeggen dat hij twee
+            slagen gaat halen, want 0+3+2+2=7).
+            <br/>
+            In de eerste spelronde wordt er &eacute;&eacute;n kaart uitgedeeld aan iedere speler. In
+            de tweede ronde worden twee kaarten uitgedeeld aan iedere speler, in de derde spelronde
+            drie, enzovoort. Dit gaat door totdat er net voldoende kaarten zijn om het spel te laten
+            doorgaan (bijvoorbeeld met vijf spelers is het maximaal aantal uitgedeelde kaarten per
+            speler gelijk aan 10). Na de spelronde met het maximale aantal kaarten wordt er in de
+            volgende spelronden terug afgebouwd, tot de laatste ronde met &eacute;&eacute;n kaart
+            per speler. De speler met het hoogste aantal punten na de laatste ronde wint het spel.
+            <br/>
+            De spelrichting is met de wijzers van de klok mee. Een speler is verplicht kleur te
+            bekennen, maar niet verplicht om een troef te spelen als hij de gevraagde kleur niet
+            heeft.
+            <br/>
+            Optie:<br/>
+            Een extra tussenronde: Na de 10e ronde bij boerenbridge kan je nog een ronde spelen met
+            10 kaarten zonder troef. Daarna volgt nogmaals een ronde met 10 kaarten maar dan weer
+            met troef. Vervolgens wordt weer afgeteld naar 1 kaart.
+
          </p>
-         <p><strong>Puntentelling</strong><br>
-            <strong>Juiste voorspelling</strong>: Heb je na het einde van een ronde de juiste
-                                                voorspelling, dan krijg je 10 punten.
-                                                Voor iedere slag die je hebt gewonnen krijg je 3
-                                                punten extra.
-            <br>
-            <strong>Onjuiste voorspelling</strong>: Is je voorspelling incorrect, dan heb je 3
-                                                minpunten per aantal dat je er naast zat. Was je
-                                                voorspelling dat je 4 slagen zou winnen, maar heb
-                                                je er maar 2? Dan heb je (4 - 2 ) x 3 = 6 minpunten.
+         <p><strong>Puntentelling</strong><br/>
+            <strong>Goed</strong>: Heb je na het einde van een ronde de juiste voorspelling, dan
+                                 krijg je 10 punten. Voor iedere slag die je hebt gewonnen krijg je
+                                 3 punten extra.
+
+            <br/>
+            <strong>Fout</strong>: Zit je voorspelling ernaast, dan heb je 3 minpunten per kaart die
+                                 je er naast zat. Was je voorspelling dat je 4 slagen zou winnen,
+                                 maar heb je er maar 2? Dan heb je (4 - 2 ) x 3 = 6 minpunten.
+
          </p>
          <p><strong>Schoppen troef?&nbsp;</strong>Dan worden alle behaalde of verloren&nbsp; punten
-                                                  verdubbeld!<br></p>
+                                                  verdubbeld!<br/></p>
          <div class="table-responsive alignCenter">
             <table class="table" id="gamerulesButtonTable">
                <thead class="alignCenter">
@@ -205,8 +211,18 @@
                </tbody>
             </table>
          </div>
+         <div class="alert alert-success" role="alert" id="takesEqualAlert">
+            <span>
+               Aantal gehaalde slagen is ongelijk aan aantal te halen slagen!
+            </span>
+         </div>
+         <div class="alert alert-success hidden" role="alert" id="takesFilledAlert">
+            <span>
+               Nog niet alle gehaalde slagen zijn ingevoerd!
+            </span>
+         </div>
          <div class="table-responsive alignCenter">
-            <table class="table" id="takeButtons">
+            <table class="table" id="takeScreenButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
@@ -228,7 +244,7 @@
                <tbody></tbody>
             </table>
          </div>
-         <code>Indien laatste ronde geweest:</code>
+         <!--<code>Indien laatste ronde geweest:</code>
          <div class="table-responsive alignCenter">
             <table class="table" id="buttons">
                <thead class="alignCenter">
@@ -242,7 +258,7 @@
                </thead>
                <tbody></tbody>
             </table>
-         </div>
+         </div>-->
       </div>
    </form>
 </div>
@@ -268,6 +284,7 @@
             <tbody></tbody>
          </table>
       </div>
+      <code>DIT IS ALLEMAAL NOG WORK IN PROGRESS!</code>
       <div class="form-group">
          <div class="table-responsive">
             <table class="table alignCenter" id="overviewDataTable">
@@ -309,7 +326,7 @@
 <div id="bidScreen" class="contact-clean">
    <form method="post" id="bidForm" onsubmit="return storeBids()">
       <h2 class="text-center">Bieden</h2>
-      <p class="alignCenter" id="bidScreenTopInfo">5e&nbsp; ronde, Iduna deelt 5 kaarten</p>
+      <p class="alignCenter" id="bidScreenTopInfo">Ronde X, Deler Y deelt Z kaarten</p>
       <p class="alignCenter" id="spadeRadioButtonsP">
          <label for="spadeRadioButton">
             <strong>&spades;&nbsp;</strong>troef<strong>&nbsp;&nbsp;</strong>
@@ -360,12 +377,17 @@
                Aantal geboden slagen mag niet gelijk zijn aan aantal te halen slagen!
             </span>
          </div>
+         <div class="alert alert-success hidden" role="alert" id="bidsFilledAlert">
+            <span>
+               Nog niet iedereen heeft geboden!
+            </span>
+         </div>
          <div class="table-responsive alignCenter">
-            <table class="table" id="bidScreenButtonsTable">
+            <table class="table hidden" id="bidScreenButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" id="toTakesButton"
+                     <button class="btn btn-primary" type="button"
                              onclick="return storeBids()">
                         Naar Halen
                      </button>

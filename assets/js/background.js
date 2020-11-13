@@ -477,6 +477,22 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
    }
 }
 
+function hideOrShowAlert(buttonElement, alertElement, check) {
+   try {
+      if (check) {
+         if (! buttonElement.classList.contains("hidden")) { buttonElement.classList.add("hidden"); }
+         if (alertElement.classList.contains("hidden")) { alertElement.classList.remove("hidden"); }
+      } else {
+         if (buttonElement.classList.contains("hidden")) { buttonElement.classList.remove("hidden"); }
+         if (! alertElement.classList.contains("hidden")) { alertElement.classList.add("hidden"); }
+      }
+      return true;
+   } catch (e) {
+      alert("hideOrShowAlert " + e.message);
+      return false;
+   }
+}
+
 function updateBidsOrTakesPlaced(bidOrTake) {
    try {
       let infoRow = document.getElementById(bidOrTake === "bid" ? "bidInfoRow" : "takeInfoRow");
@@ -486,16 +502,20 @@ function updateBidsOrTakesPlaced(bidOrTake) {
          if (num) { sum += num; }
       }
       infoRow.innerHTML = sum.toString() + " / " + currentCards.toString();
-      let toTakesButton = document.getElementById("toTakesButton");
-      let bidsEqualAlert = document.getElementById("bidsEqualAlert");
-      if (sum === currentCards) {
-         toTakesButton.classList.add("hidden");
-         if (bidsEqualAlert.classList.contains("hidden")) { bidsEqualAlert.classList.remove("hidden"); }
-      } else {
-         if (toTakesButton.classList.contains("hidden")) { toTakesButton.classList.remove("hidden"); }
-         if (! bidsEqualAlert.classList.contains("hidden")) { bidsEqualAlert.classList.add("hidden"); }
-      }
-      return true;
+      let buttonElement = document.getElementById(bidOrTake + "ScreenButtonsTable");
+      let equalAlert = document.getElementById(bidOrTake + "sEqualAlert");
+      let filledAlert = document.getElementById(bidOrTake + "sFilledAlert");
+      let check = (sum === currentCards);
+      let amountInputsFilled = (bidOrTake === "bid" ? window.currentBids : window.currentTakes).length;
+      // Second check is to ensure the game does not break when initialising the screen
+      let allFilledIn = (window.players.length === amountInputsFilled);
+      // TODO: If first hides button, don't make second unhide it!
+      return hideOrShowAlert(buttonElement,
+                             equalAlert,
+                             (bidOrTake === "bid" ? check : (! check)))
+             && hideOrShowAlert(buttonElement,
+                                filledAlert,
+                                (! allFilledIn));
    } catch (e) {
       alert("updateBidsOrTakesPlaced " + e.message);
       return false;
@@ -638,5 +658,5 @@ function createScoreBoard() {
 window.onload = function() {
    while (! document.getElementById("newGameScreen")) { }
    //TODO Check for existing save game
-   toNewGame();
+   toOverview();
 };
