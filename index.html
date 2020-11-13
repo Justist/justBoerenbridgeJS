@@ -125,8 +125,8 @@
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return uitSpelregels()">
-                        gelezen
+                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
+                        Terug naar overzicht
                      </button>
                   </th>
                </tr>
@@ -186,7 +186,7 @@
 <div id="takeScreen" class="contact-clean">
    <form method="post" id="takeForm">
       <h2 class="text-center">Halen</h2>
-      <p class="alignCenter" id="takeScreenTopInfo">5e&nbsp; ronde, Iduna deelde 5 kaarten</p>
+      <p class="alignCenter" id="takeScreenTopInfo">Ronde X, Deler Y deelt Z kaarten</p>
       <div class="form-group">
          <div class="table-responsive">
             <table class="table aligncenter" id="takeInputTable">
@@ -333,7 +333,7 @@
             <input type="radio"
                    name="schoppenTroef"
                    id="spadeRadioButton"
-                   onclick="return removeSpadeTrumpSelectAlert()">
+                   onclick="return clickSpadeRadioButton()">
          </label>
          &nbsp;
          &nbsp; &nbsp;&nbsp;
@@ -341,7 +341,7 @@
             <input type="radio"
                    name="schoppenTroef"
                    id="otherTrumpRadioButton"
-                   onclick="return removeSpadeTrumpSelectAlert()">
+                   onclick="return clickSpadeRadioButton()">
             &nbsp;&nbsp;Andere troef
          </label>
 
@@ -377,7 +377,7 @@
                Aantal geboden slagen mag niet gelijk zijn aan aantal te halen slagen!
             </span>
          </div>
-         <div class="alert alert-success hidden" role="alert" id="bidsFilledAlert">
+         <div class="alert alert-success" role="alert" id="bidsFilledAlert">
             <span>
                Nog niet iedereen heeft geboden!
             </span>

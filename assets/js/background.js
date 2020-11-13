@@ -1,17 +1,3 @@
-window.maxPlayers = 8;
-window.players = [];
-window.currentDealerIndex = -1; // Updated later on
-// Content is mostly just for show, as the first round is 1
-window.bids = { 0 : [] };
-window.takes = { 0 : [] };
-window.scores = { 0 : [] };
-window.spadeTrump = { 0 : false };
-window.currentBids = [];
-window.currentTakes = [];
-window.currentRound = 1;
-window.roundWithoutTrump = true;
-window.maxCards = -1; //Updated later on
-
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
@@ -47,6 +33,29 @@ function setEverythingToNone() {
    }
 }
 
+function resetAllStats() {
+   try {
+      // Content is mostly just for show, as the first round is 1
+      window.bids = { 0 : [] };
+      window.currentBids = [];
+      window.currentDealerIndex = -1; // Updated later on
+      window.currentRound = 1;
+      window.currentTakes = [];
+      window.maxCards = -1; //Updated later on
+      window.maxPlayers = 8;
+      window.maxRounds = -1;
+      window.players = [];
+      window.roundWithoutTrump = true;
+      window.scores = { 0 : [] };
+      window.spadeTrump = { 0 : false };
+      window.takes = { 0 : [] };
+      return true;
+   } catch (e) {
+      alert("resetAllStats " + e.message);
+      return false;
+   }
+}
+
 function updateRoundInfo(bidOrTake) {
    try {
       let id = bidOrTake + "ScreenTopInfo";
@@ -63,13 +72,10 @@ function updateRoundInfo(bidOrTake) {
    }
 }
 
-/*function hideUnavailableBidOptions() {
- let bid = document.getElementById("bidScreen");
- }*/
-
 function toNewGame() {
    try {
       setEverythingToNone();
+      resetAllStats();
       let newGame = document.getElementById("newGameScreen");
       newGame.classList.remove("hidden");
 
@@ -77,17 +83,24 @@ function toNewGame() {
       let dateTime = new Date();
       dateTimeScoreBoard.innerHTML =
          "Spel van %s - %s - %s (%s:%s)".format(("00" + dateTime.getDate().toString()).slice(-2),
-                                                ("00" + (dateTime.getMonth() + 1).toString()).slice(-2),
+                                                ("00" + (dateTime.getMonth() + 1).toString()).slice(
+                                                   -2),
                                                 dateTime.getFullYear().toString(),
                                                 ("00" + dateTime.getHours().toString()).slice(-2),
-                                                ("00" + dateTime.getMinutes().toString()).slice(-2));
+                                                ("00" + dateTime.getMinutes()
+                                                                .toString()).slice(-2));
 
-      // TODO: Fix this string to make it readable and have singular length values have leading zeroes
+      // TODO: Fix this string to make it readable and have singular length values have leading
+      // zeroes
       window.jsonFileName = "bb%s_%s_%s_%s_%s".format(dateTime.getFullYear().toString(),
-                                                      ("00" + (dateTime.getMonth() + 1).toString()).slice(-2),
-                                                      ("00" + dateTime.getDate().toString()).slice(-2),
-                                                      ("00" + dateTime.getHours().toString()).slice(-2),
-                                                      ("00" + dateTime.getMinutes().toString()).slice(-2));
+                                                      ("00" + (dateTime.getMonth()
+                                                       + 1).toString()).slice(-2),
+                                                      ("00" + dateTime.getDate()
+                                                                      .toString()).slice(-2),
+                                                      ("00" + dateTime.getHours().toString()).slice(
+                                                         -2),
+                                                      ("00" + dateTime.getMinutes()
+                                                                      .toString()).slice(-2));
 
       return createPlayersTable();
    } catch (e) {
@@ -100,10 +113,13 @@ function toBids() {
    try {
       setEverythingToNone();
       window.currentBids = [];
-      let screen = document.getElementById("bidScreen"), alert = document.getElementById("spadeTrumpSelectAlert");
+      let screen = document.getElementById("bidScreen"),
+          alert  = document.getElementById("spadeTrumpSelectAlert");
       screen.classList.remove("hidden");
       alert.classList.remove("hidden");
-      let spadeRadioButtons = getTypeInputFields(document.getElementById("spadeRadioButtonsP"), "radio");
+      let spadeRadioButtons = getTypeInputFields(
+         document.getElementById("spadeRadioButtonsP"),
+         "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
       return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
@@ -208,7 +224,8 @@ function getCurrentCards() {
       if (window.roundWithoutTrump && currentCards === window.maxCards + 1) {
          currentCards = window.maxCards;
       } else if (currentCards > window.maxCards) {
-         currentCards = ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - window.currentRound;
+         currentCards =
+            ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - window.currentRound;
       }
       return currentCards;
    } catch (e) {
@@ -252,9 +269,11 @@ function createPlayersTable() {
 
          let nameSelectElement = document.createElement("input");
          nameSelectElement.classList.add("form-control");
-         nameSelectElement.setAttribute("id", "nameChoice-" + playerIndex.toString());
+         nameSelectElement.setAttribute("id",
+                                        "nameChoice-" + playerIndex.toString());
          nameSelectElement.setAttribute("list", "nameList");
-         nameSelectElement.setAttribute("placeholder", "Kies een speler of typ een naam");
+         nameSelectElement.setAttribute("placeholder",
+                                        "Kies een speler of typ een naam");
          nameSelectElement.setAttribute("onchange",
                                         "return showNextPlayerField("
                                         + playerIndex.toString()
@@ -305,21 +324,30 @@ function showNextPlayerField(index, value) {
    }
 }
 
+function anyRadioFilled(parent) {
+   try {
+      let radioFields = getTypeInputFields(parent, "radio");
+      for (let fieldIndex in radioFields) {
+         // I assume there is only one radio checked. If not, change this to your needs
+         if (radioFields[fieldIndex].checked) {
+            // Apparently this is a string, and it works with that, but I am very confused
+            return parseInt(fieldIndex, 10);
+         }
+      }
+      return -1;
+   } catch (e) {
+      alert("anyRadioFilled " + e.message);
+      return false;
+   }
+}
+
 // noinspection JSUnusedGlobalSymbols
 function storePlayers() {
    let localPlayers = new Set();
    let localDealerIndex = 0;
    try {
       let playerForm = document.getElementById("newGameForm");
-      let radioFields = getTypeInputFields(playerForm, "radio");
-      let anySelected = false;
-      for (let fieldIndex in radioFields) {
-         if (radioFields[fieldIndex].checked) {
-            // Apparently this is a string, and it works with that, but I am very confused
-            localDealerIndex = parseInt(fieldIndex, 10);
-            anySelected = true;
-         }
-      }
+      localDealerIndex = anyRadioFilled(playerForm);
 
       let selectFields = getElementTypeFields(playerForm, "input[list]");
       let fieldIndex;
@@ -336,10 +364,7 @@ function storePlayers() {
          return false;
       }
 
-      console.log(localDealerIndex + 1);
-      console.log(localPlayers.size);
-      console.log((localDealerIndex + 1) > localPlayers.size);
-      if ((! anySelected) || ((localDealerIndex + 1) > localPlayers.size)) {
+      if ((localDealerIndex === -1) || ((localDealerIndex + 1) > localPlayers.size)) {
          alert("Geen (valide) beginspeler gekozen!");
          return false;
       }
@@ -347,6 +372,7 @@ function storePlayers() {
       window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
       window.maxCards = Math.floor(52 / window.players.length);
+      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : 0);
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
@@ -387,15 +413,20 @@ function createBidTakeTable(bidOrTake) {
       let currentCards = getCurrentCards();
 
       let currentScores = calculateTotalScores();
-
+      let lastRowIndex = 0;
       for (let i = 0; i < window.players.length; i++) {
-         let row = formTable.insertRow();
+         let row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
+                                                                             - (window.currentDealerIndex
+                                                                                + 1));
          row.setAttribute("id", playerId + i.toString());
 
          let nameCell = row.insertCell(0);
          nameCell.classList.add(cellName);
-         nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this should contain strings
-
+         nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this
+         // should contain strings
+         if (i === window.currentDealerIndex) {
+            nameCell.innerHTML += "*";
+         }
          let scoreCell = row.insertCell(1);
          let score = currentScores[i];
          if (score) { scoreCell.innerHTML = score.toString(); } else { scoreCell.innerHTML = "0"; }
@@ -407,13 +438,14 @@ function createBidTakeTable(bidOrTake) {
 
          for (let number = 0; number <= currentCards; number++) {
             let numberCell = row.insertCell(-1);
-            numberCell.setAttribute("onclick", "return clickBidOrTakeButton(this.parentNode, "
-                                               + number.toString()
-                                               + ", "
-                                               + i.toString()
-                                               + ", \'"
-                                               + bidOrTake.toString()
-                                               + "\')");
+            numberCell.setAttribute("onclick",
+                                    "return clickBidOrTakeButton(this.parentNode, "
+                                    + number.toString()
+                                    + ", "
+                                    + i.toString()
+                                    + ", \'"
+                                    + bidOrTake.toString()
+                                    + "\')");
             numberCell.innerHTML = number.toString();
          }
       }
@@ -421,7 +453,9 @@ function createBidTakeTable(bidOrTake) {
       if (bidOrTake === "take") {
          let spadeText = document.getElementById("spadeTrumpTakeScreen");
          spadeText.innerHTML =
-            "<strong>%s</strong>".format(window.spadeTrump[window.currentRound] ? "Schoppenrondje!" : "Normale ronde");
+            "<strong>%s</strong>".format(window.spadeTrump[window.currentRound]
+                                         ? "Schoppenrondje!"
+                                         : "Normale ronde");
       }
 
       return formTable;
@@ -434,8 +468,9 @@ function createBidTakeTable(bidOrTake) {
 function createBidTable() {
    try {
       let formTable = createBidTakeTable("bid");
-      createStretchTableHead(formTable, ["Spelers", "Scores", "Bieden"], (getCurrentCards() + 1));
-      return true;
+      return createStretchTableHead(formTable,
+                                    ["Spelers", "Scores", "Bieden"],
+                                    (getCurrentCards() + 1));
    } catch (e) {
       alert("createBidTable " + e.message);
       return false;
@@ -458,6 +493,15 @@ function clearHighLightsPlayer(player) {
    }
 }
 
+function clickSpadeRadioButton() {
+   try {
+      return updateBidsOrTakesPlaced("bid");
+   } catch (e) {
+      alert("clickSpadeRadioButton " + e.message);
+      return false;
+   }
+}
+
 // noinspection JSUnusedGlobalSymbols
 function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake) {
    try {
@@ -468,7 +512,9 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
       let indexToHighlight = parent.children[numberAsInt + offset];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");
-      (bidOrTake === "bid") ? window.currentBids[playerIndexInt] = numberAsInt : window.currentTakes[playerIndexInt] =
+      (bidOrTake === "bid")
+      ? window.currentBids[playerIndexInt] = numberAsInt
+      : window.currentTakes[playerIndexInt] =
          numberAsInt;
       return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
@@ -477,18 +523,16 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
    }
 }
 
-function hideOrShowAlert(buttonElement, alertElement, check) {
+function hideOrShowElement(element, show) {
    try {
-      if (check) {
-         if (! buttonElement.classList.contains("hidden")) { buttonElement.classList.add("hidden"); }
-         if (alertElement.classList.contains("hidden")) { alertElement.classList.remove("hidden"); }
+      if (show) {
+         if (element.classList.contains("hidden")) { element.classList.remove("hidden"); }
       } else {
-         if (buttonElement.classList.contains("hidden")) { buttonElement.classList.remove("hidden"); }
-         if (! alertElement.classList.contains("hidden")) { alertElement.classList.add("hidden"); }
+         if (! element.classList.contains("hidden")) { element.classList.add("hidden"); }
       }
       return true;
    } catch (e) {
-      alert("hideOrShowAlert " + e.message);
+      alert("hideOrShowElement " + e.message);
       return false;
    }
 }
@@ -503,19 +547,28 @@ function updateBidsOrTakesPlaced(bidOrTake) {
       }
       infoRow.innerHTML = sum.toString() + " / " + currentCards.toString();
       let buttonElement = document.getElementById(bidOrTake + "ScreenButtonsTable");
-      let equalAlert = document.getElementById(bidOrTake + "sEqualAlert");
-      let filledAlert = document.getElementById(bidOrTake + "sFilledAlert");
-      let check = (sum === currentCards);
-      let amountInputsFilled = (bidOrTake === "bid" ? window.currentBids : window.currentTakes).length;
+      let equalAlert  = document.getElementById(bidOrTake + "sEqualAlert"),
+          filledAlert = document.getElementById(bidOrTake + "sFilledAlert"),
+          spadeAlert  = document.getElementById("spadeTrumpSelectAlert");
+
+      let equalCheck = (sum === currentCards);
+      let amountInputsFilled = (bidOrTake === "bid"
+                                ? window.currentBids
+                                : window.currentTakes).length;
+      let spadeRadioChecked = true;
+      if (bidOrTake === "bid") {
+         spadeRadioChecked =
+            (anyRadioFilled(document.getElementById("spadeRadioButtonsP")) !== -1);
+      }
       // Second check is to ensure the game does not break when initialising the screen
       let allFilledIn = (window.players.length === amountInputsFilled);
-      // TODO: If first hides button, don't make second unhide it!
-      return hideOrShowAlert(buttonElement,
-                             equalAlert,
-                             (bidOrTake === "bid" ? check : (! check)))
-             && hideOrShowAlert(buttonElement,
-                                filledAlert,
-                                (! allFilledIn));
+      return hideOrShowElement(equalAlert, (bidOrTake === "bid" ? equalCheck : (! equalCheck)))
+             && hideOrShowElement(filledAlert, (! allFilledIn))
+             && (bidOrTake === "bid" ? hideOrShowElement(spadeAlert, (! spadeRadioChecked)) : true)
+             && hideOrShowElement(buttonElement,
+             (bidOrTake === "bid" ? (! equalCheck) : equalCheck)
+             && allFilledIn
+             && spadeRadioChecked);
    } catch (e) {
       alert("updateBidsOrTakesPlaced " + e.message);
       return false;
@@ -538,7 +591,9 @@ function storeBids() {
 function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
-      createStretchTableHead(formTable, ["Spelers", "Scores", "Geboden", "Gehaald"], (getCurrentCards() + 1));
+      createStretchTableHead(formTable,
+                             ["Spelers", "Scores", "Geboden", "Gehaald"],
+                             (getCurrentCards() + 1));
       return true;
    } catch (e) {
       alert("createTakeTable " + e.message);
@@ -610,7 +665,8 @@ function clickScoreCell(element, round, playerIndex) {
             "%s / %s".format(window.bids[round][playerIndex], window.takes[round][playerIndex]);
          element.setAttribute("clicked", "true");
       } else {
-         alert("clickScoreCell The clicked attribute of scoreCell should not be something else than true or false!");
+         alert(
+            "clickScoreCell The clicked attribute of scoreCell should not be something else than true or false!");
          return false;
       }
       return true;
