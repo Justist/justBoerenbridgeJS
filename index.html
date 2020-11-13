@@ -147,9 +147,8 @@
                <!-- filled with javascript -->
             </table>
          </div>
-         <code>Spel nog niet af</code>
-         <div class="table-responsive alignCenter">
-            <table class="table" id="scoreboardToBidButtonTable">
+         <div class="table-responsive alignCenter" id="scoreboardToBidButton">
+            <table class="table">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
@@ -161,9 +160,8 @@
                </thead>
             </table>
          </div>
-         <code>Spel afgelopen</code>
-         <div class="table-responsive alignCenter">
-            <table class="table" id="scoreboardToOtherButtonsTable">
+         <div class="table-responsive alignCenter hidden" id="scoreboardToOtherButtons">
+            <table class="table">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
@@ -244,21 +242,6 @@
                <tbody></tbody>
             </table>
          </div>
-         <!--<code>Indien laatste ronde geweest:</code>
-         <div class="table-responsive alignCenter">
-            <table class="table" id="buttons">
-               <thead class="alignCenter">
-               <tr class="alignCenter">
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toEndGame()">
-                        Einde spel
-                     </button>
-                  </th>
-               </tr>
-               </thead>
-               <tbody></tbody>
-            </table>
-         </div>-->
       </div>
    </form>
 </div>
@@ -410,11 +393,12 @@
             </table>
          </div>
          <div class="form-check alignCenter">
-            <input class="form-check-input"
-                   type="checkbox"
-                   id="checkNoTrumpMiddleRound">
+
             <label class="form-check-label"
                    for="checkNoTrumpMiddleRound">
+               <input class="form-check-input"
+                      type="checkbox"
+                      id="checkNoTrumpMiddleRound">
                Middelste ronde zonder troef?
                <br>
             </label>

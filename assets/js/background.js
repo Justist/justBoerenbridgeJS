@@ -49,7 +49,9 @@ function resetAllStats() {
       window.scores = { 0 : [] };
       window.spadeTrump = { 0 : false };
       window.takes = { 0 : [] };
-      return true;
+
+      return hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
+             && hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), false);
    } catch (e) {
       alert("resetAllStats " + e.message);
       return false;
@@ -290,7 +292,7 @@ function createPlayersTable() {
          }
          nameChoiceCell.appendChild(nameList);
       }
-
+      document.getElementById("checkNoTrumpMiddleRound").checked = true;
       return createTableHead(playerTable, ["Eerste deler", "Namen spelers"]);
    } catch (e) {
       alert("createPlayersTable " + e.message);
@@ -358,6 +360,11 @@ function storePlayers() {
          else { break; }
       }
 
+      if (localPlayers.size < 2) {
+         alert("Je hebt minder dan 2 spelers ingevuld!");
+         return false;
+      }
+
       // localPlayers is a set, so if there are duplicate names fieldIndex is larger than the set
       if (fieldIndex > localPlayers.size) {
          alert("Dubbele namen zijn niet toegestaan!");
@@ -368,6 +375,9 @@ function storePlayers() {
          alert("Geen (valide) beginspeler gekozen!");
          return false;
       }
+
+      let noTrumpMiddleRound = document.getElementById("checkNoTrumpMiddleRound");
+      window.roundWithoutTrump = noTrumpMiddleRound.checked;
 
       window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
@@ -646,7 +656,9 @@ function storeTakes(bidButtonPressed) {
       window.currentRound++;
       window.currentDealerIndex++;
       window.currentDealerIndex %= window.players.length;
-      return updatedScores && (bidButtonPressed ? toBids() : toScores());
+      return updatedScores && (bidButtonPressed && (window.currentRound <= window.maxRounds)
+                               ? toBids()
+                               : toScores());
    } catch (e) {
       alert("storeTakes " + e.message);
       return false;
@@ -704,6 +716,10 @@ function createScoreBoard() {
             }
          }
       }
+      if (window.currentRound > window.maxRounds) {
+         hideOrShowElement(document.getElementById("scoreboardToBidButton"), false);
+         hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), true);
+      }
       return createTableHead(scoreTable, ["Ronde", "♠", ...window.players]);
    } catch (e) {
       alert("createScoreBoard " + e.message);
@@ -712,7 +728,7 @@ function createScoreBoard() {
 }
 
 window.onload = function() {
-   while (! document.getElementById("newGameScreen")) { }
+   while (! document.getElementById("overviewScreen")) { }
    //TODO Check for existing save game
    toOverview();
 };
