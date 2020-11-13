@@ -1,8 +1,11 @@
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
+//  deepcode ignore no-extend-native: It's a very clean way to do this, and I am not using for x in
+// y anyway
 String.prototype.format = function() {
    try {
+      //  deepcode ignore prefer-rest-params: doesn't work otherwise
       return [...arguments].reduce((p, c) => p.replace(/%s/, c), this);
    } catch (e) {
       alert("String.prototype.format " + e.message);
