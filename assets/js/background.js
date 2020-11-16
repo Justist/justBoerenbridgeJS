@@ -614,6 +614,8 @@ function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
 
+      console.log("currentRound: " + window.currentRound);
+      console.log("maxRounds: " + window.maxRounds);
       if (window.currentRound === window.maxRounds) {
          hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
       }
