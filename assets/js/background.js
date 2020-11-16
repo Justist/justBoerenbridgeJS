@@ -60,7 +60,8 @@ function resetAllStats() {
       window.spadeTrump = { 0 : false };
       window.takes = { 0 : [] };
 
-      return hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
+      return hideOrShowElement(document.getElementById("takeScreenToBidsButton"), true)
+             && hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
              && hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), false);
    } catch (e) {
       alert("resetAllStats " + e.message);
@@ -614,8 +615,6 @@ function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
 
-      console.log("currentRound: " + window.currentRound);
-      console.log("maxRounds: " + window.maxRounds);
       if (window.currentRound === window.maxRounds) {
          hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
       }
