@@ -125,11 +125,17 @@ function toBids() {
       let screen = document.getElementById("bidScreen"),
           alert  = document.getElementById("spadeTrumpSelectAlert");
       screen.classList.remove("hidden");
-      alert.classList.remove("hidden");
       let spadeRadioButtons = getTypeInputFields(
          document.getElementById("spadeRadioButtonsP"),
          "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
+      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+         hideOrShowElement(alert, false);
+         hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
+         spadeRadioButtons[1].checked = true;
+      } else {
+         hideOrShowElement(alert, true);
+      }
       return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
       alert("toBids " + e.toString());
