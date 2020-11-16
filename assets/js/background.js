@@ -1,5 +1,5 @@
 // TODO Set to false before pushing to main!
-window.DEBUG = true;
+window.DEBUG = false;
 
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
@@ -245,6 +245,17 @@ function getCurrentCards(round = -1) {
    }
 }
 
+// noinspection JSUnusedGlobalSymbols
+function clickDealerRadiobutton(playerIndex) {
+   try {
+      document.getElementById("radioDealer-" + playerIndex.toString()).checked = true;
+      return true;
+   } catch (e) {
+      alert("clickDealerRadiobutton " + e.message);
+      return false;
+   }
+}
+
 function createPlayersTable() {
    try {
       let playerTable = document.getElementById("newGameInputTable");
@@ -256,6 +267,7 @@ function createPlayersTable() {
          row.setAttribute("id", "playerRow" + playerIndex);
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
+         dealerCell.setAttribute("onclick", "return clickDealerRadiobutton(" + playerIndex.toString() + ")");
 
          let radioButton = document.createElement("input");
          radioButton.setAttribute("type", "radio");
@@ -614,6 +626,7 @@ function storeBids() {
 function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
+
 
       if (window.currentRound === window.maxRounds) {
          hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
