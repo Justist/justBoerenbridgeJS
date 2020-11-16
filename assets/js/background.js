@@ -1,3 +1,6 @@
+// TODO Set to false before pushing to main!
+window.DEBUG = false;
+
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
@@ -57,7 +60,8 @@ function resetAllStats() {
       window.spadeTrump = { 0 : false };
       window.takes = { 0 : [] };
 
-      return hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
+      return hideOrShowElement(document.getElementById("takeScreenToBidsButton"), true)
+             && hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
              && hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), false);
    } catch (e) {
       alert("resetAllStats " + e.message);
@@ -85,8 +89,7 @@ function toNewGame() {
    try {
       setEverythingToNone();
       resetAllStats();
-      let newGame = document.getElementById("newGameScreen");
-      newGame.classList.remove("hidden");
+      hideOrShowElement(document.getElementById("newGameScreen"), true);
 
       let dateTimeScoreBoard = document.getElementById("dateTimeScoreBoard");
       let dateTime = new Date();
@@ -99,17 +102,16 @@ function toNewGame() {
                                                 ("00" + dateTime.getMinutes()
                                                                 .toString()).slice(-2));
 
-      // TODO: Fix this string to make it readable and have singular length values have leading
-      // zeroes
-      window.jsonFileName = "bb%s_%s_%s_%s_%s".format(dateTime.getFullYear().toString(),
-                                                      ("00" + (dateTime.getMonth()
-                                                       + 1).toString()).slice(-2),
-                                                      ("00" + dateTime.getDate()
-                                                                      .toString()).slice(-2),
-                                                      ("00" + dateTime.getHours().toString()).slice(
-                                                         -2),
-                                                      ("00" + dateTime.getMinutes()
-                                                                      .toString()).slice(-2));
+      window.jsonFileName =
+         "bb%s_%s_%s_%s_%s".format(dateTime.getFullYear().toString(),
+                                   ("00" + (dateTime.getMonth()
+                                    + 1).toString()).slice(-2),
+                                   ("00" + dateTime.getDate()
+                                                   .toString()).slice(-2),
+                                   ("00" + dateTime.getHours().toString()).slice(
+                                      -2),
+                                   ("00" + dateTime.getMinutes()
+                                                   .toString()).slice(-2));
 
       return createPlayersTable();
    } catch (e) {
@@ -122,14 +124,22 @@ function toBids() {
    try {
       setEverythingToNone();
       window.currentBids = [];
-      let screen = document.getElementById("bidScreen"),
-          alert  = document.getElementById("spadeTrumpSelectAlert");
-      screen.classList.remove("hidden");
-      alert.classList.remove("hidden");
+      let alert = document.getElementById("spadeTrumpSelectAlert");
+      hideOrShowElement(document.getElementById("bidScreen"), true);
       let spadeRadioButtons = getTypeInputFields(
          document.getElementById("spadeRadioButtonsP"),
          "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
+      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+         hideOrShowElement(alert, false);
+         hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
+         hideOrShowElement(document.getElementById("middleRoundText"), true);
+         spadeRadioButtons[1].checked = true;
+      } else {
+         hideOrShowElement(alert, true);
+         hideOrShowElement(document.getElementById("spadeRadioButtonsP"), true);
+         hideOrShowElement(document.getElementById("middleRoundText"), false);
+      }
       return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
       alert("toBids " + e.toString());
@@ -141,8 +151,12 @@ function toTakes() {
    try {
       setEverythingToNone();
       window.currentTakes = [];
-      let take = document.getElementById("takeScreen");
-      take.classList.remove("hidden");
+      hideOrShowElement(document.getElementById("takeScreen"), true);
+      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+         hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
+      } else {
+         hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), true);
+      }
       return updateRoundInfo("take") && createTakeTable();
    } catch (e) {
       alert("toTakes " + e.toString());
@@ -165,9 +179,7 @@ function toScores() {
 function toGameRules() {
    try {
       setEverythingToNone();
-      let rules = document.getElementById("gameRulesScreen");
-      rules.classList.remove("hidden");
-      return true;
+      return hideOrShowElement(document.getElementById("gameRulesScreen"), true);
    } catch (e) {
       alert("toGameRules " + e.toString());
       return false;
@@ -177,9 +189,7 @@ function toGameRules() {
 function toOverview() {
    try {
       setEverythingToNone();
-      let overview = document.getElementById("overviewScreen");
-      overview.classList.remove("hidden");
-      return true;
+      return hideOrShowElement(document.getElementById("overviewScreen"), true);
    } catch (e) {
       alert("toOverview " + e.toString());
       return false;
@@ -217,18 +227,31 @@ function createStretchTableHead(table, rowData, stretch) {
    }
 }
 
-function getCurrentCards() {
+function getCurrentCards(round = -1) {
    try {
-      let currentCards = window.currentRound;
+      if (round === -1) { round = window.currentRound; }
+      let currentCards = round;
       if (window.roundWithoutTrump && currentCards === window.maxCards + 1) {
          currentCards = window.maxCards;
       } else if (currentCards > window.maxCards) {
          currentCards =
-            ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - window.currentRound;
+            ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - round;
       }
+
       return currentCards;
    } catch (e) {
       alert("getCurrentCards " + e.message);
+      return false;
+   }
+}
+
+// noinspection JSUnusedGlobalSymbols
+function clickDealerRadiobutton(playerIndex) {
+   try {
+      document.getElementById("radioDealer-" + playerIndex.toString()).checked = true;
+      return true;
+   } catch (e) {
+      alert("clickDealerRadiobutton " + e.message);
       return false;
    }
 }
@@ -240,10 +263,11 @@ function createPlayersTable() {
 
       for (let playerIndex = 0; playerIndex < 8; playerIndex++) {
          let row = playerTable.insertRow();
-         if (playerIndex > 1) { row.classList.add("hidden"); }
+         if (playerIndex > 1) { hideOrShowElement(row, false); }
          row.setAttribute("id", "playerRow" + playerIndex);
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
+         dealerCell.setAttribute("onclick", "return clickDealerRadiobutton(" + playerIndex.toString() + ")");
 
          let radioButton = document.createElement("input");
          radioButton.setAttribute("type", "radio");
@@ -279,6 +303,9 @@ function createPlayersTable() {
          nameChoiceCell.appendChild(nameList);
       }
       document.getElementById("checkNoTrumpMiddleRound").checked = true;
+      if (window.DEBUG) {
+         hideOrShowElement(document.getElementById("debugSetMaxCardsDiv"), true);
+      }
       return createTableHead(playerTable, ["Eerste deler", "Namen spelers"]);
    } catch (e) {
       alert("createPlayersTable " + e.message);
@@ -287,11 +314,9 @@ function createPlayersTable() {
 }
 
 function hideAllNextPlayerFields(number) {
-   let field;
    try {
       for (let i = number + 1; i < window.maxPlayers; i++) {
-         field = document.getElementById("playerRow" + i.toString());
-         field.classList.add("hidden");
+         hideOrShowElement(document.getElementById("playerRow" + i.toString()), false);
       }
       return true;
    } catch (e) {
@@ -302,12 +327,14 @@ function hideAllNextPlayerFields(number) {
 
 // noinspection JSUnusedGlobalSymbols
 function showNextPlayerField(index, value) {
-   let nextField;
    try {
-      nextField = document.getElementById("playerRow" + (index + 1).toString());
-      if (value) { nextField.classList.remove("hidden"); } else { hideAllNextPlayerFields(index); }
+      if (value) {
+         hideOrShowElement(document.getElementById("playerRow" + (index + 1).toString()),
+                           true);
+      } else { hideAllNextPlayerFields(index); }
       return true;
    } catch (e) {
+      alert("showNextPlayerField " + e.message);
       return false;
    }
 }
@@ -367,8 +394,16 @@ function storePlayers() {
 
       window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
-      window.maxCards = Math.floor(52 / window.players.length);
-      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : 0);
+      if (window.DEBUG) {
+         let maxCardsInput = document.getElementById("debugSetMaxCardsInput").value;
+         if (maxCardsInput) { window.maxCards = parseInt(maxCardsInput, 10); }
+      } else {
+         window.maxCards = Math.floor(52 / window.players.length)
+                           // If no cards would be left at the highest round, deal 1 card less
+                           - (52 % window.players.length === 0 ? 1 : 0);
+      }
+
+      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : -1);
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
@@ -547,15 +582,18 @@ function updateBidsOrTakesPlaced(bidOrTake) {
           spadeAlert  = document.getElementById("spadeTrumpSelectAlert");
 
       let equalCheck = (sum === currentCards);
+      // Filter to make sure not to count empty elements
       let amountInputsFilled = (bidOrTake === "bid"
                                 ? window.currentBids
-                                : window.currentTakes).length;
+                                : window.currentTakes).filter(function(value) {
+         return typeof (value !== "undefined")
+                && (value !== null);
+      }).length;
       let spadeRadioChecked = true;
       if (bidOrTake === "bid") {
          spadeRadioChecked =
             (anyRadioFilled(document.getElementById("spadeRadioButtonsP")) !== -1);
       }
-      // Second check is to ensure the game does not break when initialising the screen
       let allFilledIn = (window.players.length === amountInputsFilled);
       return hideOrShowElement(equalAlert, (bidOrTake === "bid" ? equalCheck : (! equalCheck)))
              && hideOrShowElement(filledAlert, (! allFilledIn))
@@ -573,10 +611,12 @@ function updateBidsOrTakesPlaced(bidOrTake) {
 function storeBids() {
    try {
       window.bids[window.currentRound] = window.currentBids;
-      let spadeField = document.getElementById("spadeRadioButton");
-      window.spadeTrump[window.currentRound] = spadeField.checked;
-      let spadeAlert = document.getElementById("spadeTrumpSelectAlert");
-      return spadeAlert.classList.contains("hidden") && toTakes();
+
+      window.spadeTrump[window.currentRound] = document
+         .getElementById("spadeRadioButton")
+         .checked;
+
+      return toTakes();
    } catch (e) {
       alert("storeBids " + e.message);
       return false;
@@ -586,10 +626,14 @@ function storeBids() {
 function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
-      createStretchTableHead(formTable,
-                             ["Spelers", "Scores", "Geboden", "Gehaald"],
-                             (getCurrentCards() + 1));
-      return true;
+
+
+      if (window.currentRound === window.maxRounds) {
+         hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
+      }
+      return createStretchTableHead(formTable,
+                                    ["Spelers", "Scores", "Geboden", "Gehaald"],
+                                    (getCurrentCards() + 1));
    } catch (e) {
       alert("createTakeTable " + e.message);
       return false;
@@ -682,8 +726,13 @@ function createScoreBoard() {
          let scoreRow = scoreTable.insertRow();
          let roundCell = scoreRow.insertCell(0);
          roundCell.innerHTML = round === 0 ? "" : round.toString();
-         let spadeCell = scoreRow.insertCell(1);
-         spadeCell.innerHTML = window.spadeTrump[round] ? "♠" : "";
+         let cardsCell = scoreRow.insertCell(1);
+         cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
+         let spadeCell = scoreRow.insertCell(2);
+         spadeCell.innerHTML =
+            (window.roundWithoutTrump && (round === window.maxCards + 1))
+            ? "NVT"
+            : window.spadeTrump[round] ? "♠" : "";
          for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
             let scoreCell = scoreRow.insertCell(-1);
 
@@ -705,7 +754,7 @@ function createScoreBoard() {
          hideOrShowElement(document.getElementById("scoreboardToBidButton"), false);
          hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), true);
       }
-      return createTableHead(scoreTable, ["Ronde", "♠", ...window.players]);
+      return createTableHead(scoreTable, ["Ronde", "Kaarten", "♠", ...window.players]);
    } catch (e) {
       alert("createScoreBoard " + e.message);
       return false;
