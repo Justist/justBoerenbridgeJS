@@ -132,11 +132,12 @@ function toBids() {
       if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
          hideOrShowElement(alert, false);
          hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
+         hideOrShowElement(document.getElementById("middleRoundText"), true);
          spadeRadioButtons[1].checked = true;
       } else {
          hideOrShowElement(alert, true);
          hideOrShowElement(document.getElementById("spadeRadioButtonsP"), true);
-
+         hideOrShowElement(document.getElementById("middleRoundText"), false);
       }
       return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
@@ -389,7 +390,7 @@ function storePlayers() {
                            - (52 % window.players.length === 0 ? 1 : 0);
       }
 
-      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : 0);
+      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : -1);
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
@@ -580,11 +581,6 @@ function updateBidsOrTakesPlaced(bidOrTake) {
          spadeRadioChecked =
             (anyRadioFilled(document.getElementById("spadeRadioButtonsP")) !== -1);
       }
-      // Second check is to ensure the game does not break when initialising the screen
-      console.log("uBOTP: length: %s, amount: %s, equal: %s".format(window.players.length.toString(),
-                                                                    amountInputsFilled.toString(),
-                                                                    (window.players.length
-                                                                     === amountInputsFilled).toString()));
       let allFilledIn = (window.players.length === amountInputsFilled);
       return hideOrShowElement(equalAlert, (bidOrTake === "bid" ? equalCheck : (! equalCheck)))
              && hideOrShowElement(filledAlert, (! allFilledIn))
@@ -719,7 +715,10 @@ function createScoreBoard() {
          let cardsCell = scoreRow.insertCell(1);
          cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
          let spadeCell = scoreRow.insertCell(2);
-         spadeCell.innerHTML = window.spadeTrump[round] ? "♠" : "";
+         spadeCell.innerHTML =
+            (window.roundWithoutTrump && (round === window.maxCards + 1))
+            ? "NVT"
+            : window.spadeTrump[round] ? "♠" : "";
          for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
             let scoreCell = scoreRow.insertCell(-1);
 
