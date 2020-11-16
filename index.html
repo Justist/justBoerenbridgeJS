@@ -197,15 +197,11 @@
          </p>
          <div class="table-responsive">
             <table class="table">
-               <thead>
-               <tr></tr>
-               </thead>
                <tbody>
                <tr>
                   <td class="bidInfoRow">Totaal gehaald<br></td>
                   <td id="takeInfoRow">0 / 1<br></td>
                </tr>
-               <tr></tr>
                </tbody>
             </table>
          </div>
@@ -223,7 +219,7 @@
             <table class="table" id="takeScreenButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
-                  <th class="alignCenter">
+                  <th class="alignCenter" id="takeScreenToBidsButton">
                      <button class="btn btn-primary"
                              type="button"
                              onclick="return storeTakes(true)">
@@ -247,7 +243,11 @@
 </div>
 <div id="overviewScreen" class="contact-clean">
    <form method="post">
-      <h2 class="text-center">Overzicht</h2>
+      <h2 class="text-center">Welkom bij Boerenbridge!</h2>
+      <p>Deze app is ontwikkeld door Aad Klaver en Simon Klaver en is bedoeld om scores voor
+         Boerenbridge in bij te houden. Onder deze tekst kunt u kiezen of u een nieuw spel wil
+         starten of eerst even de regels wil lezen.<br/> Voordat u begint, wil ik wel nog even
+         een paar woorden zeggen. En dit zijn ze: Domkop! Blubber! Kleinood! Kriel! Dank u.</p>
       <div class="table-responsive alignCenter">
          <table class="table" id="overviewButtonsTable">
             <thead class="alignCenter">
@@ -402,6 +402,19 @@
                Middelste ronde zonder troef?
                <br>
             </label>
+         </div>
+         <div class="form-check alignCenter hidden" id="debugSetMaxCardsDiv">
+
+            <label class="form-check-label"
+                   for="debugSetMaxCardsInput">
+               Max kaarten:
+            </label><br/>
+
+            <input class="form-check-input alignCenter"
+                   type="number"
+                   id="debugSetMaxCardsInput">
+            <br>
+
          </div>
          <div class="table-responsive alignCenter">
             <table class="table" id="newGameButtonTable">
