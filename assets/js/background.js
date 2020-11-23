@@ -45,7 +45,7 @@ function setEverythingToNone() {
 
 function resetAllStats() {
    try {
-      // Content is mostly just for show, as the first round is 1
+      // Content is mostly just for default values, as the first round is 1
       window.bids = { 0 : [] };
       window.currentBids = [];
       window.currentDealerIndex = -1; // Updated later on
@@ -54,6 +54,7 @@ function resetAllStats() {
       window.maxCards = -1; //Updated later on
       window.maxPlayers = 8;
       window.maxRounds = -1;
+      window.minimumPlayers = 2;
       window.players = [];
       window.roundWithoutTrump = true;
       window.scores = { 0 : [] };
@@ -245,7 +246,6 @@ function getCurrentCards(round = -1) {
    }
 }
 
-// noinspection JSUnusedGlobalSymbols
 function clickDealerRadiobutton(playerIndex) {
    try {
       document.getElementById("radioDealer-" + playerIndex.toString()).checked = true;
@@ -261,13 +261,14 @@ function createPlayersTable() {
       let playerTable = document.getElementById("newGameInputTable");
       removeAllContent(playerTable);
 
-      for (let playerIndex = 0; playerIndex < 8; playerIndex++) {
+      for (let playerIndex = 0; playerIndex < window.maxPlayers; playerIndex++) {
          let row = playerTable.insertRow();
          if (playerIndex > 1) { hideOrShowElement(row, false); }
          row.setAttribute("id", "playerRow" + playerIndex);
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
-         dealerCell.setAttribute("onclick", "return clickDealerRadiobutton(" + playerIndex.toString() + ")");
+         dealerCell.setAttribute("onclick",
+                                 "return updatePlayers(" + playerIndex.toString() + ", \"-1\")");
 
          let radioButton = document.createElement("input");
          radioButton.setAttribute("type", "radio");
@@ -287,7 +288,7 @@ function createPlayersTable() {
          nameSelectElement.setAttribute("placeholder",
                                         "Kies een speler of typ een naam");
          nameSelectElement.setAttribute("onchange",
-                                        "return showNextPlayerField("
+                                        "return updatePlayers("
                                         + playerIndex.toString()
                                         + ", this.value)");
          nameChoiceCell.appendChild(nameSelectElement);
@@ -325,16 +326,74 @@ function hideAllNextPlayerFields(number) {
    }
 }
 
+function findFirstHiddenNameField() {
+   try {
+      let i;
+      for (i = 0; i < window.maxPlayers; i++) {
+         if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")) {
+            break;
+         }
+      }
+      // Even if the loop doesn't break, we still get a number
+      return i;
+   } catch (e) {
+      alert("findFirstHiddenNameField " + e.message);
+      return false;
+   }
+}
+
+function checkPlayerValidity(index) {
+   try {
+      if (index === -1) { return false; }
+      return (document.getElementById("nameChoice-" + index.toString()).value !== "")
+             &&
+             (index < findFirstHiddenNameField());
+   } catch (e) {
+      alert("checkPlayerValidity " + e.message);
+      return false;
+   }
+}
+
 // noinspection JSUnusedGlobalSymbols
-function showNextPlayerField(index, value) {
+function updatePlayers(index, value) {
+   try {
+      let result;
+      let notEnoughPlayersAlert = document.getElementById("notEnoughPlayersAlert");
+      let currentDealer = index;
+      let noValidDealerAlert = document.getElementById("noValidDealerAlert");
+      if (value === "-1") {
+         //checkbox got checked
+         result = clickDealerRadiobutton(index);
+      } else {
+         // Playername got changed
+         currentDealer = anyRadioFilled(document.getElementById("newGameForm"));
+         result =
+            showAllNextPlayerFields(index, value) && hideOrShowElement(notEnoughPlayersAlert,
+                                                                       // Say this is 2: if 1 is not
+                                                                       // filled in, 2 is hidden
+                                                                       findFirstHiddenNameField()
+                                                                       <= window.minimumPlayers);
+      }
+      return result && hideOrShowElement(noValidDealerAlert, ! checkPlayerValidity(currentDealer));
+   } catch (e) {
+      alert("updatePlayers " + e.message);
+      return false;
+   }
+}
+
+function showAllNextPlayerFields(index, value) {
+   // with values, of course
    try {
       if (value) {
-         hideOrShowElement(document.getElementById("playerRow" + (index + 1).toString()),
-                           true);
-      } else { hideAllNextPlayerFields(index); }
-      return true;
+         for (let i = index + 1; i < window.maxPlayers; i++) {
+            hideOrShowElement(document.getElementById("playerRow" + i.toString()), true);
+            // Only show one empty line
+            if (document.getElementById("nameChoice-" + i.toString()).value === "") { break; }
+         }
+         return true;
+      } else { return hideAllNextPlayerFields(index); }
    } catch (e) {
-      alert("showNextPlayerField " + e.message);
+      alert("showAllNextPlayerFields " + e.message);
       return false;
    }
 }
@@ -626,7 +685,6 @@ function storeBids() {
 function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
-
 
       if (window.currentRound === window.maxRounds) {
          hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
