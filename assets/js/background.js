@@ -342,7 +342,28 @@ function findFirstHiddenNameField() {
    }
 }
 
-function checkPlayerValidity(index) {
+function checkNoDoublePlayers() {
+   try {
+      let currentPlayers = [];
+      let value;
+      for (let i = 0; i < window.maxPlayers; i++) {
+         value = document.getElementById("nameChoice-" + i.toString()).value;
+         if (value === "") {
+            break; //Only players before the first empty cell should be considered
+         } else if (currentPlayers.includes(value)) {
+            return false;
+         } else {
+            currentPlayers.push(value);
+         }
+      }
+      return true;
+   } catch (e) {
+      alert("checkDoublePlayers " + e.message);
+      return false;
+   }
+}
+
+function checkDealerValidity(index) {
    try {
       if (index === -1) { return false; }
       return (document.getElementById("nameChoice-" + index.toString()).value !== "")
@@ -358,23 +379,31 @@ function checkPlayerValidity(index) {
 function updatePlayers(index, value) {
    try {
       let result;
-      let notEnoughPlayersAlert = document.getElementById("notEnoughPlayersAlert");
       let currentDealer = index;
+
+      let notEnoughPlayersAlert = document.getElementById("notEnoughPlayersAlert");
       let noValidDealerAlert = document.getElementById("noValidDealerAlert");
+      let doublePlayerNamesAlert = document.getElementById("doublePlayerNamesAlert");
+      let buttonElement = document.getElementById("newGameButtonTable");
+
       if (value === "-1") {
          //checkbox got checked
          result = clickDealerRadiobutton(index);
       } else {
          // Playername got changed
          currentDealer = anyRadioFilled(document.getElementById("newGameForm"));
-         result =
-            showAllNextPlayerFields(index, value) && hideOrShowElement(notEnoughPlayersAlert,
-                                                                       // Say this is 2: if 1 is not
-                                                                       // filled in, 2 is hidden
-                                                                       findFirstHiddenNameField()
-                                                                       <= window.minimumPlayers);
+         result = showAllNextPlayerFields(index, value);
       }
-      return result && hideOrShowElement(noValidDealerAlert, ! checkPlayerValidity(currentDealer));
+      // These should be initialised after the if/else!
+      let conditionValidDealer = checkDealerValidity(currentDealer);
+      let conditionEnoughPlayers = findFirstHiddenNameField() > window.minimumPlayers;
+      let conditionNoDoublePlayers = checkNoDoublePlayers();
+      return result
+             && hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
+             && hideOrShowElement(notEnoughPlayersAlert, ! conditionEnoughPlayers)
+             && hideOrShowElement(doublePlayerNamesAlert, ! conditionNoDoublePlayers)
+             && hideOrShowElement(buttonElement,
+             conditionEnoughPlayers && conditionValidDealer && conditionNoDoublePlayers);
    } catch (e) {
       alert("updatePlayers " + e.message);
       return false;
@@ -430,22 +459,6 @@ function storePlayers() {
          if (name) { localPlayers.add(name); }
          //If there is an empty field followed by filled in fields, ignore those
          else { break; }
-      }
-
-      if (localPlayers.size < 2) {
-         alert("Je hebt minder dan 2 spelers ingevuld!");
-         return false;
-      }
-
-      // localPlayers is a set, so if there are duplicate names fieldIndex is larger than the set
-      if (fieldIndex > localPlayers.size) {
-         alert("Dubbele namen zijn niet toegestaan!");
-         return false;
-      }
-
-      if ((localDealerIndex === -1) || ((localDealerIndex + 1) > localPlayers.size)) {
-         alert("Geen (valide) beginspeler gekozen!");
-         return false;
       }
 
       let noTrumpMiddleRound = document.getElementById("checkNoTrumpMiddleRound");
