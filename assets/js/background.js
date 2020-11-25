@@ -45,7 +45,7 @@ function setEverythingToNone() {
 
 function resetAllStats() {
    try {
-      // Content is mostly just for show, as the first round is 1
+      // Content is mostly just for default values, as the first round is 1
       window.bids = { 0 : [] };
       window.currentBids = [];
       window.currentDealerIndex = -1; // Updated later on
@@ -54,6 +54,7 @@ function resetAllStats() {
       window.maxCards = -1; //Updated later on
       window.maxPlayers = 8;
       window.maxRounds = -1;
+      window.minimumPlayers = 2;
       window.players = [];
       window.roundWithoutTrump = true;
       window.scores = { 0 : [] };
@@ -245,7 +246,6 @@ function getCurrentCards(round = -1) {
    }
 }
 
-// noinspection JSUnusedGlobalSymbols
 function clickDealerRadiobutton(playerIndex) {
    try {
       document.getElementById("radioDealer-" + playerIndex.toString()).checked = true;
@@ -261,13 +261,14 @@ function createPlayersTable() {
       let playerTable = document.getElementById("newGameInputTable");
       removeAllContent(playerTable);
 
-      for (let playerIndex = 0; playerIndex < 8; playerIndex++) {
+      for (let playerIndex = 0; playerIndex < window.maxPlayers; playerIndex++) {
          let row = playerTable.insertRow();
          if (playerIndex > 1) { hideOrShowElement(row, false); }
          row.setAttribute("id", "playerRow" + playerIndex);
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
-         dealerCell.setAttribute("onclick", "return clickDealerRadiobutton(" + playerIndex.toString() + ")");
+         dealerCell.setAttribute("onclick",
+                                 "return updatePlayers(" + playerIndex.toString() + ", \"-1\")");
 
          let radioButton = document.createElement("input");
          radioButton.setAttribute("type", "radio");
@@ -287,7 +288,7 @@ function createPlayersTable() {
          nameSelectElement.setAttribute("placeholder",
                                         "Kies een speler of typ een naam");
          nameSelectElement.setAttribute("onchange",
-                                        "return showNextPlayerField("
+                                        "return updatePlayers("
                                         + playerIndex.toString()
                                         + ", this.value)");
          nameChoiceCell.appendChild(nameSelectElement);
@@ -325,16 +326,103 @@ function hideAllNextPlayerFields(number) {
    }
 }
 
-// noinspection JSUnusedGlobalSymbols
-function showNextPlayerField(index, value) {
+function findFirstHiddenNameField() {
    try {
-      if (value) {
-         hideOrShowElement(document.getElementById("playerRow" + (index + 1).toString()),
-                           true);
-      } else { hideAllNextPlayerFields(index); }
+      let i;
+      for (i = 0; i < window.maxPlayers; i++) {
+         if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")) {
+            break;
+         }
+      }
+      // Even if the loop doesn't break, we still get a number
+      return i;
+   } catch (e) {
+      alert("findFirstHiddenNameField " + e.message);
+      return false;
+   }
+}
+
+function checkNoDoublePlayers() {
+   try {
+      let currentPlayers = [];
+      let value;
+      for (let i = 0; i < window.maxPlayers; i++) {
+         value = document.getElementById("nameChoice-" + i.toString()).value;
+         if (value === "") {
+            break; //Only players before the first empty cell should be considered
+         } else if (currentPlayers.includes(value)) {
+            return false;
+         } else {
+            currentPlayers.push(value);
+         }
+      }
       return true;
    } catch (e) {
-      alert("showNextPlayerField " + e.message);
+      alert("checkDoublePlayers " + e.message);
+      return false;
+   }
+}
+
+function checkDealerValidity(index) {
+   try {
+      if (index === -1) { return false; }
+      return (document.getElementById("nameChoice-" + index.toString()).value !== "")
+             &&
+             (index < findFirstHiddenNameField());
+   } catch (e) {
+      alert("checkPlayerValidity " + e.message);
+      return false;
+   }
+}
+
+// noinspection JSUnusedGlobalSymbols
+function updatePlayers(index, value) {
+   try {
+      let result;
+      let currentDealer = index;
+
+      let notEnoughPlayersAlert = document.getElementById("notEnoughPlayersAlert");
+      let noValidDealerAlert = document.getElementById("noValidDealerAlert");
+      let doublePlayerNamesAlert = document.getElementById("doublePlayerNamesAlert");
+      let buttonElement = document.getElementById("newGameButtonTable");
+
+      if (value === "-1") {
+         //checkbox got checked
+         result = clickDealerRadiobutton(index);
+      } else {
+         // Playername got changed
+         currentDealer = anyRadioFilled(document.getElementById("newGameForm"));
+         result = showAllNextPlayerFields(index, value);
+      }
+      // These should be initialised after the if/else!
+      let conditionValidDealer = checkDealerValidity(currentDealer);
+      let conditionEnoughPlayers = findFirstHiddenNameField() > window.minimumPlayers;
+      let conditionNoDoublePlayers = checkNoDoublePlayers();
+      return result
+             && hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
+             && hideOrShowElement(notEnoughPlayersAlert, ! conditionEnoughPlayers)
+             && hideOrShowElement(doublePlayerNamesAlert, ! conditionNoDoublePlayers)
+             && hideOrShowElement(buttonElement,
+             conditionEnoughPlayers && conditionValidDealer && conditionNoDoublePlayers);
+   } catch (e) {
+      alert("updatePlayers " + e.message);
+      return false;
+   }
+}
+
+function showAllNextPlayerFields(index, value) {
+   // with values, of course
+   try {
+      if (value) {
+         for (let i = index + 1; i < window.maxPlayers; i++) {
+            hideOrShowElement(document.getElementById("playerRow" + i.toString()), true);
+            // Only show one empty line
+            if (document.getElementById("nameChoice-" + i.toString()).value === "") { break; }
+         }
+         return true;
+      } else { return hideAllNextPlayerFields(index); }
+   } catch (e) {
+      alert("showAllNextPlayerFields " + e.message);
       return false;
    }
 }
@@ -371,22 +459,6 @@ function storePlayers() {
          if (name) { localPlayers.add(name); }
          //If there is an empty field followed by filled in fields, ignore those
          else { break; }
-      }
-
-      if (localPlayers.size < 2) {
-         alert("Je hebt minder dan 2 spelers ingevuld!");
-         return false;
-      }
-
-      // localPlayers is a set, so if there are duplicate names fieldIndex is larger than the set
-      if (fieldIndex > localPlayers.size) {
-         alert("Dubbele namen zijn niet toegestaan!");
-         return false;
-      }
-
-      if ((localDealerIndex === -1) || ((localDealerIndex + 1) > localPlayers.size)) {
-         alert("Geen (valide) beginspeler gekozen!");
-         return false;
       }
 
       let noTrumpMiddleRound = document.getElementById("checkNoTrumpMiddleRound");
@@ -626,7 +698,6 @@ function storeBids() {
 function createTakeTable() {
    try {
       let formTable = createBidTakeTable("take");
-
 
       if (window.currentRound === window.maxRounds) {
          hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
