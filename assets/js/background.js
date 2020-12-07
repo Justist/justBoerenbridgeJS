@@ -4,6 +4,26 @@ window.DEBUG = false;
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
+class Settings {
+   constructor() {
+      this.roundWithoutTrump = true;
+      this.spadeDouble = true;
+      this.dealerLast = true;
+      this.maxPlayers = 8;
+      this.maxCards = 10;
+   }
+
+   set rwt(bool) { this.roundWithoutTrump = bool; }
+
+   set sd(bool) { this.spadeDouble = bool; }
+
+   set dl(bool) { this.dealerLast = bool; }
+
+   set mp(num) { this.maxPlayers = num; }
+
+   set mc(num) { this.maxCards = num; }
+}
+
 //  deepcode ignore no-extend-native: I like format()
 String.prototype.format = function() {
    try {
@@ -31,7 +51,7 @@ function setEverythingToNone() {
                         "scoreboardScreen",
                         "gameRulesScreen",
                         "overviewScreen",
-                        "endOfGameScreen"])
+                        "settingsScreen"])
       {
          let div = document.getElementById(page);
          div.classList.add("hidden");
@@ -187,9 +207,21 @@ function toGameRules() {
    }
 }
 
+function toSettings() {
+   try {
+      setEverythingToNone();
+
+      return createSettingsScreen();
+   } catch (e) {
+      alert("toSettings " + e.message);
+      return false;
+   }
+}
+
 function toOverview() {
    try {
       setEverythingToNone();
+      window.settings = new Settings();
       return hideOrShowElement(document.getElementById("overviewScreen"), true);
    } catch (e) {
       alert("toOverview " + e.toString());
@@ -224,6 +256,21 @@ function createStretchTableHead(table, rowData, stretch) {
       return true;
    } catch (e) {
       alert("createStretchTableHead " + e.message);
+      return false;
+   }
+}
+
+function createRadioButton(name, id, classAddition, checked) {
+   try {
+      let radioButton = document.createElement("input");
+      radioButton.setAttribute("type", "radio");
+      radioButton.setAttribute("name", name);
+      radioButton.setAttribute("id", id);
+      radioButton.setAttribute("checked", checked);
+      radioButton.classList.add(classAddition);
+      return radioButton;
+   } catch (e) {
+      alert("createRadioButton " + e.message);
       return false;
    }
 }
@@ -270,12 +317,10 @@ function createPlayersTable() {
          dealerCell.setAttribute("onclick",
                                  "return updatePlayers(" + playerIndex.toString() + ", \"-1\")");
 
-         let radioButton = document.createElement("input");
-         radioButton.setAttribute("type", "radio");
-         radioButton.setAttribute("name", "firstDealer");
-         radioButton.setAttribute("id", "radioDealer-" + playerIndex.toString());
-         radioButton.classList.add("vertCenter");
-         dealerCell.appendChild(radioButton);
+         dealerCell.appendChild(createRadioButton("firstDealer",
+                                                  "radioDealer-" + playerIndex.toString(),
+                                                  "vertCenter",
+                                                  false));
 
          let nameChoiceCell = row.insertCell(1);
          nameChoiceCell.classList.add("vertCenter");
@@ -828,6 +873,52 @@ function createScoreBoard() {
       return createTableHead(scoreTable, ["Ronde", "Kaarten", "♠", ...window.players]);
    } catch (e) {
       alert("createScoreBoard " + e.message);
+      return false;
+   }
+}
+
+function createSettingsScreen() {
+   try {
+      let settingsTable = document.getElementById("settingsTable");
+      let row = settingsTable.insertRow();
+      let cell1 = row.insertCell(0);
+      cell1.innerText = "Instelling:";
+      let cell2 = row.insertCell(1);
+      cell2.innerText = "Uit";
+      let cell3 = row.insertCell(2);
+      cell3.innerText = "Aan";
+      for (let key in window.settings) {
+         if (window.settings.hasOwnProperty(key)) {
+            let keyValue = window.settings[key];
+            row = settingsTable.insertRow();
+            cell1 = row.insertCell(0);
+            cell1.innerText = key.toString();
+            cell2 = row.insertCell(1);
+            if (typeof keyValue === "boolean") {
+               cell3 = row.insertCell(2);
+               console.log("key: ", key);
+               console.log("value: ", keyValue);
+               cell2.appendChild(createRadioButton(key.toString() + "radio",
+                                                   key.toString() + "radioId1",
+                                                   "alignLeft",
+                                                   keyValue === false));
+               cell3.appendChild(createRadioButton(key.toString() + "radio",
+                                                   key.toString() + "radioId2",
+                                                   "alignLeft",
+                                                   keyValue === true));
+            } else if (typeof keyValue === "number") {
+               cell2.setAttribute("colspan", "2");
+               let numberInput = document.createElement("input");
+               numberInput.setAttribute("type", "number");
+               numberInput.setAttribute("id", key.toString() + "numberId");
+               numberInput.setAttribute("value", keyValue);
+               cell2.appendChild(numberInput);
+            }
+         }
+      }
+      return hideOrShowElement(document.getElementById("settingsScreen"), true);
+   } catch (e) {
+      alert("createSettingsScreen " + e.message);
       return false;
    }
 }
