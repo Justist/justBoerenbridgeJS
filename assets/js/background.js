@@ -35,11 +35,104 @@ String.prototype.format = function() {
    }
 };
 
+function storageAvailable(type) {
+   // As copied from
+   // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+   let storage;
+   try {
+      storage = window[type];
+      let x = "__storage_test__";
+      storage.setItem(x, x);
+      storage.removeItem(x);
+      return true;
+   } catch (e) {
+      return e instanceof DOMException && (
+                  // everything except Firefox
+         e.code === 22 ||
+         // Firefox
+         e.code === 1014 ||
+         // test name field too, because code might not be present
+         // everything except Firefox
+         e.name === "QuotaExceededError" ||
+         // Firefox
+         e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+             // acknowledge QuotaExceededError only if there's something already stored
+             (storage && storage.length !== 0);
+   }
+}
+
+function storeLocal(itemName, itemData) {
+   try {
+      if (! storageAvailable("localStorage")) {
+         // This should be changed to not be an alert on every try, like a static message somewhere
+         alert("No local storage available! Changes will not be saved!");
+         // Then fail silently
+         return true;
+      }
+      window.localStorage.setItem(itemName, itemData);
+      return true;
+   } catch (e) {
+      alert("storeLocal: " + e.message);
+      return false;
+   }
+}
+
+function getLocal(itemName) {
+   try {
+      if (! storageAvailable("localStorage")) {
+         // This should be changed to not be an alert on every try, like a static message somewhere
+         alert("No local storage available! Changes will not be saved!");
+         // Then fail silently
+         return true;
+      }
+      return window.localStorage.getItem(itemName);
+   } catch (e) {
+      alert("getLocal: " + e.message);
+      return false;
+   }
+}
+
+function getSettings() {
+   try {
+      let keyValue;
+      for (let key in window.settings) {
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         keyValue = getLocal(key);
+         if (keyValue) {
+            window.settings[key] = keyValue;
+         }
+      }
+      return true;
+   } catch (e) {
+      alert("getSettings: " + e.message);
+      return false;
+   }
+}
+
+function storeSettings() {
+   try {
+      for (let key in window.settings) {
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         storeLocal(key, window.settings[key]);
+      }
+      return true;
+   } catch (e) {
+      alert("storeSettings: " + e.message);
+      return false;
+   }
+}
+
 function removeAllContent(parent) {
    try {
       while (parent.firstChild) { parent.removeChild(parent.lastChild); }
+      return true;
    } catch (e) {
       alert("removeAllContent " + e.message);
+      return false;
    }
 }
 
@@ -210,7 +303,6 @@ function toGameRules() {
 function toSettings() {
    try {
       setEverythingToNone();
-
       return createSettingsScreen();
    } catch (e) {
       alert("toSettings " + e.message);
@@ -222,7 +314,7 @@ function toOverview() {
    try {
       setEverythingToNone();
       window.settings = new Settings();
-      return hideOrShowElement(document.getElementById("overviewScreen"), true);
+      return getSettings() && hideOrShowElement(document.getElementById("overviewScreen"), true);
    } catch (e) {
       alert("toOverview " + e.toString());
       return false;
@@ -888,37 +980,64 @@ function createSettingsScreen() {
       let cell3 = row.insertCell(2);
       cell3.innerText = "Aan";
       for (let key in window.settings) {
-         if (window.settings.hasOwnProperty(key)) {
-            let keyValue = window.settings[key];
-            row = settingsTable.insertRow();
-            cell1 = row.insertCell(0);
-            cell1.innerText = key.toString();
-            cell2 = row.insertCell(1);
-            if (typeof keyValue === "boolean") {
-               cell3 = row.insertCell(2);
-               console.log("key: ", key);
-               console.log("value: ", keyValue);
-               cell2.appendChild(createRadioButton(key.toString() + "radio",
-                                                   key.toString() + "radioId1",
-                                                   "alignLeft",
-                                                   keyValue === false));
-               cell3.appendChild(createRadioButton(key.toString() + "radio",
-                                                   key.toString() + "radioId2",
-                                                   "alignLeft",
-                                                   keyValue === true));
-            } else if (typeof keyValue === "number") {
-               cell2.setAttribute("colspan", "2");
-               let numberInput = document.createElement("input");
-               numberInput.setAttribute("type", "number");
-               numberInput.setAttribute("id", key.toString() + "numberId");
-               numberInput.setAttribute("value", keyValue);
-               cell2.appendChild(numberInput);
-            }
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         let keyValue = window.settings[key];
+         row = settingsTable.insertRow();
+         cell1 = row.insertCell(0);
+         cell1.innerText = key.toString();
+         cell2 = row.insertCell(1);
+         if (typeof keyValue === "boolean") {
+            cell3 = row.insertCell(2);
+            cell2.appendChild(createRadioButton(key.toString() + "radio",
+                                                key.toString() + "radioId1",
+                                                "alignLeft",
+                                                keyValue === false));
+            cell3.appendChild(createRadioButton(key.toString() + "radio",
+                                                key.toString() + "radioId2",
+                                                "alignLeft",
+                                                keyValue === true));
+         } else if (typeof keyValue === "number") {
+            cell2.setAttribute("colspan", "2");
+            let numberInput = document.createElement("input");
+            numberInput.setAttribute("type", "number");
+            numberInput.setAttribute("id", key.toString() + "numberId");
+            numberInput.setAttribute("value", keyValue);
+            cell2.appendChild(numberInput);
          }
       }
       return hideOrShowElement(document.getElementById("settingsScreen"), true);
    } catch (e) {
       alert("createSettingsScreen " + e.message);
+      return false;
+   }
+}
+
+function saveSettings() {
+   try {
+      let keyValue, newValue;
+      for (let key in window.settings) {
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         // Bit counterintuitive maybe, but as values are always initialised this is a good way to
+         // determine which id to get and how to get the value (checked vs value)
+         keyValue = window.settings[key];
+         if (typeof keyValue === "boolean") {
+            newValue = document.getElementById(key.toString() + "radioId1").checked === false;
+         } else if (typeof keyValue === "number") {
+            newValue = document.getElementById(key.toString() + "numberId").value;
+         } else {
+            alert("Setting %s has the invalid type of %s! Please fix this.".format(key.toString(),
+                                                                                   typeof keyValue));
+            return false;
+         }
+         window.settings[key] = newValue;
+      }
+      return storeSettings();
+   } catch (e) {
+      alert("saveSettings " + e.message);
       return false;
    }
 }
