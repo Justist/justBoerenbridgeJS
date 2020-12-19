@@ -11,7 +11,7 @@ class Settings {
       this.spadeDouble =
          { id : "sd", text : "Schoppen telt dubbel: ", type : "boolean", value : true };
       this.dealerLast =
-         { id : "dl", text : "Deler onderaan bij bieden/halen: ", type : "boolean", value : true };
+         { id : "dl", text : "Deler onderaan bij bieden/halen: ", type : "boolean", value : false };
       this.minPlayers =
          { id : "minp", text : "Minimum aantal spelers mogelijk: ", type : "number", value : 2 };
       this.maxPlayers =
@@ -29,6 +29,17 @@ class Settings {
          }
       } catch (e) {
          alert("window.settings.getSetting: " + e.message);
+         return false;
+      }
+   }
+
+   getValue(name) {
+      try {
+         let setting = this.getSetting(name);
+         if (setting) { return setting.value; }
+         else { return false; }
+      } catch (e) {
+         alert("window.settings.getValue: " + e.message);
          return false;
       }
    }
@@ -189,7 +200,6 @@ function resetAllStats() {
       window.currentDealerIndex = -1; // Updated later on
       window.currentRound = 1;
       window.currentTakes = [];
-      window.maxPlayers = 8;
       window.maxRounds = -1;
       window.players = [];
       window.scores = { 0 : [] };
@@ -266,7 +276,7 @@ function toBids() {
          document.getElementById("spadeRadioButtonsP"),
          "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
-      if (window.settings.getSetting("roundWithoutTrump").value
+      if (window.settings.getValue("roundWithoutTrump")
           && (window.currentRound === window.maxCards + 1))
       {
          hideOrShowElement(alert, false);
@@ -290,7 +300,7 @@ function toTakes() {
       setEverythingToNone();
       window.currentTakes = [];
       hideOrShowElement(document.getElementById("takeScreen"), true);
-      if (window.settings.getSetting("roundWithoutTrump").value
+      if (window.settings.getValue("roundWithoutTrump")
           && (window.currentRound === window.maxCards + 1))
       {
          hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
@@ -397,13 +407,13 @@ function getCurrentCards(round = -1) {
    try {
       if (round === -1) { round = window.currentRound; }
       let currentCards = round;
-      if (window.settings.getSetting("roundWithoutTrump").value
+      if (window.settings.getValue("roundWithoutTrump")
           && (currentCards === (window.maxCards + 1)))
       {
          currentCards = window.maxCards;
       } else if (currentCards > window.maxCards) {
          currentCards =
-            ((window.maxCards + (window.settings.getSetting("roundWithoutTrump").value ? 1 : 0))
+            ((window.maxCards + (window.settings.getValue("roundWithoutTrump") ? 1 : 0))
              * 2) - round;
       }
 
@@ -429,7 +439,10 @@ function createPlayersTable() {
       let playerTable = document.getElementById("newGameInputTable");
       removeAllContent(playerTable);
 
-      for (let playerIndex = 0; playerIndex < window.maxPlayers; playerIndex++) {
+      for (let playerIndex = 0;
+           playerIndex < window.settings.getValue("maxPlayers");
+           playerIndex++)
+      {
          let row = playerTable.insertRow();
          if (playerIndex > 1) { hideOrShowElement(row, false); }
          row.setAttribute("id", "playerRow" + playerIndex);
@@ -481,7 +494,7 @@ function createPlayersTable() {
 
 function hideAllNextPlayerFields(number) {
    try {
-      for (let i = number + 1; i < window.maxPlayers; i++) {
+      for (let i = number + 1; i < window.settings.getValue("maxPlayers"); i++) {
          hideOrShowElement(document.getElementById("playerRow" + i.toString()), false);
       }
       return true;
@@ -494,7 +507,7 @@ function hideAllNextPlayerFields(number) {
 function findFirstHiddenNameField() {
    try {
       let i;
-      for (i = 0; i < window.maxPlayers; i++) {
+      for (i = 0; i < window.settings.getValue("maxPlayers"); i++) {
          if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")) {
             break;
          }
@@ -511,7 +524,7 @@ function checkNoDoublePlayers() {
    try {
       let currentPlayers = [];
       let value;
-      for (let i = 0; i < window.maxPlayers; i++) {
+      for (let i = 0; i < window.settings.getValue("maxPlayers"); i++) {
          value = document.getElementById("nameChoice-" + i.toString()).value;
          if (value === "") {
             break; //Only players before the first empty cell should be considered
@@ -562,7 +575,7 @@ function updatePlayers(index, value) {
       // These should be initialised after the if/else!
       let conditionValidDealer = checkDealerValidity(currentDealer);
       let conditionEnoughPlayers = findFirstHiddenNameField() >
-                                   window.settings.getSetting("minPlayers").value;
+                                   window.settings.getValue("minPlayers");
       let conditionNoDoublePlayers = checkNoDoublePlayers();
       return result
              && hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
@@ -580,7 +593,7 @@ function showAllNextPlayerFields(index, value) {
    // with values, of course
    try {
       if (value) {
-         for (let i = index + 1; i < window.maxPlayers; i++) {
+         for (let i = index + 1; i < window.settings.getValue("maxPlayers"); i++) {
             hideOrShowElement(document.getElementById("playerRow" + i.toString()), true);
             // Only show one empty line
             if (document.getElementById("nameChoice-" + i.toString()).value === "") { break; }
@@ -638,11 +651,11 @@ function storePlayers() {
                                       // card less
                                       - (52 % window.players.length === 0 ? 1 : 0);
          window.maxCards =
-            Math.min(maxCardsBasedOnPlayers, window.settings.getSetting("maxCards").value);
+            Math.min(maxCardsBasedOnPlayers, window.settings.getValue("maxCards"));
       }
 
       window.maxRounds =
-         (window.maxCards * 2) + (window.settings.getSetting("roundWithoutTrump").value ? 1 : -1);
+         (window.maxCards * 2) + (window.settings.getValue("roundWithoutTrump") ? 1 : -1);
       console.log("maxCards: %s, maxRounds: %s".format(window.maxCards, window.maxRounds));
       for (let _ of window.players) {
          window.scores[0].push(0);
@@ -915,8 +928,9 @@ function updateScores() {
             localScores[playerIndex] =
                (-Math.abs(window.currentBids[playerIndex] - window.currentTakes[playerIndex]) * 3);
          }
-         if (window.settings.getSetting("spadeDouble").value
-             && window.spadeTrump[window.currentRound]) { localScores[playerIndex] *= 2; }
+         if (window.settings.getValue("spadeDouble")
+             && window.spadeTrump[window.currentRound])
+         { localScores[playerIndex] *= 2; }
       }
       window.scores[window.currentRound] = localScores;
       return true;
@@ -978,7 +992,7 @@ function createScoreBoard() {
          cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
          let spadeCell = scoreRow.insertCell(2);
          spadeCell.innerHTML =
-            (window.settings.getSetting("roundWithoutTrump").value && (round
+            (window.settings.getValue("roundWithoutTrump") && (round
                                                                        === window.maxCards
                                                                        + 1))
             ? "NVT"
