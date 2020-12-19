@@ -1042,7 +1042,7 @@ function createSettingsScreen() {
          if (! window.settings.hasOwnProperty(key)) {
             continue;
          }
-         let keyValue = window.settings[key];
+         let keyValue = window.settings.getSetting(key);
          row = settingsTable.insertRow();
          cell1 = row.insertCell(0);
          cell1.innerText = keyValue.text;
@@ -1082,7 +1082,7 @@ function saveSettings() {
          }
          // Bit counterintuitive maybe, but as values are always initialised this is a good way to
          // determine which id to get and how to get the value (checked vs value)
-         keyValue = window.settings[key];
+         keyValue = window.settings.getSetting(key);
          if (keyValue.type === "boolean") {
             newValue = document.getElementById(keyValue.id + "radioId1").checked === false;
          } else if (keyValue.type === "number") {
