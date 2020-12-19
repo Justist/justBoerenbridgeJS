@@ -6,22 +6,19 @@ window.regularPlayers =
 
 class Settings {
    constructor() {
-      this.roundWithoutTrump = true;
-      this.spadeDouble = true;
-      this.dealerLast = true;
-      this.maxPlayers = 8;
-      this.maxCards = 10;
+      this.roundWithoutTrump =
+         { id : "rwt", text : "Ronde zonder troef: ", type : "boolean", value : true };
+      this.spadeDouble =
+         { id : "sd", text : "Schoppen telt dubbel: ", type : "boolean", value : true };
+      this.dealerLast =
+         { id : "dl", text : "Deler onderaan bij bieden/halen: ", type : "boolean", value : true };
+      this.minPlayers =
+         { id : "minp", text : "Minimum aantal spelers mogelijk: ", type : "number", value : 2 };
+      this.maxPlayers =
+         { id : "maxp", text : "Maximum aantal spelers mogelijk: ", type : "number", value : 8 };
+      this.maxCards =
+         { id : "maxc", text : "Maximum aantal kaarten mogelijk: ", type : "number", value : 8 };
    }
-
-   set rwt(bool) { this.roundWithoutTrump = bool; }
-
-   set sd(bool) { this.spadeDouble = bool; }
-
-   set dl(bool) { this.dealerLast = bool; }
-
-   set mp(num) { this.maxPlayers = num; }
-
-   set mc(num) { this.maxCards = num; }
 }
 
 //  deepcode ignore no-extend-native: I like format()
@@ -101,7 +98,7 @@ function getSettings() {
          }
          keyValue = getLocal(key);
          if (keyValue) {
-            window.settings[key] = keyValue;
+            window.settings[key] = JSON.parse(keyValue);
          }
       }
       return true;
@@ -114,10 +111,11 @@ function getSettings() {
 function storeSettings() {
    try {
       for (let key in window.settings) {
-         if (! window.settings.hasOwnProperty(key)) {
+         if (! (window.settings.hasOwnProperty(key) && window.settings[key])) {
             continue;
          }
-         storeLocal(key, window.settings[key]);
+         console.log("Saving ", JSON.stringify(window.settings[key]));
+         storeLocal(key, JSON.stringify(window.settings[key]));
       }
       return true;
    } catch (e) {
@@ -164,7 +162,6 @@ function resetAllStats() {
       window.currentDealerIndex = -1; // Updated later on
       window.currentRound = 1;
       window.currentTakes = [];
-      window.maxCards = -1; //Updated later on
       window.maxPlayers = 8;
       window.maxRounds = -1;
       window.minimumPlayers = 2;
@@ -358,7 +355,7 @@ function createRadioButton(name, id, classAddition, checked) {
       radioButton.setAttribute("type", "radio");
       radioButton.setAttribute("name", name);
       radioButton.setAttribute("id", id);
-      radioButton.setAttribute("checked", checked);
+      radioButton.checked = checked; // setAttribute does not work for this :(
       radioButton.classList.add(classAddition);
       return radioButton;
    } catch (e) {
@@ -607,9 +604,11 @@ function storePlayers() {
          let maxCardsInput = document.getElementById("debugSetMaxCardsInput").value;
          if (maxCardsInput) { window.maxCards = parseInt(maxCardsInput, 10); }
       } else {
-         window.maxCards = Math.floor(52 / window.players.length)
-                           // If no cards would be left at the highest round, deal 1 card less
-                           - (52 % window.players.length === 0 ? 1 : 0);
+         let maxCardsBasedOnPlayers = Math.floor(52 / window.players.length)
+                                      // If no cards would be left at the highest round, deal 1
+                                      // card less
+                                      - (52 % window.players.length === 0 ? 1 : 0);
+         window.maxCards = Math.min(maxCardsBasedOnPlayers, window.settings.maxCards);
       }
 
       window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : -1);
@@ -653,10 +652,15 @@ function createBidTakeTable(bidOrTake) {
       let currentCards = getCurrentCards();
 
       let currentScores = calculateTotalScores();
+      let row;
       for (let i = 0; i < window.players.length; i++) {
-         let row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
-                                                                             - (window.currentDealerIndex
-                                                                                + 1));
+         if (window.settings.hasOwnProperty("dealerLast") && window.settings["dealerLast"].value === true) {
+            row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
+                                                                            - (window.currentDealerIndex
+                                                                               + 1));
+         } else {
+            row = formTable.insertRow();
+         }
          row.setAttribute("id", playerId + i.toString());
 
          let nameCell = row.insertCell(0);
@@ -972,6 +976,7 @@ function createScoreBoard() {
 function createSettingsScreen() {
    try {
       let settingsTable = document.getElementById("settingsTable");
+      removeAllContent(settingsTable);
       let row = settingsTable.insertRow();
       let cell1 = row.insertCell(0);
       cell1.innerText = "Instelling:";
@@ -986,24 +991,24 @@ function createSettingsScreen() {
          let keyValue = window.settings[key];
          row = settingsTable.insertRow();
          cell1 = row.insertCell(0);
-         cell1.innerText = key.toString();
+         cell1.innerText = keyValue.text;
          cell2 = row.insertCell(1);
-         if (typeof keyValue === "boolean") {
+         if (keyValue.type === "boolean") {
             cell3 = row.insertCell(2);
-            cell2.appendChild(createRadioButton(key.toString() + "radio",
-                                                key.toString() + "radioId1",
+            cell2.appendChild(createRadioButton(keyValue.id + "radio",
+                                                keyValue.id + "radioId1",
                                                 "alignLeft",
-                                                keyValue === false));
-            cell3.appendChild(createRadioButton(key.toString() + "radio",
-                                                key.toString() + "radioId2",
+                                                keyValue.value === false));
+            cell3.appendChild(createRadioButton(keyValue.id + "radio",
+                                                keyValue.id + "radioId2",
                                                 "alignLeft",
-                                                keyValue === true));
-         } else if (typeof keyValue === "number") {
+                                                keyValue.value === true));
+         } else if (keyValue.type === "number") {
             cell2.setAttribute("colspan", "2");
             let numberInput = document.createElement("input");
             numberInput.setAttribute("type", "number");
-            numberInput.setAttribute("id", key.toString() + "numberId");
-            numberInput.setAttribute("value", keyValue);
+            numberInput.setAttribute("id", keyValue.id + "numberId");
+            numberInput.setAttribute("value", keyValue.value);
             cell2.appendChild(numberInput);
          }
       }
@@ -1024,16 +1029,16 @@ function saveSettings() {
          // Bit counterintuitive maybe, but as values are always initialised this is a good way to
          // determine which id to get and how to get the value (checked vs value)
          keyValue = window.settings[key];
-         if (typeof keyValue === "boolean") {
-            newValue = document.getElementById(key.toString() + "radioId1").checked === false;
-         } else if (typeof keyValue === "number") {
-            newValue = document.getElementById(key.toString() + "numberId").value;
+         if (keyValue.type === "boolean") {
+            newValue = document.getElementById(keyValue.id + "radioId1").checked === false;
+         } else if (keyValue.type === "number") {
+            newValue = document.getElementById(keyValue.id + "numberId").value;
          } else {
             alert("Setting %s has the invalid type of %s! Please fix this.".format(key.toString(),
-                                                                                   typeof keyValue));
+                                                                                   typeof keyValue.value));
             return false;
          }
-         window.settings[key] = newValue;
+         window.settings[key].value = newValue;
       }
       return storeSettings();
    } catch (e) {
