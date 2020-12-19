@@ -7,7 +7,7 @@ window.regularPlayers =
 class Settings {
    constructor() {
       this.roundWithoutTrump =
-         { id : "rwt", text : "Ronde zonder troef: ", type : "boolean", value : true };
+         { id : "rwt", text : "Middelste ronde zonder troef: ", type : "boolean", value : true };
       this.spadeDouble =
          { id : "sd", text : "Schoppen telt dubbel: ", type : "boolean", value : true };
       this.dealerLast =
@@ -17,7 +17,20 @@ class Settings {
       this.maxPlayers =
          { id : "maxp", text : "Maximum aantal spelers mogelijk: ", type : "number", value : 8 };
       this.maxCards =
-         { id : "maxc", text : "Maximum aantal kaarten mogelijk: ", type : "number", value : 8 };
+         { id : "maxc", text : "Maximum aantal kaarten mogelijk: ", type : "number", value : 10 };
+   }
+
+   getSetting(name) {
+      try {
+         if (this.hasOwnProperty(name)) {
+            return this[name];
+         } else {
+            return false;
+         }
+      } catch (e) {
+         alert("window.settings.getSetting: " + e.message);
+         return false;
+      }
    }
 }
 
@@ -85,6 +98,20 @@ function getLocal(itemName) {
       return window.localStorage.getItem(itemName);
    } catch (e) {
       alert("getLocal: " + e.message);
+      return false;
+   }
+}
+
+function clearLocal() {
+   try {
+      if (storageAvailable("localStorage")) {
+         window.localStorage.clear();
+      } else {
+         alert("Cookies niet beschikbaar, kan ze niet verwijderen!");
+      }
+      return true;
+   } catch (e) {
+      alert("clearLocal: " + e.message);
       return false;
    }
 }
@@ -164,9 +191,7 @@ function resetAllStats() {
       window.currentTakes = [];
       window.maxPlayers = 8;
       window.maxRounds = -1;
-      window.minimumPlayers = 2;
       window.players = [];
-      window.roundWithoutTrump = true;
       window.scores = { 0 : [] };
       window.spadeTrump = { 0 : false };
       window.takes = { 0 : [] };
@@ -241,7 +266,9 @@ function toBids() {
          document.getElementById("spadeRadioButtonsP"),
          "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
-      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+      if (window.settings.getSetting("roundWithoutTrump").value
+          && (window.currentRound === window.maxCards + 1))
+      {
          hideOrShowElement(alert, false);
          hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
          hideOrShowElement(document.getElementById("middleRoundText"), true);
@@ -263,7 +290,9 @@ function toTakes() {
       setEverythingToNone();
       window.currentTakes = [];
       hideOrShowElement(document.getElementById("takeScreen"), true);
-      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+      if (window.settings.getSetting("roundWithoutTrump").value
+          && (window.currentRound === window.maxCards + 1))
+      {
          hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
       } else {
          hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), true);
@@ -368,11 +397,14 @@ function getCurrentCards(round = -1) {
    try {
       if (round === -1) { round = window.currentRound; }
       let currentCards = round;
-      if (window.roundWithoutTrump && currentCards === window.maxCards + 1) {
+      if (window.settings.getSetting("roundWithoutTrump").value
+          && (currentCards === (window.maxCards + 1)))
+      {
          currentCards = window.maxCards;
       } else if (currentCards > window.maxCards) {
          currentCards =
-            ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - round;
+            ((window.maxCards + (window.settings.getSetting("roundWithoutTrump").value ? 1 : 0))
+             * 2) - round;
       }
 
       return currentCards;
@@ -437,7 +469,6 @@ function createPlayersTable() {
          }
          nameChoiceCell.appendChild(nameList);
       }
-      document.getElementById("checkNoTrumpMiddleRound").checked = true;
       if (window.DEBUG) {
          hideOrShowElement(document.getElementById("debugSetMaxCardsDiv"), true);
       }
@@ -530,7 +561,8 @@ function updatePlayers(index, value) {
       }
       // These should be initialised after the if/else!
       let conditionValidDealer = checkDealerValidity(currentDealer);
-      let conditionEnoughPlayers = findFirstHiddenNameField() > window.minimumPlayers;
+      let conditionEnoughPlayers = findFirstHiddenNameField() >
+                                   window.settings.getSetting("minPlayers").value;
       let conditionNoDoublePlayers = checkNoDoublePlayers();
       return result
              && hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
@@ -595,9 +627,6 @@ function storePlayers() {
          else { break; }
       }
 
-      let noTrumpMiddleRound = document.getElementById("checkNoTrumpMiddleRound");
-      window.roundWithoutTrump = noTrumpMiddleRound.checked;
-
       window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
       if (window.DEBUG) {
@@ -608,10 +637,13 @@ function storePlayers() {
                                       // If no cards would be left at the highest round, deal 1
                                       // card less
                                       - (52 % window.players.length === 0 ? 1 : 0);
-         window.maxCards = Math.min(maxCardsBasedOnPlayers, window.settings.maxCards);
+         window.maxCards =
+            Math.min(maxCardsBasedOnPlayers, window.settings.getSetting("maxCards").value);
       }
 
-      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : -1);
+      window.maxRounds =
+         (window.maxCards * 2) + (window.settings.getSetting("roundWithoutTrump").value ? 1 : -1);
+      console.log("maxCards: %s, maxRounds: %s".format(window.maxCards, window.maxRounds));
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
@@ -654,7 +686,10 @@ function createBidTakeTable(bidOrTake) {
       let currentScores = calculateTotalScores();
       let row;
       for (let i = 0; i < window.players.length; i++) {
-         if (window.settings.hasOwnProperty("dealerLast") && window.settings["dealerLast"].value === true) {
+         if (window.settings.hasOwnProperty("dealerLast")
+             && window.settings["dealerLast"].value
+             === true)
+         {
             row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
                                                                             - (window.currentDealerIndex
                                                                                + 1));
@@ -880,7 +915,8 @@ function updateScores() {
             localScores[playerIndex] =
                (-Math.abs(window.currentBids[playerIndex] - window.currentTakes[playerIndex]) * 3);
          }
-         if (window.spadeTrump[window.currentRound]) { localScores[playerIndex] *= 2; }
+         if (window.settings.getSetting("spadeDouble").value
+             && window.spadeTrump[window.currentRound]) { localScores[playerIndex] *= 2; }
       }
       window.scores[window.currentRound] = localScores;
       return true;
@@ -942,7 +978,9 @@ function createScoreBoard() {
          cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
          let spadeCell = scoreRow.insertCell(2);
          spadeCell.innerHTML =
-            (window.roundWithoutTrump && (round === window.maxCards + 1))
+            (window.settings.getSetting("roundWithoutTrump").value && (round
+                                                                       === window.maxCards
+                                                                       + 1))
             ? "NVT"
             : window.spadeTrump[round] ? "♠" : "";
          for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {

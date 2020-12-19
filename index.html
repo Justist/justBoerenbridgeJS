@@ -15,8 +15,24 @@
    <form method="post">
       <h2 class="text-center">Instellingen</h2>
       <div class="form-group">
+         <div class="table-responsive alignCenter">
+            <table class="table" id="clearCookiesTable">
+               <thead class="alignLeft">
+               <tr class="alignLeft">
+                  <th class="alignLeft">
+                     <button class="btn clearCookiesButton"
+                             id="clearCookiesButton"
+                             type="button"
+                             onclick="return clearLocal()">
+                        Verwijder opgeslagen gegevens
+                     </button>
+                  </th>
+               </thead>
+            </table>
+         </div>
          <div class="table-responsive">
             <table class="table alignCenter" id="settingsTable">
+               <!-- filled with javascript -->
             </table>
          </div>
          <div class="table-responsive alignCenter">
@@ -374,17 +390,6 @@
             <table class="table nameTable" id="newGameInputTable">
                <!-- filled with javascript -->
             </table>
-         </div>
-         <div class="form-check alignCenter">
-
-            <label class="form-check-label"
-                   for="checkNoTrumpMiddleRound">
-               <input class="form-check-input"
-                      type="checkbox"
-                      id="checkNoTrumpMiddleRound">
-               Middelste ronde zonder troef?
-               <br>
-            </label>
          </div>
          <div class="form-check alignCenter hidden" id="debugSetMaxCardsDiv">
 
