@@ -982,19 +982,21 @@ function createScoreBoard() {
       let scoreTable = document.getElementById("scoreDataTable");
       removeAllContent(scoreTable);
       let totalScores = calculateTotalScores();
+      let spadeDouble = window.settings.getValue("spadeDouble");
       for (let round = 0; round < window.currentRound; round++) {
          let scoreRow = scoreTable.insertRow();
          let roundCell = scoreRow.insertCell(0);
          roundCell.innerHTML = round === 0 ? "" : round.toString();
          let cardsCell = scoreRow.insertCell(1);
          cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
-         let spadeCell = scoreRow.insertCell(2);
-         spadeCell.innerHTML =
-            ((window.settings.getValue("roundWithoutTrump")
-             && (round === window.maxCardsThisGame + 1))
-            || (! window.settings.getValue("spadeDouble")))
-            ? "NVT"
-            : window.spadeTrump[round] ? "♠" : "";
+         if (spadeDouble) {
+            let spadeCell = scoreRow.insertCell(2);
+            spadeCell.innerHTML =
+               (window.settings.getValue("roundWithoutTrump")
+                && (round === window.maxCardsThisGame + 1))
+               ? "NVT"
+               : window.spadeTrump[round] ? "♠" : "";
+         }
          for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
             let scoreCell = scoreRow.insertCell(-1);
 
@@ -1016,7 +1018,9 @@ function createScoreBoard() {
          hideOrShowElement(document.getElementById("scoreboardToBidButton"), false);
          hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), true);
       }
-      return createTableHead(scoreTable, ["Ronde", "Kaarten", "♠", ...window.players]);
+      let rowData = ["Ronde", "Kaarten", ...window.players];
+      if (spadeDouble) { rowData = ["Ronde", "Kaarten", "♠", ...window.players]; }
+      return createTableHead(scoreTable, rowData);
    } catch (e) {
       alert("createScoreBoard " + e.message);
       return false;
