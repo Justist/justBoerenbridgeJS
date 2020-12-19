@@ -36,8 +36,7 @@ class Settings {
    getValue(name) {
       try {
          let setting = this.getSetting(name);
-         if (setting) { return setting.value; }
-         else { return false; }
+         if (setting) { return setting.value; } else { return false; }
       } catch (e) {
          alert("window.settings.getValue: " + e.message);
          return false;
@@ -272,16 +271,17 @@ function toBids() {
       window.currentBids = [];
       let alert = document.getElementById("spadeTrumpSelectAlert");
       hideOrShowElement(document.getElementById("bidScreen"), true);
-      let spadeRadioButtons = getTypeInputFields(
-         document.getElementById("spadeRadioButtonsP"),
-         "radio");
+      let spadeRadioButtons =
+             getTypeInputFields(document.getElementById("spadeRadioButtonsP"), "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
-      if (window.settings.getValue("roundWithoutTrump")
-          && (window.currentRound === window.maxCards + 1))
+      let spadeDouble = window.settings.getValue("spadeDouble");
+      if ((window.settings.getValue("roundWithoutTrump")
+           && (window.currentRound === window.maxCards + 1))
+          || (! spadeDouble))
       {
          hideOrShowElement(alert, false);
          hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
-         hideOrShowElement(document.getElementById("middleRoundText"), true);
+         hideOrShowElement(document.getElementById("middleRoundText"), spadeDouble);
          spadeRadioButtons[1].checked = true;
       } else {
          hideOrShowElement(alert, true);
@@ -992,9 +992,9 @@ function createScoreBoard() {
          cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
          let spadeCell = scoreRow.insertCell(2);
          spadeCell.innerHTML =
-            (window.settings.getValue("roundWithoutTrump") && (round
-                                                                       === window.maxCards
-                                                                       + 1))
+            ((window.settings.getValue("roundWithoutTrump")
+             && (round === window.maxCards + 1))
+            || (! window.settings.getValue("spadeDouble")))
             ? "NVT"
             : window.spadeTrump[round] ? "♠" : "";
          for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
