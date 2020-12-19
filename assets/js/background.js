@@ -16,7 +16,7 @@ class Settings {
          { id : "minp", text : "Minimum aantal spelers mogelijk: ", type : "number", value : 2 };
       this.maxPlayers =
          { id : "maxp", text : "Maximum aantal spelers mogelijk: ", type : "number", value : 8 };
-      this.maxCards =
+      this.maxCardsPossible =
          { id : "maxc", text : "Maximum aantal kaarten mogelijk: ", type : "number", value : 10 };
    }
 
@@ -58,10 +58,10 @@ String.prototype.format = function() {
 function storageAvailable(type) {
    // As copied from
    // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-   let storage;
+   let storage, x;
    try {
       storage = window[type];
-      let x = "__storage_test__";
+      x = "__storage_test__";
       storage.setItem(x, x);
       storage.removeItem(x);
       return true;
@@ -151,7 +151,6 @@ function storeSettings() {
          if (! (window.settings.hasOwnProperty(key) && window.settings[key])) {
             continue;
          }
-         console.log("Saving ", JSON.stringify(window.settings[key]));
          storeLocal(key, JSON.stringify(window.settings[key]));
       }
       return true;
@@ -276,7 +275,7 @@ function toBids() {
       for (let button of spadeRadioButtons) { button.checked = false; }
       let spadeDouble = window.settings.getValue("spadeDouble");
       if ((window.settings.getValue("roundWithoutTrump")
-           && (window.currentRound === window.maxCards + 1))
+           && (window.currentRound === window.maxCardsThisGame + 1))
           || (! spadeDouble))
       {
          hideOrShowElement(alert, false);
@@ -301,7 +300,7 @@ function toTakes() {
       window.currentTakes = [];
       hideOrShowElement(document.getElementById("takeScreen"), true);
       if (window.settings.getValue("roundWithoutTrump")
-          && (window.currentRound === window.maxCards + 1))
+          && (window.currentRound === window.maxCardsThisGame + 1))
       {
          hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
       } else {
@@ -408,12 +407,12 @@ function getCurrentCards(round = -1) {
       if (round === -1) { round = window.currentRound; }
       let currentCards = round;
       if (window.settings.getValue("roundWithoutTrump")
-          && (currentCards === (window.maxCards + 1)))
+          && (currentCards === (window.maxCardsThisGame + 1)))
       {
-         currentCards = window.maxCards;
-      } else if (currentCards > window.maxCards) {
+         currentCards = window.maxCardsThisGame;
+      } else if (currentCards > window.maxCardsThisGame) {
          currentCards =
-            ((window.maxCards + (window.settings.getValue("roundWithoutTrump") ? 1 : 0))
+            ((window.maxCardsThisGame + (window.settings.getValue("roundWithoutTrump") ? 1 : 0))
              * 2) - round;
       }
 
@@ -644,19 +643,18 @@ function storePlayers() {
       window.currentDealerIndex = localDealerIndex;
       if (window.DEBUG) {
          let maxCardsInput = document.getElementById("debugSetMaxCardsInput").value;
-         if (maxCardsInput) { window.maxCards = parseInt(maxCardsInput, 10); }
+         if (maxCardsInput) { window.maxCardsThisGame = parseInt(maxCardsInput, 10); }
       } else {
          let maxCardsBasedOnPlayers = Math.floor(52 / window.players.length)
                                       // If no cards would be left at the highest round, deal 1
                                       // card less
                                       - (52 % window.players.length === 0 ? 1 : 0);
-         window.maxCards =
-            Math.min(maxCardsBasedOnPlayers, window.settings.getValue("maxCards"));
+         window.maxCardsThisGame =
+            Math.min(maxCardsBasedOnPlayers, window.settings.getValue("maxCardsPossible"));
       }
 
       window.maxRounds =
-         (window.maxCards * 2) + (window.settings.getValue("roundWithoutTrump") ? 1 : -1);
-      console.log("maxCards: %s, maxRounds: %s".format(window.maxCards, window.maxRounds));
+         (window.maxCardsThisGame * 2) + (window.settings.getValue("roundWithoutTrump") ? 1 : -1);
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
@@ -993,7 +991,7 @@ function createScoreBoard() {
          let spadeCell = scoreRow.insertCell(2);
          spadeCell.innerHTML =
             ((window.settings.getValue("roundWithoutTrump")
-             && (round === window.maxCards + 1))
+             && (round === window.maxCardsThisGame + 1))
             || (! window.settings.getValue("spadeDouble")))
             ? "NVT"
             : window.spadeTrump[round] ? "♠" : "";
