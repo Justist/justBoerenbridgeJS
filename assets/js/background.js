@@ -5,19 +5,67 @@ window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
 class Settings {
+   /*
+    To add a setting:
+    - this.settingName = {
+    id: id
+    text: text to show on settings screen
+    type: type
+    value: default value, can be changed by user
+    min: minimal allowed value
+    max: maximal allowed value
+    };
+    - testSetting() { restraints on the setting; may have multiple functions per setting; }
+    */
    constructor() {
       this.roundWithoutTrump =
-         { id : "rwt", text : "Middelste ronde zonder troef: ", type : "boolean", value : true };
+         {
+            id    : "rwt",
+            text  : "Middelste ronde zonder troef: ",
+            type  : "boolean",
+            value : true
+         };
       this.spadeDouble =
-         { id : "sd", text : "Schoppen telt dubbel: ", type : "boolean", value : true };
+         {
+            id    : "sd",
+            text  : "Schoppen telt dubbel: ",
+            type  : "boolean",
+            value : true
+         };
       this.dealerLast =
-         { id : "dl", text : "Deler onderaan bij bieden/halen: ", type : "boolean", value : false };
+         {
+            id    : "dl",
+            text  : "Deler onderaan bij bieden/halen: ",
+            type  : "boolean",
+            value : false
+         };
       this.minPlayers =
-         { id : "minp", text : "Minimum aantal spelers mogelijk: ", type : "number", value : 2 };
+         {
+            id    : "minp",
+            text  : "Minimum aantal spelers mogelijk: ",
+            type  : "number",
+            value : 2,
+            min   : 1,
+            max   : 51
+         };
       this.maxPlayers =
-         { id : "maxp", text : "Maximum aantal spelers mogelijk: ", type : "number", value : 8 };
+         {
+            id    : "maxp",
+            text  : "Maximum aantal spelers mogelijk: ",
+            type  : "number",
+            value : 8,
+            min   : 1,
+            max   : 51
+         };
       this.maxCardsPossible =
-         { id : "maxc", text : "Maximum aantal kaarten mogelijk: ", type : "number", value : 10 };
+         {
+            id    : "maxc",
+            text  : "Maximum aantal kaarten mogelijk: ",
+            type  : "number",
+            value : 10,
+            min   : 1,
+            max   : 51
+         };
    }
 
    getSetting(name) {
@@ -42,6 +90,61 @@ class Settings {
          return false;
       }
    }
+
+   testMinPlayersAboveZero() {
+      try {
+         if (this.minPlayers.value <= 0) {
+            alert("%s is minder dan of gelijk aan 0!".format(this.minPlayers.text.slice(0, -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMinPlayersAboveZero: " + e.message);
+         return false;
+      }
+   }
+
+   testMaxPlayersAboveZero() {
+      try {
+         if (this.maxPlayers.value <= 0) {
+            alert("%s is minder dan of gelijk aan 0!".format(this.maxPlayers.text.slice(0, -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMaxPlayersAboveZero: " + e.message);
+         return false;
+      }
+   }
+
+   testMaxPlayersLargerThanMinPlayers() {
+      try {
+         if (this.maxPlayers.value < this.minPlayers.value) {
+            alert("%s mag niet kleiner zijn dan %s!".format(this.maxPlayers.text.slice(0, -2),
+                                                            this.minPlayers.text.slice(0, -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMaxPlayersLargerThanMinPlayers: " + e.message);
+         return false;
+      }
+   }
+
+   testMaxCardsPossibleAboveZero() {
+      try {
+         if (this.maxCardsPossible.value <= 0) {
+            alert("%s is minder dan of gelijk aan 0!".format(this.maxCardsPossible.text.slice(0,
+                                                                                              -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMaxCardsPossibleAboveZero: " + e.message);
+         return false;
+      }
+   }
+
 }
 
 //  deepcode ignore no-extend-native: I like format()
@@ -1063,12 +1166,36 @@ function createSettingsScreen() {
             numberInput.setAttribute("type", "number");
             numberInput.setAttribute("id", keyValue.id + "numberId");
             numberInput.setAttribute("value", keyValue.value);
+            numberInput.setAttribute("min", keyValue.min);
+            numberInput.setAttribute("max", keyValue.max);
             cell2.appendChild(numberInput);
          }
       }
       return hideOrShowElement(document.getElementById("settingsScreen"), true);
    } catch (e) {
       alert("createSettingsScreen " + e.message);
+      return false;
+   }
+}
+
+function checkSettings() {
+   /*
+    Loops over all test functions in the settings class and returns if all of them return true.
+    */
+   try {
+      let methods = Object.getOwnPropertyNames(Object.getPrototypeOf(window.settings))
+                          .filter(name => (name !== "constructor"
+                                           && typeof window.settings[name] === "function"));
+      for (let m of methods) {
+         if (m.startsWith("test")) {
+            if (! window.settings[m]()) {
+               return false;
+            }
+         }
+      }
+      return true;
+   } catch (e) {
+      alert("checkSettings " + e.message);
       return false;
    }
 }
@@ -1094,7 +1221,7 @@ function saveSettings() {
          }
          window.settings[key].value = newValue;
       }
-      return storeSettings();
+      return checkSettings() && storeSettings();
    } catch (e) {
       alert("saveSettings " + e.message);
       return false;
