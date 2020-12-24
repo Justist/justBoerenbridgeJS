@@ -547,7 +547,7 @@ function createPlayersTable() {
       {
          let row = playerTable.insertRow();
          if (playerIndex > 1) { hideOrShowElement(row, false); }
-         row.setAttribute("id", "playerRow" + playerIndex);
+         row.setAttribute("id", "playerRow" + playerIndex.toString());
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
          dealerCell.setAttribute("onclick",
@@ -607,15 +607,22 @@ function hideAllNextPlayerFields(number) {
 }
 
 function findFirstHiddenNameField() {
+   /*
+    Either finds the first hidden field or the first empty field.
+    If no such field is found, return i+1 so checks using this function will still return true
+    */
    try {
-      let i;
+      let i, allFilled = true;
       for (i = 0; i < window.settings.getValue("maxPlayers"); i++) {
-         if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")) {
+         if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")
+             || document.getElementById("nameChoice-" + i.toString()).value === "") {
+            allFilled = false;
             break;
          }
       }
-      // Even if the loop doesn't break, we still get a number
-      return i;
+      // If the loop ends, return the last known number +1, to show there are no hidden fields
+      if (allFilled) { return i + 1; }
+      else { return i; }
    } catch (e) {
       alert("findFirstHiddenNameField " + e.message);
       return false;
