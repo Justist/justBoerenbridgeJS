@@ -121,7 +121,8 @@ class Settings {
       try {
          if (this.maxPlayers.value < this.minPlayers.value) {
             alert("%s mag niet kleiner zijn dan %s!".format(this.maxPlayers.text.slice(0, -2),
-                                                            this.minPlayers.text.slice(0, -2)));
+                                                            this.minPlayers.text.slice(0, -2)
+                                                                .toLowerCase()));
             return false;
          }
          return true;
@@ -615,14 +616,14 @@ function findFirstHiddenNameField() {
       let i, allFilled = true;
       for (i = 0; i < window.settings.getValue("maxPlayers"); i++) {
          if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")
-             || document.getElementById("nameChoice-" + i.toString()).value === "") {
+             || document.getElementById("nameChoice-" + i.toString()).value === "")
+         {
             allFilled = false;
             break;
          }
       }
       // If the loop ends, return the last known number +1, to show there are no hidden fields
-      if (allFilled) { return i + 1; }
-      else { return i; }
+      if (allFilled) { return i + 1; } else { return i; }
    } catch (e) {
       alert("findFirstHiddenNameField " + e.message);
       return false;
@@ -1173,6 +1174,7 @@ function createSettingsScreen() {
             numberInput.setAttribute("type", "number");
             numberInput.setAttribute("id", keyValue.id + "numberId");
             numberInput.setAttribute("value", keyValue.value);
+            // These don't seem to work
             numberInput.setAttribute("min", keyValue.min);
             numberInput.setAttribute("max", keyValue.max);
             cell2.appendChild(numberInput);

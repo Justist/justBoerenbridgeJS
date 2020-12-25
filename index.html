@@ -23,7 +23,7 @@
                      <button class="btn clearCookiesButton"
                              id="clearCookiesButton"
                              type="button"
-                             onclick="return clearLocal()">
+                             onclick="return clearLocal() && toOverview()">
                         Verwijder opgeslagen gegevens
                      </button>
                   </th>
@@ -43,13 +43,8 @@
                      <button class="btn btn-primary"
                              id="saveSettingsButton"
                              type="button"
-                             onclick="return saveSettings()">
-                        Opslaan
-                     </button>
-                  </th>
-                  <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
-                        Terug naar overzicht
+                             onclick="return saveSettings() && toOverview()">
+                        Opslaan en terug naar overzicht
                      </button>
                   </th>
                </tr>
