@@ -623,7 +623,7 @@ function findFirstHiddenNameField() {
          }
       }
       // If the loop ends, return the last known number +1, to show there are no hidden fields
-      if (allFilled) { return i + 1; } else { return i; }
+      return i + 1;
    } catch (e) {
       alert("findFirstHiddenNameField " + e.message);
       return false;
@@ -815,15 +815,13 @@ function createBidTakeTable(bidOrTake) {
             row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
                                                                             - (window.currentDealerIndex
                                                                                + 1));
-         } else {
-            row = formTable.insertRow();
-         }
+         } else { row = formTable.insertRow(); }
          row.setAttribute("id", playerId + i.toString());
 
          let nameCell = row.insertCell(0);
          nameCell.classList.add(cellName);
          nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this should
-                                                            // contain strings
+                                                            //already contain strings
          if (i === window.currentDealerIndex) {
             nameCell.innerHTML += "*";
          }
@@ -838,6 +836,7 @@ function createBidTakeTable(bidOrTake) {
 
          for (let number = 0; number <= currentCards; number++) {
             let numberCell = row.insertCell(-1);
+            numberCell.setAttribute("id", bidOrTake + "number" + i.toString() + number.toString());
             numberCell.setAttribute("onclick",
                                     "return clickBidOrTakeButton(this.parentNode, "
                                     + number.toString()
@@ -847,6 +846,10 @@ function createBidTakeTable(bidOrTake) {
                                     + bidOrTake.toString()
                                     + "\')");
             numberCell.innerHTML = number.toString();
+            /*if (bidOrTake === "take" && number === window.currentBids[i]) {
+               numberCell.classList.remove("unhighlighted");
+               numberCell.classList.add("highlighted");
+            }*/
          }
       }
 
@@ -878,11 +881,30 @@ function createBidTable() {
 
 }
 
+function clearHighLightsPlayerIndex(playerIndex, bidOrTake) {
+   try {
+      let numberCell;
+      for (let number = 0; number <= getCurrentCards(); number++) {
+         numberCell = document.getElementById(bidOrTake + "number" + playerIndex + number);
+         if (numberCell.getAttribute("class")) {
+            numberCell.classList.remove("highlighted");
+            numberCell.classList.remove("unclickable");
+         }
+         numberCell.classList.add("unhighlighted");
+      }
+      return true;
+   } catch (e) {
+      alert("clearHighLightsPlayerIndex " + e.message);
+      return false;
+   }
+}
+
 function clearHighLightsPlayer(player) {
    try {
       for (let child of player.children) {
          if (child.getAttribute("class")) {
             child.classList.remove("highlighted");
+            child.classList.remove("unclickable");
          }
          child.classList.add("unhighlighted");
       }
@@ -902,6 +924,35 @@ function clickSpadeRadioButton() {
    }
 }
 
+function updateDealerNumberHighlighted(bidOrTake) {
+   try {
+      let sum;
+      if (bidOrTake === "bid") {
+         sum = window.currentBids.reduce((a, b) => a + b, 0);
+      } else if (bidOrTake === "take") {
+         sum = window.currentTakes.reduce((a, b) => a + b, 0);
+      } else {
+         alert("bidOrTake is not bid or take, but instead " + bidOrTake.toString() + "!");
+         return false;
+      }
+      let numberToActOn = getCurrentCards() - sum;
+      if (numberToActOn < 0) {
+         return true;
+      }
+      let numberCell = document.getElementById(bidOrTake + "number" + window.currentDealerIndex + numberToActOn);
+      clearHighLightsPlayerIndex(window.currentDealerIndex, bidOrTake);
+      if (bidOrTake === "bid") {
+         numberCell.classList.add("unclickable");
+      } else { //has to be take or we'd've returned false already
+         numberCell.classList.add("highlighted");
+      }
+      return true;
+   } catch (e) {
+      alert("updateDealerNumberHighlighted " + e.message);
+      return false;
+   }
+}
+
 // noinspection JSUnusedGlobalSymbols
 function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake) {
    try {
@@ -909,14 +960,18 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
       let numberAsInt = parseInt(numberString, 10);
       let playerIndexInt = parseInt(playerIndexString, 10);
       let offset = bidOrTake === "bid" ? 2 : 3;
+      (bidOrTake === "bid")
+      ? window.currentBids[playerIndexInt] = numberAsInt
+      : window.currentTakes[playerIndexInt] = numberAsInt;
+      /*if (playerIndexInt !== window.currentDealerIndex) {
+         window.currentBids[window.currentDealerIndex] = null;
+      }*/
+      let result = true; //updateDealerNumberHighlighted(bidOrTake);
       let indexToHighlight = parent.children[numberAsInt + offset];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");
-      (bidOrTake === "bid")
-      ? window.currentBids[playerIndexInt] = numberAsInt
-      : window.currentTakes[playerIndexInt] =
-         numberAsInt;
-      return updateBidsOrTakesPlaced(bidOrTake);
+
+      return result && updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
       alert("clickBidOrTakeButton " + e.message);
       return false;
@@ -956,8 +1011,7 @@ function updateBidsOrTakesPlaced(bidOrTake) {
       let amountInputsFilled = (bidOrTake === "bid"
                                 ? window.currentBids
                                 : window.currentTakes).filter(function(value) {
-         return typeof (value !== "undefined")
-                && (value !== null);
+         return typeof (value !== "undefined") && (value !== null);
       }).length;
       let spadeRadioChecked = true;
       if (bidOrTake === "bid") {
