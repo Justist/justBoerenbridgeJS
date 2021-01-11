@@ -4,6 +4,150 @@ window.DEBUG = false;
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
+class Settings {
+   /*
+    To add a setting:
+    - this.settingName = {
+    id: id
+    text: text to show on settings screen
+    type: type
+    value: default value, can be changed by user
+    min: minimal allowed value
+    max: maximal allowed value
+    };
+    - testSetting() { restraints on the setting; may have multiple functions per setting; }
+    */
+   constructor() {
+      this.roundWithoutTrump =
+         {
+            id    : "rwt",
+            text  : "Middelste ronde zonder troef: ",
+            type  : "boolean",
+            value : true
+         };
+      this.spadeDouble =
+         {
+            id    : "sd",
+            text  : "Schoppen telt dubbel: ",
+            type  : "boolean",
+            value : true
+         };
+      this.dealerLast =
+         {
+            id    : "dl",
+            text  : "Deler onderaan bij bieden/halen: ",
+            type  : "boolean",
+            value : false
+         };
+      this.minPlayers =
+         {
+            id    : "minp",
+            text  : "Minimum aantal spelers mogelijk: ",
+            type  : "number",
+            value : 2,
+            min   : 1,
+            max   : 51
+         };
+      this.maxPlayers =
+         {
+            id    : "maxp",
+            text  : "Maximum aantal spelers mogelijk: ",
+            type  : "number",
+            value : 8,
+            min   : 1,
+            max   : 51
+         };
+      this.maxCardsPossible =
+         {
+            id    : "maxc",
+            text  : "Maximum aantal kaarten mogelijk: ",
+            type  : "number",
+            value : 10,
+            min   : 1,
+            max   : 51
+         };
+   }
+
+   getSetting(name) {
+      try {
+         if (this.hasOwnProperty(name)) {
+            return this[name];
+         } else {
+            return false;
+         }
+      } catch (e) {
+         alert("window.settings.getSetting: " + e.message);
+         return false;
+      }
+   }
+
+   getValue(name) {
+      try {
+         let setting = this.getSetting(name);
+         if (setting) { return setting.value; } else { return false; }
+      } catch (e) {
+         alert("window.settings.getValue: " + e.message);
+         return false;
+      }
+   }
+
+   testMinPlayersAboveZero() {
+      try {
+         if (this.minPlayers.value <= 0) {
+            alert("%s is minder dan of gelijk aan 0!".format(this.minPlayers.text.slice(0, -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMinPlayersAboveZero: " + e.message);
+         return false;
+      }
+   }
+
+   testMaxPlayersAboveZero() {
+      try {
+         if (this.maxPlayers.value <= 0) {
+            alert("%s is minder dan of gelijk aan 0!".format(this.maxPlayers.text.slice(0, -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMaxPlayersAboveZero: " + e.message);
+         return false;
+      }
+   }
+
+   testMaxPlayersLargerThanMinPlayers() {
+      try {
+         if (this.maxPlayers.value < this.minPlayers.value) {
+            alert("%s mag niet kleiner zijn dan %s!".format(this.maxPlayers.text.slice(0, -2),
+                                                            this.minPlayers.text.slice(0, -2)
+                                                                .toLowerCase()));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMaxPlayersLargerThanMinPlayers: " + e.message);
+         return false;
+      }
+   }
+
+   testMaxCardsPossibleAboveZero() {
+      try {
+         if (this.maxCardsPossible.value <= 0) {
+            alert("%s is minder dan of gelijk aan 0!".format(this.maxCardsPossible.text.slice(0,
+                                                                                              -2)));
+            return false;
+         }
+         return true;
+      } catch (e) {
+         alert("window.settings.testMaxCardsPossibleAboveZero: " + e.message);
+         return false;
+      }
+   }
+
+}
+
 //  deepcode ignore no-extend-native: I like format()
 String.prototype.format = function() {
    try {
@@ -15,11 +159,118 @@ String.prototype.format = function() {
    }
 };
 
+function storageAvailable(type) {
+   // As copied from
+   // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+   let storage, x;
+   try {
+      storage = window[type];
+      x = "__storage_test__";
+      storage.setItem(x, x);
+      storage.removeItem(x);
+      return true;
+   } catch (e) {
+      return e instanceof DOMException && (
+                  // everything except Firefox
+         e.code === 22 ||
+         // Firefox
+         e.code === 1014 ||
+         // test name field too, because code might not be present
+         // everything except Firefox
+         e.name === "QuotaExceededError" ||
+         // Firefox
+         e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+             // acknowledge QuotaExceededError only if there's something already stored
+             (storage && storage.length !== 0);
+   }
+}
+
+function storeLocal(itemName, itemData) {
+   try {
+      if (! storageAvailable("localStorage")) {
+         // This should be changed to not be an alert on every try, like a static message somewhere
+         alert("No local storage available! Changes will not be saved!");
+         // Then fail silently
+         return true;
+      }
+      window.localStorage.setItem(itemName, itemData);
+      return true;
+   } catch (e) {
+      alert("storeLocal: " + e.message);
+      return false;
+   }
+}
+
+function getLocal(itemName) {
+   try {
+      if (! storageAvailable("localStorage")) {
+         // This should be changed to not be an alert on every try, like a static message somewhere
+         alert("No local storage available! Changes will not be saved!");
+         // Then fail silently
+         return true;
+      }
+      return window.localStorage.getItem(itemName);
+   } catch (e) {
+      alert("getLocal: " + e.message);
+      return false;
+   }
+}
+
+function clearLocal() {
+   try {
+      if (storageAvailable("localStorage")) {
+         window.localStorage.clear();
+      } else {
+         alert("Cookies niet beschikbaar, kan ze niet verwijderen!");
+      }
+      return true;
+   } catch (e) {
+      alert("clearLocal: " + e.message);
+      return false;
+   }
+}
+
+function getSettings() {
+   try {
+      let keyValue;
+      for (let key in window.settings) {
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         keyValue = getLocal(key);
+         if (keyValue) {
+            window.settings[key] = JSON.parse(keyValue);
+         }
+      }
+      return true;
+   } catch (e) {
+      alert("getSettings: " + e.message);
+      return false;
+   }
+}
+
+function storeSettings() {
+   try {
+      for (let key in window.settings) {
+         if (! (window.settings.hasOwnProperty(key) && window.settings[key])) {
+            continue;
+         }
+         storeLocal(key, JSON.stringify(window.settings[key]));
+      }
+      return true;
+   } catch (e) {
+      alert("storeSettings: " + e.message);
+      return false;
+   }
+}
+
 function removeAllContent(parent) {
    try {
       while (parent.firstChild) { parent.removeChild(parent.lastChild); }
+      return true;
    } catch (e) {
       alert("removeAllContent " + e.message);
+      return false;
    }
 }
 
@@ -31,7 +282,7 @@ function setEverythingToNone() {
                         "scoreboardScreen",
                         "gameRulesScreen",
                         "overviewScreen",
-                        "endOfGameScreen"])
+                        "settingsScreen"])
       {
          let div = document.getElementById(page);
          div.classList.add("hidden");
@@ -51,12 +302,8 @@ function resetAllStats() {
       window.currentDealerIndex = -1; // Updated later on
       window.currentRound = 1;
       window.currentTakes = [];
-      window.maxCards = -1; //Updated later on
-      window.maxPlayers = 8;
       window.maxRounds = -1;
-      window.minimumPlayers = 2;
       window.players = [];
-      window.roundWithoutTrump = true;
       window.scores = { 0 : [] };
       window.spadeTrump = { 0 : false };
       window.takes = { 0 : [] };
@@ -127,14 +374,17 @@ function toBids() {
       window.currentBids = [];
       let alert = document.getElementById("spadeTrumpSelectAlert");
       hideOrShowElement(document.getElementById("bidScreen"), true);
-      let spadeRadioButtons = getTypeInputFields(
-         document.getElementById("spadeRadioButtonsP"),
-         "radio");
+      let spadeRadioButtons =
+             getTypeInputFields(document.getElementById("spadeRadioButtonsP"), "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
-      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+      let spadeDouble = window.settings.getValue("spadeDouble");
+      if ((window.settings.getValue("roundWithoutTrump")
+           && (window.currentRound === window.maxCardsThisGame + 1))
+          || (! spadeDouble))
+      {
          hideOrShowElement(alert, false);
          hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
-         hideOrShowElement(document.getElementById("middleRoundText"), true);
+         hideOrShowElement(document.getElementById("middleRoundText"), spadeDouble);
          spadeRadioButtons[1].checked = true;
       } else {
          hideOrShowElement(alert, true);
@@ -153,7 +403,9 @@ function toTakes() {
       setEverythingToNone();
       window.currentTakes = [];
       hideOrShowElement(document.getElementById("takeScreen"), true);
-      if (window.roundWithoutTrump && (window.currentRound === window.maxCards + 1)) {
+      if (window.settings.getValue("roundWithoutTrump")
+          && (window.currentRound === window.maxCardsThisGame + 1))
+      {
          hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
       } else {
          hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), true);
@@ -187,10 +439,21 @@ function toGameRules() {
    }
 }
 
+function toSettings() {
+   try {
+      setEverythingToNone();
+      return createSettingsScreen();
+   } catch (e) {
+      alert("toSettings " + e.message);
+      return false;
+   }
+}
+
 function toOverview() {
    try {
       setEverythingToNone();
-      return hideOrShowElement(document.getElementById("overviewScreen"), true);
+      window.settings = new Settings();
+      return getSettings() && hideOrShowElement(document.getElementById("overviewScreen"), true);
    } catch (e) {
       alert("toOverview " + e.toString());
       return false;
@@ -228,15 +491,33 @@ function createStretchTableHead(table, rowData, stretch) {
    }
 }
 
+function createRadioButton(name, id, classAddition, checked) {
+   try {
+      let radioButton = document.createElement("input");
+      radioButton.setAttribute("type", "radio");
+      radioButton.setAttribute("name", name);
+      radioButton.setAttribute("id", id);
+      radioButton.checked = checked; // setAttribute does not work for this :(
+      radioButton.classList.add(classAddition);
+      return radioButton;
+   } catch (e) {
+      alert("createRadioButton " + e.message);
+      return false;
+   }
+}
+
 function getCurrentCards(round = -1) {
    try {
       if (round === -1) { round = window.currentRound; }
       let currentCards = round;
-      if (window.roundWithoutTrump && currentCards === window.maxCards + 1) {
-         currentCards = window.maxCards;
-      } else if (currentCards > window.maxCards) {
+      if (window.settings.getValue("roundWithoutTrump")
+          && (currentCards === (window.maxCardsThisGame + 1)))
+      {
+         currentCards = window.maxCardsThisGame;
+      } else if (currentCards > window.maxCardsThisGame) {
          currentCards =
-            ((window.maxCards + (window.roundWithoutTrump ? 1 : 0)) * 2) - round;
+            ((window.maxCardsThisGame + (window.settings.getValue("roundWithoutTrump") ? 1 : 0))
+             * 2) - round;
       }
 
       return currentCards;
@@ -261,21 +542,22 @@ function createPlayersTable() {
       let playerTable = document.getElementById("newGameInputTable");
       removeAllContent(playerTable);
 
-      for (let playerIndex = 0; playerIndex < window.maxPlayers; playerIndex++) {
+      for (let playerIndex = 0;
+           playerIndex < window.settings.getValue("maxPlayers");
+           playerIndex++)
+      {
          let row = playerTable.insertRow();
          if (playerIndex > 1) { hideOrShowElement(row, false); }
-         row.setAttribute("id", "playerRow" + playerIndex);
+         row.setAttribute("id", "playerRow" + playerIndex.toString());
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
          dealerCell.setAttribute("onclick",
                                  "return updatePlayers(" + playerIndex.toString() + ", \"-1\")");
 
-         let radioButton = document.createElement("input");
-         radioButton.setAttribute("type", "radio");
-         radioButton.setAttribute("name", "firstDealer");
-         radioButton.setAttribute("id", "radioDealer-" + playerIndex.toString());
-         radioButton.classList.add("vertCenter");
-         dealerCell.appendChild(radioButton);
+         dealerCell.appendChild(createRadioButton("firstDealer",
+                                                  "radioDealer-" + playerIndex.toString(),
+                                                  "vertCenter",
+                                                  false));
 
          let nameChoiceCell = row.insertCell(1);
          nameChoiceCell.classList.add("vertCenter");
@@ -303,7 +585,6 @@ function createPlayersTable() {
          }
          nameChoiceCell.appendChild(nameList);
       }
-      document.getElementById("checkNoTrumpMiddleRound").checked = true;
       if (window.DEBUG) {
          hideOrShowElement(document.getElementById("debugSetMaxCardsDiv"), true);
       }
@@ -316,7 +597,7 @@ function createPlayersTable() {
 
 function hideAllNextPlayerFields(number) {
    try {
-      for (let i = number + 1; i < window.maxPlayers; i++) {
+      for (let i = number + 1; i < window.settings.getValue("maxPlayers"); i++) {
          hideOrShowElement(document.getElementById("playerRow" + i.toString()), false);
       }
       return true;
@@ -327,15 +608,22 @@ function hideAllNextPlayerFields(number) {
 }
 
 function findFirstHiddenNameField() {
+   /*
+    Either finds the first hidden field or the first empty field.
+    If no such field is found, return i+1 so checks using this function will still return true
+    */
    try {
-      let i;
-      for (i = 0; i < window.maxPlayers; i++) {
-         if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")) {
+      let i, allFilled = true;
+      for (i = 0; i < window.settings.getValue("maxPlayers"); i++) {
+         if (document.getElementById("playerRow" + i.toString()).classList.contains("hidden")
+             || document.getElementById("nameChoice-" + i.toString()).value === "")
+         {
+            allFilled = false;
             break;
          }
       }
-      // Even if the loop doesn't break, we still get a number
-      return i;
+      // If the loop ends, return the last known number +1, to show there are no hidden fields
+      return i + 1;
    } catch (e) {
       alert("findFirstHiddenNameField " + e.message);
       return false;
@@ -346,7 +634,7 @@ function checkNoDoublePlayers() {
    try {
       let currentPlayers = [];
       let value;
-      for (let i = 0; i < window.maxPlayers; i++) {
+      for (let i = 0; i < window.settings.getValue("maxPlayers"); i++) {
          value = document.getElementById("nameChoice-" + i.toString()).value;
          if (value === "") {
             break; //Only players before the first empty cell should be considered
@@ -396,7 +684,8 @@ function updatePlayers(index, value) {
       }
       // These should be initialised after the if/else!
       let conditionValidDealer = checkDealerValidity(currentDealer);
-      let conditionEnoughPlayers = findFirstHiddenNameField() > window.minimumPlayers;
+      let conditionEnoughPlayers = findFirstHiddenNameField() >
+                                   window.settings.getValue("minPlayers");
       let conditionNoDoublePlayers = checkNoDoublePlayers();
       return result
              && hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
@@ -414,7 +703,7 @@ function showAllNextPlayerFields(index, value) {
    // with values, of course
    try {
       if (value) {
-         for (let i = index + 1; i < window.maxPlayers; i++) {
+         for (let i = index + 1; i < window.settings.getValue("maxPlayers"); i++) {
             hideOrShowElement(document.getElementById("playerRow" + i.toString()), true);
             // Only show one empty line
             if (document.getElementById("nameChoice-" + i.toString()).value === "") { break; }
@@ -461,21 +750,22 @@ function storePlayers() {
          else { break; }
       }
 
-      let noTrumpMiddleRound = document.getElementById("checkNoTrumpMiddleRound");
-      window.roundWithoutTrump = noTrumpMiddleRound.checked;
-
       window.players = Array.from(localPlayers);
       window.currentDealerIndex = localDealerIndex;
       if (window.DEBUG) {
          let maxCardsInput = document.getElementById("debugSetMaxCardsInput").value;
-         if (maxCardsInput) { window.maxCards = parseInt(maxCardsInput, 10); }
+         if (maxCardsInput) { window.maxCardsThisGame = parseInt(maxCardsInput, 10); }
       } else {
-         window.maxCards = Math.floor(52 / window.players.length)
-                           // If no cards would be left at the highest round, deal 1 card less
-                           - (52 % window.players.length === 0 ? 1 : 0);
+         let maxCardsBasedOnPlayers = Math.floor(52 / window.players.length)
+                                      // If no cards would be left at the highest round, deal 1
+                                      // card less
+                                      - (52 % window.players.length === 0 ? 1 : 0);
+         window.maxCardsThisGame =
+            Math.min(maxCardsBasedOnPlayers, window.settings.getValue("maxCardsPossible"));
       }
 
-      window.maxRounds = (window.maxCards * 2) + (window.roundWithoutTrump ? 1 : -1);
+      window.maxRounds =
+         (window.maxCardsThisGame * 2) + (window.settings.getValue("roundWithoutTrump") ? 1 : -1);
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
@@ -516,16 +806,22 @@ function createBidTakeTable(bidOrTake) {
       let currentCards = getCurrentCards();
 
       let currentScores = calculateTotalScores();
+      let row;
       for (let i = 0; i < window.players.length; i++) {
-         let row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
-                                                                             - (window.currentDealerIndex
-                                                                                + 1));
+         if (window.settings.hasOwnProperty("dealerLast")
+             && window.settings["dealerLast"].value
+             === true)
+         {
+            row = formTable.insertRow(i <= window.currentDealerIndex ? -1 : i
+                                                                            - (window.currentDealerIndex
+                                                                               + 1));
+         } else { row = formTable.insertRow(); }
          row.setAttribute("id", playerId + i.toString());
 
          let nameCell = row.insertCell(0);
          nameCell.classList.add(cellName);
          nameCell.innerHTML = window.players[i].toString(); //Just to prevent warnings, this should
-                                                            // contain strings
+                                                            //already contain strings
          if (i === window.currentDealerIndex) {
             nameCell.innerHTML += "*";
          }
@@ -540,6 +836,7 @@ function createBidTakeTable(bidOrTake) {
 
          for (let number = 0; number <= currentCards; number++) {
             let numberCell = row.insertCell(-1);
+            numberCell.setAttribute("id", bidOrTake + "number" + i.toString() + number.toString());
             numberCell.setAttribute("onclick",
                                     "return clickBidOrTakeButton(this.parentNode, "
                                     + number.toString()
@@ -580,6 +877,23 @@ function createBidTable() {
 
 }
 
+function clearHighLightsPlayerIndex(playerIndex, bidOrTake) {
+   try {
+      let numberCell;
+      for (let number = 0; number <= getCurrentCards(); number++) {
+         numberCell = document.getElementById(bidOrTake + "number" + playerIndex + number);
+         if (numberCell.getAttribute("class")) {
+            numberCell.classList.remove("highlighted");
+         }
+         numberCell.classList.add("unhighlighted");
+      }
+      return true;
+   } catch (e) {
+      alert("clearHighLightsPlayerIndex " + e.message);
+      return false;
+   }
+}
+
 function clearHighLightsPlayer(player) {
    try {
       for (let child of player.children) {
@@ -611,13 +925,15 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
       let numberAsInt = parseInt(numberString, 10);
       let playerIndexInt = parseInt(playerIndexString, 10);
       let offset = bidOrTake === "bid" ? 2 : 3;
+      if (bidOrTake === "bid") {
+         window.currentBids[playerIndexInt] = numberAsInt;
+      } else {
+         window.currentTakes[playerIndexInt] = numberAsInt;
+      }
       let indexToHighlight = parent.children[numberAsInt + offset];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");
-      (bidOrTake === "bid")
-      ? window.currentBids[playerIndexInt] = numberAsInt
-      : window.currentTakes[playerIndexInt] =
-         numberAsInt;
+
       return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
       alert("clickBidOrTakeButton " + e.message);
@@ -658,8 +974,7 @@ function updateBidsOrTakesPlaced(bidOrTake) {
       let amountInputsFilled = (bidOrTake === "bid"
                                 ? window.currentBids
                                 : window.currentTakes).filter(function(value) {
-         return typeof (value !== "undefined")
-                && (value !== null);
+         return typeof (value !== "undefined") && (value !== null);
       }).length;
       let spadeRadioChecked = true;
       if (bidOrTake === "bid") {
@@ -739,7 +1054,9 @@ function updateScores() {
             localScores[playerIndex] =
                (-Math.abs(window.currentBids[playerIndex] - window.currentTakes[playerIndex]) * 3);
          }
-         if (window.spadeTrump[window.currentRound]) { localScores[playerIndex] *= 2; }
+         if (window.settings.getValue("spadeDouble")
+             && window.spadeTrump[window.currentRound])
+         { localScores[playerIndex] *= 2; }
       }
       window.scores[window.currentRound] = localScores;
       return true;
@@ -793,17 +1110,21 @@ function createScoreBoard() {
       let scoreTable = document.getElementById("scoreDataTable");
       removeAllContent(scoreTable);
       let totalScores = calculateTotalScores();
+      let spadeDouble = window.settings.getValue("spadeDouble");
       for (let round = 0; round < window.currentRound; round++) {
          let scoreRow = scoreTable.insertRow();
          let roundCell = scoreRow.insertCell(0);
          roundCell.innerHTML = round === 0 ? "" : round.toString();
          let cardsCell = scoreRow.insertCell(1);
          cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
-         let spadeCell = scoreRow.insertCell(2);
-         spadeCell.innerHTML =
-            (window.roundWithoutTrump && (round === window.maxCards + 1))
-            ? "NVT"
-            : window.spadeTrump[round] ? "♠" : "";
+         if (spadeDouble) {
+            let spadeCell = scoreRow.insertCell(2);
+            spadeCell.innerHTML =
+               (window.settings.getValue("roundWithoutTrump")
+                && (round === window.maxCardsThisGame + 1))
+               ? "NVT"
+               : window.spadeTrump[round] ? "♠" : "";
+         }
          for (let playerIndex = 0; playerIndex < window.players.length; playerIndex++) {
             let scoreCell = scoreRow.insertCell(-1);
 
@@ -825,9 +1146,110 @@ function createScoreBoard() {
          hideOrShowElement(document.getElementById("scoreboardToBidButton"), false);
          hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), true);
       }
-      return createTableHead(scoreTable, ["Ronde", "Kaarten", "♠", ...window.players]);
+      let rowData = ["Ronde", "Kaarten", ...window.players];
+      if (spadeDouble) { rowData = ["Ronde", "Kaarten", "♠", ...window.players]; }
+      return createTableHead(scoreTable, rowData);
    } catch (e) {
       alert("createScoreBoard " + e.message);
+      return false;
+   }
+}
+
+function createSettingsScreen() {
+   try {
+      let settingsTable = document.getElementById("settingsTable");
+      removeAllContent(settingsTable);
+      let row = settingsTable.insertRow();
+      let cell1 = row.insertCell(0);
+      cell1.innerText = "Instelling:";
+      let cell2 = row.insertCell(1);
+      cell2.innerText = "Uit";
+      let cell3 = row.insertCell(2);
+      cell3.innerText = "Aan";
+      for (let key in window.settings) {
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         let keyValue = window.settings.getSetting(key);
+         row = settingsTable.insertRow();
+         cell1 = row.insertCell(0);
+         cell1.innerText = keyValue.text;
+         cell2 = row.insertCell(1);
+         if (keyValue.type === "boolean") {
+            cell3 = row.insertCell(2);
+            cell2.appendChild(createRadioButton(keyValue.id + "radio",
+                                                keyValue.id + "radioId1",
+                                                "alignLeft",
+                                                keyValue.value === false));
+            cell3.appendChild(createRadioButton(keyValue.id + "radio",
+                                                keyValue.id + "radioId2",
+                                                "alignLeft",
+                                                keyValue.value === true));
+         } else if (keyValue.type === "number") {
+            cell2.setAttribute("colspan", "2");
+            let numberInput = document.createElement("input");
+            numberInput.setAttribute("type", "number");
+            numberInput.setAttribute("id", keyValue.id + "numberId");
+            numberInput.setAttribute("value", keyValue.value);
+            // These don't seem to work
+            numberInput.setAttribute("min", keyValue.min);
+            numberInput.setAttribute("max", keyValue.max);
+            cell2.appendChild(numberInput);
+         }
+      }
+      return hideOrShowElement(document.getElementById("settingsScreen"), true);
+   } catch (e) {
+      alert("createSettingsScreen " + e.message);
+      return false;
+   }
+}
+
+function checkSettings() {
+   /*
+    Loops over all test functions in the settings class and returns if all of them return true.
+    */
+   try {
+      let methods = Object.getOwnPropertyNames(Object.getPrototypeOf(window.settings))
+                          .filter(name => (name !== "constructor"
+                                           && typeof window.settings[name] === "function"));
+      for (let m of methods) {
+         if (m.startsWith("test")) {
+            if (! window.settings[m]()) {
+               return false;
+            }
+         }
+      }
+      return true;
+   } catch (e) {
+      alert("checkSettings " + e.message);
+      return false;
+   }
+}
+
+function saveSettings() {
+   try {
+      let keyValue, newValue;
+      for (let key in window.settings) {
+         if (! window.settings.hasOwnProperty(key)) {
+            continue;
+         }
+         // Bit counterintuitive maybe, but as values are always initialised this is a good way to
+         // determine which id to get and how to get the value (checked vs value)
+         keyValue = window.settings.getSetting(key);
+         if (keyValue.type === "boolean") {
+            newValue = document.getElementById(keyValue.id + "radioId1").checked === false;
+         } else if (keyValue.type === "number") {
+            newValue = document.getElementById(keyValue.id + "numberId").value;
+         } else {
+            alert("Setting %s has the invalid type of %s! Please fix this.".format(key.toString(),
+                                                                                   typeof keyValue.value));
+            return false;
+         }
+         window.settings[key].value = newValue;
+      }
+      return checkSettings() && storeSettings();
+   } catch (e) {
+      alert("saveSettings " + e.message);
       return false;
    }
 }

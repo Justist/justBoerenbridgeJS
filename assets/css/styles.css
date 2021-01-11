@@ -35,6 +35,10 @@
    text-align : center;
 }
 
+.alignLeft {
+   text-align : left;
+}
+
 .hidden {
    position : absolute !important;
    top      : -9999px !important;

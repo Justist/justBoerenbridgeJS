@@ -88,3 +88,8 @@
    background-color : #055ADA !important;
 }
 
+.contact-clean form .clearCookiesButton {
+   margin-top       : 15px;
+   color            : #FFFFFF;
+   background-color : #ff0800 !important;
+}

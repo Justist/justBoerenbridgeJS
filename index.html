@@ -11,63 +11,44 @@
 </head>
 
 <body>
-<div id="endOfGameScreen" class="contact-clean">
+<div id="settingsScreen" class="contact-clean">
    <form method="post">
-      <h2 class="text-center">Einde spel</h2>
+      <h2 class="text-center">Instellingen</h2>
       <div class="form-group">
-         <div class="table-responsive">
-            <table class="table alignCenter" id="endScoreTable">
-               <thead>
-               <tr>
-                  <th>Positie</th>
-                  <th>Naam</th>
-                  <th><strong>Punten</strong><br></th>
-               </tr>
+         <div class="table-responsive alignCenter">
+            <table class="table" id="clearCookiesTable">
+               <thead class="alignLeft">
+               <tr class="alignLeft">
+                  <th class="alignLeft">
+                     <button class="btn clearCookiesButton"
+                             id="clearCookiesButton"
+                             type="button"
+                             onclick="return clearLocal() && toOverview()">
+                        Verwijder opgeslagen gegevens
+                     </button>
+                  </th>
                </thead>
-               <tbody>
-               <tr>
-                  <td>1</td>
-                  <td>Simon</td>
-                  <td>128</td>
-               </tr>
-               <tr>
-                  <td>2</td>
-                  <td>Roland</td>
-                  <td>127</td>
-               </tr>
-               <tr>
-                  <td>3</td>
-                  <td>Aad</td>
-                  <td>56</td>
-               </tr>
-               <tr>
-                  <td>4</td>
-                  <td>Arnold</td>
-                  <td>54</td>
-               </tr>
-               </tbody>
             </table>
          </div>
-         <p class="alignCenter">Allerhoogste score xx punten door yyy</p>
-         <p class="alignCenter">Aantal schoppenrondjes xx<br></p>
+         <div class="table-responsive">
+            <table class="table alignCenter" id="settingsTable">
+               <!-- filled with javascript -->
+            </table>
+         </div>
          <div class="table-responsive alignCenter">
-            <table class="table" id="endGameButtonsTable">
+            <table class="table" id="settingsButtonsTable">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
-                        Spel afsluiten en opslaan
-                     </button>
-                  </th>
-                  <th style="text-align: left;">
-                     <button class="btn btn-primary" type="button"
-                             onclick="return toScores()">
-                        Stand
+                     <button class="btn btn-primary"
+                             id="saveSettingsButton"
+                             type="button"
+                             onclick="return saveSettings() && toOverview()">
+                        Opslaan en terug naar overzicht
                      </button>
                   </th>
                </tr>
                </thead>
-               <tbody></tbody>
             </table>
          </div>
       </div>
@@ -258,8 +239,13 @@
                   </button>
                </th>
                <th>
-                  <button class="btn btn-primary" type="button" onclick="return toGameRules();">
+                  <button class="btn btn-primary" type="button" onclick="return toGameRules()">
                      Regels &amp; telling
+                  </button>
+               </th>
+               <th>
+                  <button class="btn btn-primary" type="button" onclick="return toSettings()">
+                     Instellingen
                   </button>
                </th>
             </tr>
@@ -399,17 +385,6 @@
             <table class="table nameTable" id="newGameInputTable">
                <!-- filled with javascript -->
             </table>
-         </div>
-         <div class="form-check alignCenter">
-
-            <label class="form-check-label"
-                   for="checkNoTrumpMiddleRound">
-               <input class="form-check-input"
-                      type="checkbox"
-                      id="checkNoTrumpMiddleRound">
-               Middelste ronde zonder troef?
-               <br>
-            </label>
          </div>
          <div class="form-check alignCenter hidden" id="debugSetMaxCardsDiv">
 
