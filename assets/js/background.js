@@ -925,15 +925,16 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
       let numberAsInt = parseInt(numberString, 10);
       let playerIndexInt = parseInt(playerIndexString, 10);
       let offset = bidOrTake === "bid" ? 2 : 3;
-      (bidOrTake === "bid")
-      ? window.currentBids[playerIndexInt] = numberAsInt
-      : window.currentTakes[playerIndexInt] = numberAsInt;
-      let result = true;
+      if (bidOrTake === "bid") {
+         window.currentBids[playerIndexInt] = numberAsInt;
+      } else {
+         window.currentTakes[playerIndexInt] = numberAsInt;
+      }
       let indexToHighlight = parent.children[numberAsInt + offset];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");
 
-      return result && updateBidsOrTakesPlaced(bidOrTake);
+      return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
       alert("clickBidOrTakeButton " + e.message);
       return false;
