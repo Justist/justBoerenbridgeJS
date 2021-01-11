@@ -846,10 +846,6 @@ function createBidTakeTable(bidOrTake) {
                                     + bidOrTake.toString()
                                     + "\')");
             numberCell.innerHTML = number.toString();
-            /*if (bidOrTake === "take" && number === window.currentBids[i]) {
-               numberCell.classList.remove("unhighlighted");
-               numberCell.classList.add("highlighted");
-            }*/
          }
       }
 
@@ -888,7 +884,6 @@ function clearHighLightsPlayerIndex(playerIndex, bidOrTake) {
          numberCell = document.getElementById(bidOrTake + "number" + playerIndex + number);
          if (numberCell.getAttribute("class")) {
             numberCell.classList.remove("highlighted");
-            numberCell.classList.remove("unclickable");
          }
          numberCell.classList.add("unhighlighted");
       }
@@ -904,7 +899,6 @@ function clearHighLightsPlayer(player) {
       for (let child of player.children) {
          if (child.getAttribute("class")) {
             child.classList.remove("highlighted");
-            child.classList.remove("unclickable");
          }
          child.classList.add("unhighlighted");
       }
@@ -924,35 +918,6 @@ function clickSpadeRadioButton() {
    }
 }
 
-function updateDealerNumberHighlighted(bidOrTake) {
-   try {
-      let sum;
-      if (bidOrTake === "bid") {
-         sum = window.currentBids.reduce((a, b) => a + b, 0);
-      } else if (bidOrTake === "take") {
-         sum = window.currentTakes.reduce((a, b) => a + b, 0);
-      } else {
-         alert("bidOrTake is not bid or take, but instead " + bidOrTake.toString() + "!");
-         return false;
-      }
-      let numberToActOn = getCurrentCards() - sum;
-      if (numberToActOn < 0) {
-         return true;
-      }
-      let numberCell = document.getElementById(bidOrTake + "number" + window.currentDealerIndex + numberToActOn);
-      clearHighLightsPlayerIndex(window.currentDealerIndex, bidOrTake);
-      if (bidOrTake === "bid") {
-         numberCell.classList.add("unclickable");
-      } else { //has to be take or we'd've returned false already
-         numberCell.classList.add("highlighted");
-      }
-      return true;
-   } catch (e) {
-      alert("updateDealerNumberHighlighted " + e.message);
-      return false;
-   }
-}
-
 // noinspection JSUnusedGlobalSymbols
 function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake) {
    try {
@@ -963,10 +928,7 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
       (bidOrTake === "bid")
       ? window.currentBids[playerIndexInt] = numberAsInt
       : window.currentTakes[playerIndexInt] = numberAsInt;
-      /*if (playerIndexInt !== window.currentDealerIndex) {
-         window.currentBids[window.currentDealerIndex] = null;
-      }*/
-      let result = true; //updateDealerNumberHighlighted(bidOrTake);
+      let result = true;
       let indexToHighlight = parent.children[numberAsInt + offset];
       indexToHighlight.classList.remove("unhighlighted");
       indexToHighlight.classList.add("highlighted");

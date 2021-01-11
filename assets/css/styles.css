@@ -59,9 +59,3 @@
 .vertCenter {
    vertical-align : center;
 }
-
-.unclickable {
-   pointer-events: none;
-   color      : rgb(76, 76, 76);
-   background : rgb(176, 176, 176);
-}
