@@ -15,51 +15,6 @@ String.prototype.format = function() {
    }
 };
 
-function storeLocal(itemName, itemData) {
-   try {
-      if (! Storage.storageAvailable("localStorage")) {
-         // This should be changed to not be an alert on every try, like a static message somewhere
-         alert("No local storage available! Changes will not be saved!");
-         // Then fail silently
-         return true;
-      }
-      window.localStorage.setItem(itemName, itemData);
-      return true;
-   } catch (e) {
-      alert("storeLocal: " + e.message);
-      return false;
-   }
-}
-
-function getLocal(itemName) {
-   try {
-      if (! Storage.storageAvailable("localStorage")) {
-         // This should be changed to not be an alert on every try, like a static message somewhere
-         alert("No local storage available! Changes will not be saved!");
-         // Then fail silently
-         return true;
-      }
-      return window.localStorage.getItem(itemName);
-   } catch (e) {
-      alert("getLocal: " + e.message);
-      return false;
-   }
-}
-
-function clearLocal() {
-   try {
-      if (Storage.storageAvailable("localStorage")) {
-         window.localStorage.clear();
-      } else {
-         alert("Cookies niet beschikbaar, kan ze niet verwijderen!");
-      }
-      return true;
-   } catch (e) {
-      alert("clearLocal: " + e.message);
-      return false;
-   }
-}
-
 function removeAllContent(parent) {
    try {
       while (parent.firstChild) { parent.removeChild(parent.lastChild); }

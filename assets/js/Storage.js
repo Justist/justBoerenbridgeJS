@@ -35,7 +35,7 @@ class Storage {
             if (! settings.hasOwnProperty(key)) {
                continue;
             }
-            keyValue = getLocal(key);
+            keyValue = Storage.getLocal(key);
             if (keyValue) {
                settings[key] = JSON.parse(keyValue);
             }
@@ -53,11 +53,58 @@ class Storage {
             if (! (settings.hasOwnProperty(key) && settings[key])) {
                continue;
             }
-            storeLocal(key, JSON.stringify(settings[key]));
+            Storage.storeLocal(key, JSON.stringify(settings[key]));
          }
          return true;
       } catch (e) {
          alert("Storage.storeSettings: " + e.message);
+         return false;
+      }
+   }
+
+   static storeLocal(itemName, itemData) {
+      try {
+         if (! Storage.storageAvailable("localStorage")) {
+            // This should be changed to not be an alert on every try, like a static message
+            // somewhere
+            alert("No local storage available! Changes will not be saved!");
+            // Then fail silently
+            return true;
+         }
+         window.localStorage.setItem(itemName, itemData);
+         return true;
+      } catch (e) {
+         alert("Storage.storeLocal: " + e.message);
+         return false;
+      }
+   }
+
+   static getLocal(itemName) {
+      try {
+         if (! Storage.storageAvailable("localStorage")) {
+            // This should be changed to not be an alert on every try, like a static message
+            // somewhere
+            alert("No local storage available! Changes will not be saved!");
+            // Then fail silently
+            return true;
+         }
+         return window.localStorage.getItem(itemName);
+      } catch (e) {
+         alert("Storage.getLocal: " + e.message);
+         return false;
+      }
+   }
+
+   static clearLocal() {
+      try {
+         if (Storage.storageAvailable("localStorage")) {
+            window.localStorage.clear();
+         } else {
+            alert("Cookies niet beschikbaar, kan ze niet verwijderen!");
+         }
+         return true;
+      } catch (e) {
+         alert("Storage.clearLocal: " + e.message);
          return false;
       }
    }
