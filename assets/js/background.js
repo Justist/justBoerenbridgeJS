@@ -4,12 +4,6 @@ window.DEBUG = false;
 window.regularPlayers =
    ["Speler 1", "Speler 2", "Speler 3", "Speler 4", "Speler 5", "Speler 6", "Speler 7", "Speler 8"];
 
-class GameState {
-   constructor() {
-
-   }
-}
-
 //  deepcode ignore no-extend-native: I like format()
 String.prototype.format = function() {
    try {
