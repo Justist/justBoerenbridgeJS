@@ -15,35 +15,9 @@ String.prototype.format = function() {
    }
 };
 
-function storageAvailable(type) {
-   // As copied from
-   // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-   let storage, x;
-   try {
-      storage = window[type];
-      x = "__storage_test__";
-      storage.setItem(x, x);
-      storage.removeItem(x);
-      return true;
-   } catch (e) {
-      return e instanceof DOMException && (
-                  // everything except Firefox
-         e.code === 22 ||
-         // Firefox
-         e.code === 1014 ||
-         // test name field too, because code might not be present
-         // everything except Firefox
-         e.name === "QuotaExceededError" ||
-         // Firefox
-         e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
-             // acknowledge QuotaExceededError only if there's something already stored
-             (storage && storage.length !== 0);
-   }
-}
-
 function storeLocal(itemName, itemData) {
    try {
-      if (! storageAvailable("localStorage")) {
+      if (! Storage.storageAvailable("localStorage")) {
          // This should be changed to not be an alert on every try, like a static message somewhere
          alert("No local storage available! Changes will not be saved!");
          // Then fail silently
@@ -59,7 +33,7 @@ function storeLocal(itemName, itemData) {
 
 function getLocal(itemName) {
    try {
-      if (! storageAvailable("localStorage")) {
+      if (! Storage.storageAvailable("localStorage")) {
          // This should be changed to not be an alert on every try, like a static message somewhere
          alert("No local storage available! Changes will not be saved!");
          // Then fail silently
@@ -74,7 +48,7 @@ function getLocal(itemName) {
 
 function clearLocal() {
    try {
-      if (storageAvailable("localStorage")) {
+      if (Storage.storageAvailable("localStorage")) {
          window.localStorage.clear();
       } else {
          alert("Cookies niet beschikbaar, kan ze niet verwijderen!");
@@ -82,40 +56,6 @@ function clearLocal() {
       return true;
    } catch (e) {
       alert("clearLocal: " + e.message);
-      return false;
-   }
-}
-
-function getSettings() {
-   try {
-      let keyValue;
-      for (let key in window.settings) {
-         if (! window.settings.hasOwnProperty(key)) {
-            continue;
-         }
-         keyValue = getLocal(key);
-         if (keyValue) {
-            window.settings[key] = JSON.parse(keyValue);
-         }
-      }
-      return true;
-   } catch (e) {
-      alert("getSettings: " + e.message);
-      return false;
-   }
-}
-
-function storeSettings() {
-   try {
-      for (let key in window.settings) {
-         if (! (window.settings.hasOwnProperty(key) && window.settings[key])) {
-            continue;
-         }
-         storeLocal(key, JSON.stringify(window.settings[key]));
-      }
-      return true;
-   } catch (e) {
-      alert("storeSettings: " + e.message);
       return false;
    }
 }
@@ -164,9 +104,10 @@ function resetAllStats() {
       window.spadeTrump = { 0 : false };
       window.takes = { 0 : [] };
 
-      return hideOrShowElement(document.getElementById("takeScreenToBidsButton"), true)
-             && hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
-             && hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), false);
+      return General.hideOrShowElement(document.getElementById("takeScreenToBidsButton"), true)
+             && General.hideOrShowElement(document.getElementById("scoreboardToBidButton"), true)
+             && General.hideOrShowElement(document.getElementById("scoreboardToOtherButtons"),
+                                          false);
    } catch (e) {
       alert("resetAllStats " + e.message);
       return false;
@@ -193,7 +134,7 @@ function toNewGame() {
    try {
       setEverythingToNone();
       resetAllStats();
-      hideOrShowElement(document.getElementById("newGameScreen"), true);
+      General.hideOrShowElement(document.getElementById("newGameScreen"), true);
 
       let dateTimeScoreBoard = document.getElementById("dateTimeScoreBoard");
       let dateTime = new Date();
@@ -229,7 +170,7 @@ function toBids() {
       setEverythingToNone();
       window.currentBids = [];
       let alert = document.getElementById("spadeTrumpSelectAlert");
-      hideOrShowElement(document.getElementById("bidScreen"), true);
+      General.hideOrShowElement(document.getElementById("bidScreen"), true);
       let spadeRadioButtons =
              getTypeInputFields(document.getElementById("spadeRadioButtonsP"), "radio");
       for (let button of spadeRadioButtons) { button.checked = false; }
@@ -238,14 +179,14 @@ function toBids() {
            && (window.currentRound === window.maxCardsThisGame + 1))
           || (! spadeDouble))
       {
-         hideOrShowElement(alert, false);
-         hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
-         hideOrShowElement(document.getElementById("middleRoundText"), spadeDouble);
+         General.hideOrShowElement(alert, false);
+         General.hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
+         General.hideOrShowElement(document.getElementById("middleRoundText"), spadeDouble);
          spadeRadioButtons[1].checked = true;
       } else {
-         hideOrShowElement(alert, true);
-         hideOrShowElement(document.getElementById("spadeRadioButtonsP"), true);
-         hideOrShowElement(document.getElementById("middleRoundText"), false);
+         General.hideOrShowElement(alert, true);
+         General.hideOrShowElement(document.getElementById("spadeRadioButtonsP"), true);
+         General.hideOrShowElement(document.getElementById("middleRoundText"), false);
       }
       return updateRoundInfo("bid") && createBidTable();
    } catch (e) {
@@ -258,13 +199,13 @@ function toTakes() {
    try {
       setEverythingToNone();
       window.currentTakes = [];
-      hideOrShowElement(document.getElementById("takeScreen"), true);
+      General.hideOrShowElement(document.getElementById("takeScreen"), true);
       if (window.settings.getValue("roundWithoutTrump")
           && (window.currentRound === window.maxCardsThisGame + 1))
       {
-         hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
+         General.hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), false);
       } else {
-         hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), true);
+         General.hideOrShowElement(document.getElementById("spadeTrumpTakeScreen"), true);
       }
       return updateRoundInfo("take") && createTakeTable();
    } catch (e) {
@@ -288,7 +229,7 @@ function toScores() {
 function toGameRules() {
    try {
       setEverythingToNone();
-      return hideOrShowElement(document.getElementById("gameRulesScreen"), true);
+      return General.hideOrShowElement(document.getElementById("gameRulesScreen"), true);
    } catch (e) {
       alert("toGameRules " + e.toString());
       return false;
@@ -309,55 +250,11 @@ function toOverview() {
    try {
       setEverythingToNone();
       window.settings = new Settings();
-      return getSettings() && hideOrShowElement(document.getElementById("overviewScreen"), true);
+      return Storage.getSettings(window.settings)
+             && General.hideOrShowElement(document.getElementById("overviewScreen"),
+                                          true);
    } catch (e) {
       alert("toOverview " + e.toString());
-      return false;
-   }
-}
-
-function createTableHead(table, rowData) {
-   try {
-      let head = table.createTHead();
-      let row = head.insertRow();
-      for (let i = 0; i < rowData.length; i++) {
-         let th = document.createElement("th");
-         th.textContent = rowData[i];
-         row.appendChild(th);
-      }
-      return row;
-   } catch (e) {
-      alert("createTableHead " + e.message);
-      return false;
-   }
-}
-
-function createStretchTableHead(table, rowData, stretch) {
-   try {
-      let allButLast = rowData.slice(0, -1);
-      let headRow = createTableHead(table, allButLast);
-      let th = document.createElement("th");
-      th.setAttribute("colspan", stretch);
-      th.textContent = rowData.slice(-1)[0]; //last element
-      headRow.appendChild(th);
-      return true;
-   } catch (e) {
-      alert("createStretchTableHead " + e.message);
-      return false;
-   }
-}
-
-function createRadioButton(name, id, classAddition, checked) {
-   try {
-      let radioButton = document.createElement("input");
-      radioButton.setAttribute("type", "radio");
-      radioButton.setAttribute("name", name);
-      radioButton.setAttribute("id", id);
-      radioButton.checked = checked; // setAttribute does not work for this :(
-      radioButton.classList.add(classAddition);
-      return radioButton;
-   } catch (e) {
-      alert("createRadioButton " + e.message);
       return false;
    }
 }
@@ -403,17 +300,17 @@ function createPlayersTable() {
            playerIndex++)
       {
          let row = playerTable.insertRow();
-         if (playerIndex > 1) { hideOrShowElement(row, false); }
+         if (playerIndex > 1) { General.hideOrShowElement(row, false); }
          row.setAttribute("id", "playerRow" + playerIndex.toString());
          let dealerCell = row.insertCell(0);
          dealerCell.classList.add("vertCenter");
          dealerCell.setAttribute("onclick",
                                  "return updatePlayers(" + playerIndex.toString() + ", \"-1\")");
 
-         dealerCell.appendChild(createRadioButton("firstDealer",
-                                                  "radioDealer-" + playerIndex.toString(),
-                                                  "vertCenter",
-                                                  false));
+         dealerCell.appendChild(General.createRadioButton("firstDealer",
+                                                          "radioDealer-" + playerIndex.toString(),
+                                                          "vertCenter",
+                                                          false));
 
          let nameChoiceCell = row.insertCell(1);
          nameChoiceCell.classList.add("vertCenter");
@@ -442,9 +339,9 @@ function createPlayersTable() {
          nameChoiceCell.appendChild(nameList);
       }
       if (window.DEBUG) {
-         hideOrShowElement(document.getElementById("debugSetMaxCardsDiv"), true);
+         General.hideOrShowElement(document.getElementById("debugSetMaxCardsDiv"), true);
       }
-      return createTableHead(playerTable, ["Eerste deler", "Namen spelers"]);
+      return General.createTableHead(playerTable, ["Eerste deler", "Namen spelers"]);
    } catch (e) {
       alert("createPlayersTable " + e.message);
       return false;
@@ -454,7 +351,7 @@ function createPlayersTable() {
 function hideAllNextPlayerFields(number) {
    try {
       for (let i = number + 1; i < window.settings.getValue("maxPlayers"); i++) {
-         hideOrShowElement(document.getElementById("playerRow" + i.toString()), false);
+         General.hideOrShowElement(document.getElementById("playerRow" + i.toString()), false);
       }
       return true;
    } catch (e) {
@@ -544,10 +441,10 @@ function updatePlayers(index, value) {
                                    window.settings.getValue("minPlayers");
       let conditionNoDoublePlayers = checkNoDoublePlayers();
       return result
-             && hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
-             && hideOrShowElement(notEnoughPlayersAlert, ! conditionEnoughPlayers)
-             && hideOrShowElement(doublePlayerNamesAlert, ! conditionNoDoublePlayers)
-             && hideOrShowElement(buttonElement,
+             && General.hideOrShowElement(noValidDealerAlert, ! conditionValidDealer)
+             && General.hideOrShowElement(notEnoughPlayersAlert, ! conditionEnoughPlayers)
+             && General.hideOrShowElement(doublePlayerNamesAlert, ! conditionNoDoublePlayers)
+             && General.hideOrShowElement(buttonElement,
              conditionEnoughPlayers && conditionValidDealer && conditionNoDoublePlayers);
    } catch (e) {
       alert("updatePlayers " + e.message);
@@ -560,7 +457,7 @@ function showAllNextPlayerFields(index, value) {
    try {
       if (value) {
          for (let i = index + 1; i < window.settings.getValue("maxPlayers"); i++) {
-            hideOrShowElement(document.getElementById("playerRow" + i.toString()), true);
+            General.hideOrShowElement(document.getElementById("playerRow" + i.toString()), true);
             // Only show one empty line
             if (document.getElementById("nameChoice-" + i.toString()).value === "") { break; }
          }
@@ -723,9 +620,9 @@ function createBidTakeTable(bidOrTake) {
 function createBidTable() {
    try {
       let formTable = createBidTakeTable("bid");
-      return createStretchTableHead(formTable,
-                                    ["Spelers", "Scores", "Bieden"],
-                                    (getCurrentCards() + 1));
+      return General.createStretchTableHead(formTable,
+                                            ["Spelers", "Scores", "Bieden"],
+                                            (getCurrentCards() + 1));
    } catch (e) {
       alert("createBidTable " + e.message);
       return false;
@@ -797,20 +694,6 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
    }
 }
 
-function hideOrShowElement(element, show) {
-   try {
-      if (show) {
-         if (element.classList.contains("hidden")) { element.classList.remove("hidden"); }
-      } else {
-         if (! element.classList.contains("hidden")) { element.classList.add("hidden"); }
-      }
-      return true;
-   } catch (e) {
-      alert("hideOrShowElement " + e.message);
-      return false;
-   }
-}
-
 function updateBidsOrTakesPlaced(bidOrTake) {
    try {
       let infoRow = document.getElementById(bidOrTake === "bid" ? "bidInfoRow" : "takeInfoRow");
@@ -838,10 +721,13 @@ function updateBidsOrTakesPlaced(bidOrTake) {
             (anyRadioFilled(document.getElementById("spadeRadioButtonsP")) !== -1);
       }
       let allFilledIn = (window.players.length === amountInputsFilled);
-      return hideOrShowElement(equalAlert, (bidOrTake === "bid" ? equalCheck : (! equalCheck)))
-             && hideOrShowElement(filledAlert, (! allFilledIn))
-             && (bidOrTake === "bid" ? hideOrShowElement(spadeAlert, (! spadeRadioChecked)) : true)
-             && hideOrShowElement(buttonElement,
+      return General.hideOrShowElement(equalAlert,
+                                       (bidOrTake === "bid" ? equalCheck : (! equalCheck)))
+             && General.hideOrShowElement(filledAlert, (! allFilledIn))
+             && (bidOrTake === "bid"
+                 ? General.hideOrShowElement(spadeAlert, (! spadeRadioChecked))
+                 : true)
+             && General.hideOrShowElement(buttonElement,
              (bidOrTake === "bid" ? (! equalCheck) : equalCheck)
              && allFilledIn
              && spadeRadioChecked);
@@ -871,11 +757,11 @@ function createTakeTable() {
       let formTable = createBidTakeTable("take");
 
       if (window.currentRound === window.maxRounds) {
-         hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
+         General.hideOrShowElement(document.getElementById("takeScreenToBidsButton"), false);
       }
-      return createStretchTableHead(formTable,
-                                    ["Spelers", "Scores", "Geboden", "Gehaald"],
-                                    (getCurrentCards() + 1));
+      return General.createStretchTableHead(formTable,
+                                            ["Spelers", "Scores", "Geboden", "Gehaald"],
+                                            (getCurrentCards() + 1));
    } catch (e) {
       alert("createTakeTable " + e.message);
       return false;
@@ -999,12 +885,12 @@ function createScoreBoard() {
          }
       }
       if (window.currentRound > window.maxRounds) {
-         hideOrShowElement(document.getElementById("scoreboardToBidButton"), false);
-         hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), true);
+         General.hideOrShowElement(document.getElementById("scoreboardToBidButton"), false);
+         General.hideOrShowElement(document.getElementById("scoreboardToOtherButtons"), true);
       }
       let rowData = ["Ronde", "Kaarten", ...window.players];
       if (spadeDouble) { rowData = ["Ronde", "Kaarten", "♠", ...window.players]; }
-      return createTableHead(scoreTable, rowData);
+      return General.createTableHead(scoreTable, rowData);
    } catch (e) {
       alert("createScoreBoard " + e.message);
       return false;
@@ -1033,14 +919,14 @@ function createSettingsScreen() {
          cell2 = row.insertCell(1);
          if (keyValue.type === "boolean") {
             cell3 = row.insertCell(2);
-            cell2.appendChild(createRadioButton(keyValue.id + "radio",
-                                                keyValue.id + "radioId1",
-                                                "alignLeft",
-                                                keyValue.value === false));
-            cell3.appendChild(createRadioButton(keyValue.id + "radio",
-                                                keyValue.id + "radioId2",
-                                                "alignLeft",
-                                                keyValue.value === true));
+            cell2.appendChild(General.createRadioButton(keyValue.id + "radio",
+                                                        keyValue.id + "radioId1",
+                                                        "alignLeft",
+                                                        keyValue.value === false));
+            cell3.appendChild(General.createRadioButton(keyValue.id + "radio",
+                                                        keyValue.id + "radioId2",
+                                                        "alignLeft",
+                                                        keyValue.value === true));
          } else if (keyValue.type === "number") {
             cell2.setAttribute("colspan", "2");
             let numberInput = document.createElement("input");
@@ -1053,31 +939,9 @@ function createSettingsScreen() {
             cell2.appendChild(numberInput);
          }
       }
-      return hideOrShowElement(document.getElementById("settingsScreen"), true);
+      return General.hideOrShowElement(document.getElementById("settingsScreen"), true);
    } catch (e) {
       alert("createSettingsScreen " + e.message);
-      return false;
-   }
-}
-
-function checkSettings() {
-   /*
-    Loops over all test functions in the settings class and returns if all of them return true.
-    */
-   try {
-      let methods = Object.getOwnPropertyNames(Object.getPrototypeOf(window.settings))
-                          .filter(name => (name !== "constructor"
-                                           && typeof window.settings[name] === "function"));
-      for (let m of methods) {
-         if (m.startsWith("test")) {
-            if (! window.settings[m]()) {
-               return false;
-            }
-         }
-      }
-      return true;
-   } catch (e) {
-      alert("checkSettings " + e.message);
       return false;
    }
 }
@@ -1103,7 +967,7 @@ function saveSettings() {
          }
          window.settings[key].value = newValue;
       }
-      return checkSettings() && storeSettings();
+      return window.settings.checkSettings() && Storage.storeSettings(window.settings);
    } catch (e) {
       alert("saveSettings " + e.message);
       return false;

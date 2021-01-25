@@ -85,6 +85,29 @@ class Settings {
       }
    }
 
+   checkSettings() {
+      /*
+       * Loops over all test functions in the settings class and returns if all of them return true.
+       * Probably possible to do this shorter or more readable, but this works at least.
+       */
+      try {
+         let methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+                             .filter(name => (name !== "constructor"
+                                              && typeof this[name] === "function"));
+         for (let m of methods) {
+            if (m.startsWith("test")) {
+               if (! this[m]()) {
+                  return false;
+               }
+            }
+         }
+         return true;
+      } catch (e) {
+         alert("checkSettings " + e.message);
+         return false;
+      }
+   }
+
    testMinPlayersAboveZero() {
       try {
          if (this.minPlayers.value <= 0) {
