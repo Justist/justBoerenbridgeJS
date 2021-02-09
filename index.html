@@ -106,7 +106,9 @@
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
+                     <button class="btn btn-primary"
+                             type="button"
+                             id="toOverViewFromGameRulesButton">
                         Terug naar overzicht
                      </button>
                   </th>
@@ -121,19 +123,23 @@
 <div id="scoreboardScreen" class="contact-clean">
    <form method="post">
       <h2 class="alignCenter">Stand</h2>
-      <p id="dateTimeScoreBoard" class="alignCenter">Spel van datum</p>
+      <p id="dateTimeScoreBoard"
+         class="alignCenter">Spel van datum</p>
       <div class="form-group">
          <div class="table-responsive">
             <table class="table alignCenter" id="scoreDataTable">
                <!-- filled with javascript -->
             </table>
          </div>
-         <div class="table-responsive alignCenter" id="scoreboardToBidButton">
+         <div class="table-responsive alignCenter"
+              id="scoreboardToBidButton">
             <table class="table">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toBids()">
+                     <button class="btn btn-primary"
+                             type="button"
+                             id="toBidsScoreboardButton">
                         Verder spelen
                      </button>
                   </th>
@@ -141,17 +147,22 @@
                </thead>
             </table>
          </div>
-         <div class="table-responsive alignCenter hidden" id="scoreboardToOtherButtons">
+         <div class="table-responsive alignCenter hidden"
+              id="scoreboardToOtherButtons">
             <table class="table">
                <thead class="alignCenter">
                <tr class="alignCenter">
                   <th class="alignCenter">
-                     <button class="btn btn-primary" type="button" onclick="return toNewGame()">
+                     <button class="btn btn-primary"
+                             type="button"
+                             id="toNewGameFromScoreboardButton">
                         Nieuw spel
                      </button>
                   </th>
                   <th>
-                     <button class="btn btn-primary" type="button" onclick="return toOverview()">
+                     <button class="btn btn-primary"
+                             type="button"
+                             id="toOverviewFromScoreboardButton">
                         Overzicht
                      </button>
                   </th>
@@ -234,7 +245,7 @@
             <thead class="alignCenter">
             <tr class="alignCenter">
                <th class="alignCenter">
-                  <button class="btn btn-primary" type="button" onclick="return toNewGame()">
+                  <button class="btn btn-primary" type="button" id="toNewGameFromOverviewButton">
                      Nieuw spel
                   </button>
                </th>
@@ -255,43 +266,6 @@
             <tbody></tbody>
          </table>
       </div>
-      <!--<code>DIT IS ALLEMAAL NOG WORK IN PROGRESS!</code>
-      <div class="form-group">
-         <div class="table-responsive">
-            <table class="table alignCenter" id="overviewDataTable">
-               <thead>
-               <tr>
-                  <th>Speeldatum</th>
-                  <th>Winnaar</th>
-                  <th><strong>Score</strong><br></th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr>
-                  <td onclick="toScores()">23-12-2023 (klik)</td>
-                  <td>Piet</td>
-                  <td>128</td>
-               </tr>
-               <tr>
-                  <td onclick="toScores()">16-03-2020 (klik)<br></td>
-                  <td>Truus</td>
-                  <td>162</td>
-               </tr>
-               <tr>
-                  <td onclick="toScores()">31-02-2020 (klik)<br></td>
-                  <td>Sjaan</td>
-                  <td>324</td>
-               </tr>
-               <tr>
-                  <td onclick="toScores()">04-08-1876 (klik)<br></td>
-                  <td>Truus</td>
-                  <td>65</td>
-               </tr>
-               </tbody>
-            </table>
-         </div>
-         <p><br></p>
-      </div>-->
    </form>
 </div>
 <div id="bidScreen" class="contact-clean">
@@ -442,6 +416,11 @@
 <script src="assets/js/Round.js"></script>
 <script src="assets/js/History.js"></script>
 <script src="assets/js/GameState.js"></script>
+<script src="assets/js/Views/NumberSelectView.js"></script>
+<script src="assets/js/Views/BidView.js"></script>
+<script src="assets/js/Views/OverView.js"></script>
+<script src="assets/js/Views/ScoreView.js"></script>
 <script src="assets/js/Views/SettingsView.js"></script>
+<script src="assets/js/Views/TakeView.js"></script>
 <script src="assets/js/background.js"></script>
 </html>

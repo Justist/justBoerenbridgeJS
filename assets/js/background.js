@@ -90,36 +90,6 @@ function toNewGame() {
    }
 }
 
-function toBids() {
-   try {
-      General.setEverythingToNone();
-      window.currentBids = [];
-      let alert = document.getElementById("spadeTrumpSelectAlert");
-      General.hideOrShowElement(document.getElementById("bidScreen"), true);
-      let spadeRadioButtons =
-             getTypeInputFields(document.getElementById("spadeRadioButtonsP"), "radio");
-      for (let button of spadeRadioButtons) { button.checked = false; }
-      let spadeDouble = window.settings.getValue("spadeDouble");
-      if ((window.settings.getValue("roundWithoutTrump")
-           && (window.currentRound === window.maxCardsThisGame + 1))
-          || (! spadeDouble))
-      {
-         General.hideOrShowElement(alert, false);
-         General.hideOrShowElement(document.getElementById("spadeRadioButtonsP"), false);
-         General.hideOrShowElement(document.getElementById("middleRoundText"), spadeDouble);
-         spadeRadioButtons[1].checked = true;
-      } else {
-         General.hideOrShowElement(alert, true);
-         General.hideOrShowElement(document.getElementById("spadeRadioButtonsP"), true);
-         General.hideOrShowElement(document.getElementById("middleRoundText"), false);
-      }
-      return updateRoundInfo("bid") && createBidTable();
-   } catch (e) {
-      alert("toBids " + e.toString());
-      return false;
-   }
-}
-
 function toTakes() {
    try {
       General.setEverythingToNone();
@@ -157,19 +127,6 @@ function toGameRules() {
       return General.hideOrShowElement(document.getElementById("gameRulesScreen"), true);
    } catch (e) {
       alert("toGameRules " + e.toString());
-      return false;
-   }
-}
-
-function toOverview() {
-   try {
-      General.setEverythingToNone();
-      window.settings = new Settings();
-      return Storage.getSettings(window.settings)
-             && General.hideOrShowElement(document.getElementById("overviewScreen"),
-                                          true);
-   } catch (e) {
-      alert("toOverview " + e.toString());
       return false;
    }
 }
@@ -821,7 +778,13 @@ function saveSettings() {
 
 function createViews() {
    try {
+      window.settings = new Settings();
+
+      window.bidView = new BidView();
+      window.overView = new OverView();
+      window.scoreView = new ScoreView();
       window.settingsView = new SettingsView();
+      window.takeView = new TakeView();
       return true;
    } catch (e) {
       alert("createViews " + e.message);
@@ -831,10 +794,28 @@ function createViews() {
 
 function connectButtons() {
    try {
-      let toSettingsButton = document.getElementById("toSettingsButton");
-      toSettingsButton.onclick = function() {
-         window.settingsView.toSettings(window.settings);
-      }
+      // SettingsView Buttons
+      document.getElementById("toSettingsButton").onclick =
+         function() { window.settingsView.toSettings(window.settings); };
+
+      // Overview Buttons
+      let overviewFunc = function() { return window.overView.toOverview(window.settings); };
+      document.getElementById("toOverViewFromGameRulesButton").onclick = overviewFunc();
+      document.getElementById("toOverviewFromScoreboardButton").onclick = overviewFunc();
+
+      // BidView Buttons
+      document.getElementById("toBidsScoreboardButton").onclick =
+         function() {
+            window.overView.toBids(window.settings,
+                                   window.currentRound,
+                                   window.maxCardsThisGame);
+         };
+
+      // New Game Buttons
+      let newGameFunc = function() { return toNewGame(); };
+      document.getElementById("toNewGameFromScoreboardButton").onclick = newGameFunc;
+      document.getElementById("toNewGameFromOverviewButton").onclick = newGameFunc;
+
       return true;
    } catch (e) {
       alert("connectButtons " + e.message);
@@ -845,7 +826,7 @@ function connectButtons() {
 window.onload = function() {
    while (! document.getElementById("overviewScreen")) { }
    //TODO Check for existing save game
-   createViews()
+   createViews();
    connectButtons();
-   toOverview();
+   window.overView.toOverview();
 };
