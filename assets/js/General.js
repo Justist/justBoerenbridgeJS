@@ -50,6 +50,27 @@ class General {
       }
    }
 
+   static getCurrentCards(round = -1) {
+      try {
+         if (round === -1) { round = window.currentRound; }
+         let currentCards = round;
+         if (window.settings.getValue("roundWithoutTrump")
+             && (currentCards === (window.maxCardsThisGame + 1)))
+         {
+            currentCards = window.maxCardsThisGame;
+         } else if (currentCards > window.maxCardsThisGame) {
+            currentCards =
+               ((window.maxCardsThisGame + (window.settings.getValue("roundWithoutTrump") ? 1 : 0))
+                * 2) - round;
+         }
+
+         return currentCards;
+      } catch (e) {
+         alert("General.getCurrentCards " + e.message);
+         return false;
+      }
+   }
+
    static hideOrShowElement(element, show) {
       try {
          if (show) {
@@ -60,6 +81,36 @@ class General {
          return true;
       } catch (e) {
          alert("General.hideOrShowElement " + e.message);
+         return false;
+      }
+   }
+
+   static removeAllContent(parent) {
+      try {
+         while (parent.firstChild) { parent.removeChild(parent.lastChild); }
+         return true;
+      } catch (e) {
+         alert("General.removeAllContent " + e.message);
+         return false;
+      }
+   }
+
+   static setEverythingToNone() {
+      try {
+         for (let page of ["newGameScreen",
+                           "bidScreen",
+                           "takeScreen",
+                           "scoreboardScreen",
+                           "gameRulesScreen",
+                           "overviewScreen",
+                           "settingsScreen"])
+         {
+            let div = document.getElementById(page);
+            div.classList.add("hidden");
+         }
+         return true;
+      } catch (e) {
+         alert("General.setEverythingToNone " + e.toString());
          return false;
       }
    }

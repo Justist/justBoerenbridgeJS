@@ -15,36 +15,6 @@ String.prototype.format = function() {
    }
 };
 
-function removeAllContent(parent) {
-   try {
-      while (parent.firstChild) { parent.removeChild(parent.lastChild); }
-      return true;
-   } catch (e) {
-      alert("removeAllContent " + e.message);
-      return false;
-   }
-}
-
-function setEverythingToNone() {
-   try {
-      for (let page of ["newGameScreen",
-                        "bidScreen",
-                        "takeScreen",
-                        "scoreboardScreen",
-                        "gameRulesScreen",
-                        "overviewScreen",
-                        "settingsScreen"])
-      {
-         let div = document.getElementById(page);
-         div.classList.add("hidden");
-      }
-      return true;
-   } catch (e) {
-      alert("setEverythingToNone " + e.toString());
-      return false;
-   }
-}
-
 function resetAllStats() {
    try {
       // Content is mostly just for default values, as the first round is 1
@@ -76,8 +46,8 @@ function updateRoundInfo(bidOrTake) {
          "%se ronde, %s deel%s %s kaart%s".format(window.currentRound.toString(),
                                                   window.players[window.currentDealerIndex],
                                                   bidOrTake === "bid" ? "t" : "de",
-                                                  getCurrentCards().toString(),
-                                                  getCurrentCards() > 1 ? "en" : "");
+                                                  General.getCurrentCards().toString(),
+                                                  General.getCurrentCards() > 1 ? "en" : "");
       return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
       alert("updateRoundInfo " + e.message);
@@ -87,7 +57,7 @@ function updateRoundInfo(bidOrTake) {
 
 function toNewGame() {
    try {
-      setEverythingToNone();
+      General.setEverythingToNone();
       resetAllStats();
       General.hideOrShowElement(document.getElementById("newGameScreen"), true);
 
@@ -122,7 +92,7 @@ function toNewGame() {
 
 function toBids() {
    try {
-      setEverythingToNone();
+      General.setEverythingToNone();
       window.currentBids = [];
       let alert = document.getElementById("spadeTrumpSelectAlert");
       General.hideOrShowElement(document.getElementById("bidScreen"), true);
@@ -152,7 +122,7 @@ function toBids() {
 
 function toTakes() {
    try {
-      setEverythingToNone();
+      General.setEverythingToNone();
       window.currentTakes = [];
       General.hideOrShowElement(document.getElementById("takeScreen"), true);
       if (window.settings.getValue("roundWithoutTrump")
@@ -171,7 +141,7 @@ function toTakes() {
 
 function toScores() {
    try {
-      setEverythingToNone();
+      General.setEverythingToNone();
       let scores = document.getElementById("scoreboardScreen");
       scores.classList.remove("hidden");
       return createScoreBoard();
@@ -183,7 +153,7 @@ function toScores() {
 
 function toGameRules() {
    try {
-      setEverythingToNone();
+      General.setEverythingToNone();
       return General.hideOrShowElement(document.getElementById("gameRulesScreen"), true);
    } catch (e) {
       alert("toGameRules " + e.toString());
@@ -191,46 +161,15 @@ function toGameRules() {
    }
 }
 
-function toSettings() {
-   try {
-      setEverythingToNone();
-      return createSettingsScreen();
-   } catch (e) {
-      alert("toSettings " + e.message);
-      return false;
-   }
-}
-
 function toOverview() {
    try {
-      setEverythingToNone();
+      General.setEverythingToNone();
       window.settings = new Settings();
       return Storage.getSettings(window.settings)
              && General.hideOrShowElement(document.getElementById("overviewScreen"),
                                           true);
    } catch (e) {
       alert("toOverview " + e.toString());
-      return false;
-   }
-}
-
-function getCurrentCards(round = -1) {
-   try {
-      if (round === -1) { round = window.currentRound; }
-      let currentCards = round;
-      if (window.settings.getValue("roundWithoutTrump")
-          && (currentCards === (window.maxCardsThisGame + 1)))
-      {
-         currentCards = window.maxCardsThisGame;
-      } else if (currentCards > window.maxCardsThisGame) {
-         currentCards =
-            ((window.maxCardsThisGame + (window.settings.getValue("roundWithoutTrump") ? 1 : 0))
-             * 2) - round;
-      }
-
-      return currentCards;
-   } catch (e) {
-      alert("getCurrentCards " + e.message);
       return false;
    }
 }
@@ -248,7 +187,7 @@ function clickDealerRadiobutton(playerIndex) {
 function createPlayersTable() {
    try {
       let playerTable = document.getElementById("newGameInputTable");
-      removeAllContent(playerTable);
+      General.removeAllContent(playerTable);
 
       for (let playerIndex = 0;
            playerIndex < window.settings.getValue("maxPlayers");
@@ -510,8 +449,8 @@ function createBidTakeTable(bidOrTake) {
       cellName = bidOrTake + "Name";
 
       let formTable = document.getElementById(table);
-      removeAllContent(formTable);
-      let currentCards = getCurrentCards();
+      General.removeAllContent(formTable);
+      let currentCards = General.getCurrentCards();
 
       let currentScores = calculateTotalScores();
       let row;
@@ -577,7 +516,7 @@ function createBidTable() {
       let formTable = createBidTakeTable("bid");
       return General.createStretchTableHead(formTable,
                                             ["Spelers", "Scores", "Bieden"],
-                                            (getCurrentCards() + 1));
+                                            (General.getCurrentCards() + 1));
    } catch (e) {
       alert("createBidTable " + e.message);
       return false;
@@ -588,7 +527,7 @@ function createBidTable() {
 function clearHighLightsPlayerIndex(playerIndex, bidOrTake) {
    try {
       let numberCell;
-      for (let number = 0; number <= getCurrentCards(); number++) {
+      for (let number = 0; number <= General.getCurrentCards(); number++) {
          numberCell = document.getElementById(bidOrTake + "number" + playerIndex + number);
          if (numberCell.getAttribute("class")) {
             numberCell.classList.remove("highlighted");
@@ -653,7 +592,7 @@ function updateBidsOrTakesPlaced(bidOrTake) {
    try {
       let infoRow = document.getElementById(bidOrTake === "bid" ? "bidInfoRow" : "takeInfoRow");
       let sum = 0;
-      let currentCards = getCurrentCards();
+      let currentCards = General.getCurrentCards();
       for (let num of bidOrTake === "bid" ? window.currentBids : window.currentTakes) {
          if (num) { sum += num; }
       }
@@ -716,7 +655,7 @@ function createTakeTable() {
       }
       return General.createStretchTableHead(formTable,
                                             ["Spelers", "Scores", "Geboden", "Gehaald"],
-                                            (getCurrentCards() + 1));
+                                            (General.getCurrentCards() + 1));
    } catch (e) {
       alert("createTakeTable " + e.message);
       return false;
@@ -805,7 +744,7 @@ function clickScoreCell(element, round, playerIndex) {
 function createScoreBoard() {
    try {
       let scoreTable = document.getElementById("scoreDataTable");
-      removeAllContent(scoreTable);
+      General.removeAllContent(scoreTable);
       let totalScores = calculateTotalScores();
       let spadeDouble = window.settings.getValue("spadeDouble");
       for (let round = 0; round < window.currentRound; round++) {
@@ -813,7 +752,7 @@ function createScoreBoard() {
          let roundCell = scoreRow.insertCell(0);
          roundCell.innerHTML = round === 0 ? "" : round.toString();
          let cardsCell = scoreRow.insertCell(1);
-         cardsCell.innerHTML = round === 0 ? "" : getCurrentCards(round).toString();
+         cardsCell.innerHTML = round === 0 ? "" : General.getCurrentCards(round).toString();
          if (spadeDouble) {
             let spadeCell = scoreRow.insertCell(2);
             spadeCell.innerHTML =
@@ -852,55 +791,6 @@ function createScoreBoard() {
    }
 }
 
-function createSettingsScreen() {
-   try {
-      let settingsTable = document.getElementById("settingsTable");
-      removeAllContent(settingsTable);
-      let row = settingsTable.insertRow();
-      let cell1 = row.insertCell(0);
-      cell1.innerText = "Instelling:";
-      let cell2 = row.insertCell(1);
-      cell2.innerText = "Uit";
-      let cell3 = row.insertCell(2);
-      cell3.innerText = "Aan";
-      for (let key in window.settings) {
-         if (! window.settings.hasOwnProperty(key)) {
-            continue;
-         }
-         let keyValue = window.settings.getSetting(key);
-         row = settingsTable.insertRow();
-         cell1 = row.insertCell(0);
-         cell1.innerText = keyValue.text;
-         cell2 = row.insertCell(1);
-         if (keyValue.type === "boolean") {
-            cell3 = row.insertCell(2);
-            cell2.appendChild(General.createRadioButton(keyValue.id + "radio",
-                                                        keyValue.id + "radioId1",
-                                                        "alignLeft",
-                                                        keyValue.value === false));
-            cell3.appendChild(General.createRadioButton(keyValue.id + "radio",
-                                                        keyValue.id + "radioId2",
-                                                        "alignLeft",
-                                                        keyValue.value === true));
-         } else if (keyValue.type === "number") {
-            cell2.setAttribute("colspan", "2");
-            let numberInput = document.createElement("input");
-            numberInput.setAttribute("type", "number");
-            numberInput.setAttribute("id", keyValue.id + "numberId");
-            numberInput.setAttribute("value", keyValue.value);
-            // These don't seem to work
-            numberInput.setAttribute("min", keyValue.min);
-            numberInput.setAttribute("max", keyValue.max);
-            cell2.appendChild(numberInput);
-         }
-      }
-      return General.hideOrShowElement(document.getElementById("settingsScreen"), true);
-   } catch (e) {
-      alert("createSettingsScreen " + e.message);
-      return false;
-   }
-}
-
 function saveSettings() {
    try {
       let keyValue, newValue;
@@ -929,8 +819,33 @@ function saveSettings() {
    }
 }
 
+function createViews() {
+   try {
+      window.settingsView = new SettingsView();
+      return true;
+   } catch (e) {
+      alert("createViews " + e.message);
+      return false;
+   }
+}
+
+function connectButtons() {
+   try {
+      let toSettingsButton = document.getElementById("toSettingsButton");
+      toSettingsButton.onclick = function() {
+         window.settingsView.toSettings(window.settings);
+      }
+      return true;
+   } catch (e) {
+      alert("connectButtons " + e.message);
+      return false;
+   }
+}
+
 window.onload = function() {
    while (! document.getElementById("overviewScreen")) { }
    //TODO Check for existing save game
+   createViews()
+   connectButtons();
    toOverview();
 };
