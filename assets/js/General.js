@@ -4,6 +4,34 @@ class General {
     * All are static and therefore require no class initialisation and don't use class variables.
     */
 
+   /*
+    * Taken from https://stackoverflow.com/a/3270648/1762311
+    */
+   static addEvent(object, eventType, func) {
+      try {
+         if (object.addEventListener) {
+            object.addEventListener(eventType, func, false);
+            return true;
+         } else if (object.attachEvent) {
+            return object.attachEvent("on" + eventType, func);
+         } else {
+            throw new Error("Handler could not be attached");
+         }
+      } catch (e) {
+         alert("General.addEvent " + e.message + " on line number " + e.lineNumber);
+         return false;
+      }
+   }
+
+   static addEventToButton(buttonName, func) {
+      try {
+         return General.addEvent(document.getElementById(buttonName), "click", func);
+      } catch (e) {
+         alert("General.addEventToButton " + e.message + " on line number " + e.lineNumber);
+         return false;
+      }
+   }
+
    static createRadioButton(name, id, classAddition, checked) {
       try {
          let radioButton = document.createElement("input");

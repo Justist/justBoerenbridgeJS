@@ -22,8 +22,7 @@
                   <th class="alignLeft">
                      <button class="btn clearCookiesButton"
                              id="clearCookiesButton"
-                             type="button"
-                             onclick="return Storage.clearLocal() && toOverview()">
+                             type="button">
                         Verwijder opgeslagen gegevens
                      </button>
                   </th>
@@ -42,8 +41,7 @@
                   <th class="alignCenter">
                      <button class="btn btn-primary"
                              id="saveSettingsButton"
-                             type="button"
-                             onclick="return saveSettings() && toOverview()">
+                             type="button">
                         Opslaan en terug naar overzicht
                      </button>
                   </th>
@@ -108,7 +106,7 @@
                   <th class="alignCenter">
                      <button class="btn btn-primary"
                              type="button"
-                             id="toOverViewFromGameRulesButton">
+                             id="toOverviewFromGameRulesButton">
                         Terug naar overzicht
                      </button>
                   </th>
@@ -250,13 +248,13 @@
                   </button>
                </th>
                <th>
-                  <button class="btn btn-primary" type="button" onclick="return toGameRules()">
+                  <button class="btn btn-primary" type="button" id="toRulesFromOverviewButton">
                      Regels &amp; telling
                   </button>
                </th>
                <th>
                   <button class="btn btn-primary"
-                          id="toSettingsButton"
+                          id="toSettingsFromOverviewButton"
                           type="button">
                      Instellingen
                   </button>

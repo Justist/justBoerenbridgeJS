@@ -10,7 +10,7 @@ String.prototype.format = function() {
       //  deepcode ignore prefer-rest-params: doesn't work otherwise
       return [...arguments].reduce((p, c) => p.replace(/%s/, c), this);
    } catch (e) {
-      alert("String.prototype.format " + e.message);
+      alert("String.prototype.format " + e.message + " on line " + e.lineNumber);
       return false;
    }
 };
@@ -34,7 +34,7 @@ function resetAllStats() {
              && General.hideOrShowElement(document.getElementById("scoreboardToOtherButtons"),
                                           false);
    } catch (e) {
-      alert("resetAllStats " + e.message);
+      alert("resetAllStats " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -50,7 +50,7 @@ function updateRoundInfo(bidOrTake) {
                                                   General.getCurrentCards() > 1 ? "en" : "");
       return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
-      alert("updateRoundInfo " + e.message);
+      alert("updateRoundInfo " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -136,7 +136,7 @@ function clickDealerRadiobutton(playerIndex) {
       document.getElementById("radioDealer-" + playerIndex.toString()).checked = true;
       return true;
    } catch (e) {
-      alert("clickDealerRadiobutton " + e.message);
+      alert("clickDealerRadiobutton " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -194,7 +194,7 @@ function createPlayersTable() {
       }
       return General.createTableHead(playerTable, ["Eerste deler", "Namen spelers"]);
    } catch (e) {
-      alert("createPlayersTable " + e.message);
+      alert("createPlayersTable " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -206,7 +206,7 @@ function hideAllNextPlayerFields(number) {
       }
       return true;
    } catch (e) {
-      alert("hideAllNextPlayerFields " + e.message);
+      alert("hideAllNextPlayerFields " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -229,7 +229,7 @@ function findFirstHiddenNameField() {
       // If the loop ends, return the last known number +1, to show there are no hidden fields
       return i + 1;
    } catch (e) {
-      alert("findFirstHiddenNameField " + e.message);
+      alert("findFirstHiddenNameField " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -250,7 +250,7 @@ function checkNoDoublePlayers() {
       }
       return true;
    } catch (e) {
-      alert("checkDoublePlayers " + e.message);
+      alert("checkDoublePlayers " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -262,7 +262,7 @@ function checkDealerValidity(index) {
              &&
              (index < findFirstHiddenNameField());
    } catch (e) {
-      alert("checkPlayerValidity " + e.message);
+      alert("checkPlayerValidity " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -298,7 +298,7 @@ function updatePlayers(index, value) {
              && General.hideOrShowElement(buttonElement,
              conditionEnoughPlayers && conditionValidDealer && conditionNoDoublePlayers);
    } catch (e) {
-      alert("updatePlayers " + e.message);
+      alert("updatePlayers " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -315,7 +315,7 @@ function showAllNextPlayerFields(index, value) {
          return true;
       } else { return hideAllNextPlayerFields(index); }
    } catch (e) {
-      alert("showAllNextPlayerFields " + e.message);
+      alert("showAllNextPlayerFields " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -332,7 +332,7 @@ function anyRadioFilled(parent) {
       }
       return -1;
    } catch (e) {
-      alert("anyRadioFilled " + e.message);
+      alert("anyRadioFilled " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -373,9 +373,9 @@ function storePlayers() {
       for (let _ of window.players) {
          window.scores[0].push(0);
       }
-      return toBids();
+      return window.bidView.toBids(window.settings, window.currentRound, window.maxCardsThisGame);
    } catch (e) {
-      alert("storePlayers " + e.message);
+      alert("storePlayers " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -384,7 +384,7 @@ function getElementTypeFields(parent, elementType) {
    try {
       return parent.querySelectorAll(elementType.toString());
    } catch (e) {
-      alert("getElementTypeFields " + e.message);
+      alert("getElementTypeFields " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -393,7 +393,7 @@ function getTypeInputFields(parent, type) {
    try {
       return getElementTypeFields(parent, "input[type=" + type + "]");
    } catch (e) {
-      alert("getTypeInputFields " + e.message);
+      alert("getTypeInputFields " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -463,7 +463,7 @@ function createBidTakeTable(bidOrTake) {
 
       return formTable;
    } catch (e) {
-      alert("createBidTakeTable " + e.message);
+      alert("createBidTakeTable " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -475,7 +475,7 @@ function createBidTable() {
                                             ["Spelers", "Scores", "Bieden"],
                                             (General.getCurrentCards() + 1));
    } catch (e) {
-      alert("createBidTable " + e.message);
+      alert("createBidTable " + e.message + " on line " + e.lineNumber);
       return false;
    }
 
@@ -493,7 +493,7 @@ function clearHighLightsPlayerIndex(playerIndex, bidOrTake) {
       }
       return true;
    } catch (e) {
-      alert("clearHighLightsPlayerIndex " + e.message);
+      alert("clearHighLightsPlayerIndex " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -508,7 +508,7 @@ function clearHighLightsPlayer(player) {
       }
       return true;
    } catch (e) {
-      alert("clearHighLightsPlayer " + e.message);
+      alert("clearHighLightsPlayer " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -517,7 +517,7 @@ function clickSpadeRadioButton() {
    try {
       return updateBidsOrTakesPlaced("bid");
    } catch (e) {
-      alert("clickSpadeRadioButton " + e.message);
+      alert("clickSpadeRadioButton " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -540,7 +540,7 @@ function clickBidOrTakeButton(parent, numberString, playerIndexString, bidOrTake
 
       return updateBidsOrTakesPlaced(bidOrTake);
    } catch (e) {
-      alert("clickBidOrTakeButton " + e.message);
+      alert("clickBidOrTakeButton " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -554,10 +554,10 @@ function updateBidsOrTakesPlaced(bidOrTake) {
          if (num) { sum += num; }
       }
       infoRow.innerHTML = sum.toString() + " / " + currentCards.toString();
-      let buttonElement = document.getElementById(bidOrTake + "ScreenButtonsTable");
-      let equalAlert  = document.getElementById(bidOrTake + "sEqualAlert"),
-          filledAlert = document.getElementById(bidOrTake + "sFilledAlert"),
-          spadeAlert  = document.getElementById("spadeTrumpSelectAlert");
+      let buttonElement = document.getElementById(bidOrTake + "ScreenButtonsTable"),
+          equalAlert    = document.getElementById(bidOrTake + "sEqualAlert"),
+          filledAlert   = document.getElementById(bidOrTake + "sFilledAlert"),
+          spadeAlert    = document.getElementById("spadeTrumpSelectAlert");
 
       let equalCheck = (sum === currentCards);
       // Filter to make sure not to count empty elements
@@ -583,7 +583,7 @@ function updateBidsOrTakesPlaced(bidOrTake) {
              && allFilledIn
              && spadeRadioChecked);
    } catch (e) {
-      alert("updateBidsOrTakesPlaced " + e.message);
+      alert("updateBidsOrTakesPlaced " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -598,7 +598,7 @@ function storeBids() {
 
       return toTakes();
    } catch (e) {
-      alert("storeBids " + e.message);
+      alert("storeBids " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -614,7 +614,7 @@ function createTakeTable() {
                                             ["Spelers", "Scores", "Geboden", "Gehaald"],
                                             (General.getCurrentCards() + 1));
    } catch (e) {
-      alert("createTakeTable " + e.message);
+      alert("createTakeTable " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -631,7 +631,7 @@ function calculateTotalScores() {
       }
       return totalScores;
    } catch (e) {
-      alert("calculateTotalScores " + e.message);
+      alert("calculateTotalScores " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -654,7 +654,7 @@ function updateScores() {
       window.scores[window.currentRound] = localScores;
       return true;
    } catch (e) {
-      alert("updateScores " + e.message);
+      alert("updateScores " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -670,7 +670,7 @@ function storeTakes(bidButtonPressed) {
                                ? toBids()
                                : toScores());
    } catch (e) {
-      alert("storeTakes " + e.message);
+      alert("storeTakes " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -693,7 +693,7 @@ function clickScoreCell(element, round, playerIndex) {
       }
       return true;
    } catch (e) {
-      alert("clickScoreCell " + e.message);
+      alert("clickScoreCell " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -743,7 +743,7 @@ function createScoreBoard() {
       if (spadeDouble) { rowData = ["Ronde", "Kaarten", "♠", ...window.players]; }
       return General.createTableHead(scoreTable, rowData);
    } catch (e) {
-      alert("createScoreBoard " + e.message);
+      alert("createScoreBoard " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -771,7 +771,7 @@ function saveSettings() {
       }
       return window.settings.checkSettings() && Storage.storeSettings(window.settings);
    } catch (e) {
-      alert("saveSettings " + e.message);
+      alert("saveSettings " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -787,7 +787,7 @@ function createViews() {
       window.takeView = new TakeView();
       return true;
    } catch (e) {
-      alert("createViews " + e.message);
+      alert("createViews " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
@@ -795,21 +795,30 @@ function createViews() {
 function connectButtons() {
    try {
       // SettingsView Buttons
-      document.getElementById("toSettingsButton").onclick =
-         function() { window.settingsView.toSettings(window.settings); };
+      let settingsFunc = function() { return window.settingsView.toSettings(window.settings); };
+      General.addEventToButton("toSettingsFromOverviewButton", settingsFunc);
 
       // Overview Buttons
       let overviewFunc = function() { return window.overView.toOverview(window.settings); };
-      document.getElementById("toOverViewFromGameRulesButton").onclick = overviewFunc();
-      document.getElementById("toOverviewFromScoreboardButton").onclick = overviewFunc();
+      General.addEventToButton("toOverviewFromGameRulesButton", overviewFunc);
+      General.addEventToButton("toOverviewFromScoreboardButton", overviewFunc);
+      General.addEventToButton("clearCookiesButton", function() { return Storage.clearLocal(); });
+      General.addEventToButton("clearCookiesButton", overviewFunc);
+      /*General.addEventToButton("saveSettingsButton", function() { return saveSettings(); });
+      General.addEventToButton("saveSettingsButton", overviewFunc);*/
+
+      /*document.getElementById("clearCookiesButton").onclick =
+         function() { return Storage.clearLocal() && window.overView.toOverview(window.settings); };*/
+      document.getElementById("saveSettingsButton").onclick =
+         function() { return saveSettings() && window.overView.toOverview(window.settings); };
 
       // BidView Buttons
-      document.getElementById("toBidsScoreboardButton").onclick =
-         function() {
-            window.overView.toBids(window.settings,
-                                   window.currentRound,
-                                   window.maxCardsThisGame);
-         };
+      let bidviewFunc = function() {
+         window.overView.toBids(window.settings,
+                                window.currentRound,
+                                window.maxCardsThisGame);
+      };
+      document.getElementById("toBidsScoreboardButton").onclick = bidviewFunc;
 
       // New Game Buttons
       let newGameFunc = function() { return toNewGame(); };
@@ -818,7 +827,7 @@ function connectButtons() {
 
       return true;
    } catch (e) {
-      alert("connectButtons " + e.message);
+      alert("connectButtons " + e.message + " on line " + e.lineNumber);
       return false;
    }
 }
