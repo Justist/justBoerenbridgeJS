@@ -29,7 +29,7 @@ class BidView extends NumberSelectView {
          }
          return updateRoundInfo("bid") && createBidTable();
       } catch (e) {
-         alert("toBids " + e.toString());
+         alert("toBids " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }

@@ -28,21 +28,21 @@ class Storage {
       }
    }
 
-   static getSettings(settings) {
+   static getSettings(settings, localStorage) {
       try {
          let keyValue;
          for (let key in settings) {
             if (! settings.hasOwnProperty(key)) {
                continue;
             }
-            keyValue = Storage.getLocal(key);
+            keyValue = Storage.getLocal(key, localStorage);
             if (keyValue) {
                settings[key] = JSON.parse(keyValue);
             }
          }
          return true;
       } catch (e) {
-         alert("Storage.getSettings: " + e.message);
+         alert("Storage.getSettings: " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -74,12 +74,12 @@ class Storage {
          window.localStorage.setItem(itemName, itemData);
          return true;
       } catch (e) {
-         alert("Storage.storeLocal: " + e.message);
+         alert("Storage.storeLocal: " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
 
-   static getLocal(itemName) {
+   static getLocal(itemName, localStorage) {
       try {
          if (! Storage.storageAvailable("localStorage")) {
             // This should be changed to not be an alert on every try, like a static message
@@ -88,23 +88,23 @@ class Storage {
             // Then fail silently
             return true;
          }
-         return window.localStorage.getItem(itemName);
+         return localStorage.getItem(itemName);
       } catch (e) {
-         alert("Storage.getLocal: " + e.message);
+         alert("Storage.getLocal: " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
 
-   static clearLocal() {
+   static clearLocal(localStorage) {
       try {
          if (Storage.storageAvailable("localStorage")) {
-            window.localStorage.clear();
+            localStorage.clear();
          } else {
             alert("Cookies niet beschikbaar, kan ze niet verwijderen!");
          }
          return true;
       } catch (e) {
-         alert("Storage.clearLocal: " + e.message);
+         alert("Storage.clearLocal: " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }

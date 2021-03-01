@@ -70,7 +70,7 @@ class Settings {
             return false;
          }
       } catch (e) {
-         alert("window.settings.getSetting: " + e.message);
+         alert("window.settings.getSetting: " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -80,7 +80,7 @@ class Settings {
          let setting = this.getSetting(name);
          if (setting) { return setting.value; } else { return false; }
       } catch (e) {
-         alert("window.settings.getValue: " + e.message);
+         alert("window.settings.getValue: " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -103,7 +103,7 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("checkSettings " + e.message);
+         alert("checkSettings " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -116,7 +116,10 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMinPlayersAboveZero: " + e.message);
+         alert("window.settings.testMinPlayersAboveZero: "
+               + e.message
+               + " on line number "
+               + e.lineNumber);
          return false;
       }
    }
@@ -129,7 +132,10 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMaxPlayersAboveZero: " + e.message);
+         alert("window.settings.testMaxPlayersAboveZero: "
+               + e.message
+               + " on line number "
+               + e.lineNumber);
          return false;
       }
    }
@@ -144,7 +150,10 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMaxPlayersLargerThanMinPlayers: " + e.message);
+         alert("window.settings.testMaxPlayersLargerThanMinPlayers: "
+               + e.message
+               + " on line number "
+               + e.lineNumber);
          return false;
       }
    }
@@ -158,7 +167,10 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMaxCardsPossibleAboveZero: " + e.message);
+         alert("window.settings.testMaxCardsPossibleAboveZero: "
+               + e.message
+               + " on line number "
+               + e.lineNumber);
          return false;
       }
    }

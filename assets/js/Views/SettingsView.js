@@ -9,7 +9,7 @@ class SettingsView {
          General.setEverythingToNone();
          return this.createSettingsScreen(settingsObject);
       } catch (e) {
-         alert("SettingsView.toSettings " + e.message);
+         alert("SettingsView.toSettings " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -58,7 +58,7 @@ class SettingsView {
          }
          return General.hideOrShowElement(document.getElementById("settingsScreen"), true);
       } catch (e) {
-         alert("SettingsView.createSettingsScreen " + e.message);
+         alert("SettingsView.createSettingsScreen " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }

@@ -9,10 +9,10 @@ class General {
     */
    static addEvent(object, eventType, func) {
       try {
-         if (object.addEventListener) {
+         if (object.addEventListener) { // For all major browsers, except IE 8 and earlier
             object.addEventListener(eventType, func, false);
             return true;
-         } else if (object.attachEvent) {
+         } else if (object.attachEvent) { // For IE 8 and earlier versions
             return object.attachEvent("on" + eventType, func);
          } else {
             throw new Error("Handler could not be attached");
@@ -23,14 +23,47 @@ class General {
       }
    }
 
-   static addEventToButton(buttonName, func) {
+   static addEventToButton(buttonName, func, eventType = "click") {
       try {
-         return General.addEvent(document.getElementById(buttonName), "click", func);
+         return General.addEvent(document.getElementById(buttonName), eventType, func);
       } catch (e) {
          alert("General.addEventToButton " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
+
+   /*static addLastEvent(object, eventType, func) {
+      try {
+         if (! General.addEvent(object, eventType, func)) { return false; }
+         let completeFunc = new function(object, eventType) {
+            let checkVar = true;
+            for (let eL of object.getEventListeners(eventType)) {
+               if (! checkVar) { break; }
+               checkVar = eL.listener();
+            }
+            return checkVar;
+         };
+         // TODO: Find some way to remove all previous eventListeners
+         return General.addEvent(object, eventType, completeFunc);
+      } catch (e) {
+         alert("General.addLastEvent " + e.message + " on line number " + e.lineNumber);
+         return false;
+      }
+   }
+
+   static addCumulativeEvent(object, eventType, newFunc) {
+      try {
+         let eventsOnObject = object.getEventListeners(eventType);
+         let functionList = [newFunc];
+         for (let eL of eventsOnObject) {
+            functionList.push(eL.listener);
+         }
+         return General.addEvent(object, eventType);
+      } catch (e) {
+         alert("General.addCumulativeEvent " + e.message + " on line number " + e.lineNumber);
+         return false;
+      }
+   }*/
 
    static createRadioButton(name, id, classAddition, checked) {
       try {
@@ -42,7 +75,7 @@ class General {
          radioButton.classList.add(classAddition);
          return radioButton;
       } catch (e) {
-         alert("General.createRadioButton " + e.message);
+         alert("General.createRadioButton " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -57,7 +90,7 @@ class General {
          headRow.appendChild(th);
          return true;
       } catch (e) {
-         alert("General.createStretchTableHead " + e.message);
+         alert("General.createStretchTableHead " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -73,7 +106,7 @@ class General {
          }
          return row;
       } catch (e) {
-         alert("General.createTableHead " + e.message);
+         alert("General.createTableHead " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -94,7 +127,7 @@ class General {
 
          return currentCards;
       } catch (e) {
-         alert("General.getCurrentCards " + e.message);
+         alert("General.getCurrentCards " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -108,7 +141,7 @@ class General {
          }
          return true;
       } catch (e) {
-         alert("General.hideOrShowElement " + e.message);
+         alert("General.hideOrShowElement " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -118,7 +151,7 @@ class General {
          while (parent.firstChild) { parent.removeChild(parent.lastChild); }
          return true;
       } catch (e) {
-         alert("General.removeAllContent " + e.message);
+         alert("General.removeAllContent " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
@@ -138,7 +171,7 @@ class General {
          }
          return true;
       } catch (e) {
-         alert("General.setEverythingToNone " + e.toString());
+         alert("General.setEverythingToNone " + e.message + " on line number " + e.lineNumber);
          return false;
       }
    }
