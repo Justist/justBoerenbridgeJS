@@ -70,8 +70,11 @@ class Settings {
             return false;
          }
       } catch (e) {
-         alert("window.settings.getSetting: " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("window.settings.getSetting: "
+                     + e.message
+                     + " on line number "
+                     + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -80,8 +83,8 @@ class Settings {
          let setting = this.getSetting(name);
          if (setting) { return setting.value; } else { return false; }
       } catch (e) {
-         alert("window.settings.getValue: " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("window.settings.getValue: " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -103,8 +106,8 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("checkSettings " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("checkSettings " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -116,11 +119,11 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMinPlayersAboveZero: "
-               + e.message
-               + " on line number "
-               + e.lineNumber);
-         return false;
+         console.log("window.settings.testMinPlayersAboveZero: "
+                     + e.message
+                     + " on line number "
+                     + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -132,11 +135,11 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMaxPlayersAboveZero: "
-               + e.message
-               + " on line number "
-               + e.lineNumber);
-         return false;
+         console.log("window.settings.testMaxPlayersAboveZero: "
+                     + e.message
+                     + " on line number "
+                     + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -150,11 +153,11 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMaxPlayersLargerThanMinPlayers: "
-               + e.message
-               + " on line number "
-               + e.lineNumber);
-         return false;
+         console.log("window.settings.testMaxPlayersLargerThanMinPlayers: "
+                     + e.message
+                     + " on line number "
+                     + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -167,11 +170,11 @@ class Settings {
          }
          return true;
       } catch (e) {
-         alert("window.settings.testMaxCardsPossibleAboveZero: "
-               + e.message
-               + " on line number "
-               + e.lineNumber);
-         return false;
+         console.log("window.settings.testMaxCardsPossibleAboveZero: "
+                     + e.message
+                     + " on line number "
+                     + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 

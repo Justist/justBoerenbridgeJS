@@ -10,8 +10,8 @@ class OverView {
                 && General.hideOrShowElement(document.getElementById("overviewScreen"),
                                              true);
       } catch (e) {
-         alert("toOverview " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("toOverview " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 }

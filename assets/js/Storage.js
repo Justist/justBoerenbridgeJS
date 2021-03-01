@@ -42,8 +42,8 @@ class Storage {
          }
          return true;
       } catch (e) {
-         alert("Storage.getSettings: " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("Storage.getSettings: " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -57,7 +57,7 @@ class Storage {
          }
          return true;
       } catch (e) {
-         alert("Storage.storeSettings: " + e.message);
+         console.log("Storage.storeSettings: " + e.message);
          return false;
       }
    }
@@ -74,8 +74,8 @@ class Storage {
          window.localStorage.setItem(itemName, itemData);
          return true;
       } catch (e) {
-         alert("Storage.storeLocal: " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("Storage.storeLocal: " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -90,8 +90,8 @@ class Storage {
          }
          return localStorage.getItem(itemName);
       } catch (e) {
-         alert("Storage.getLocal: " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("Storage.getLocal: " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 
@@ -104,8 +104,8 @@ class Storage {
          }
          return true;
       } catch (e) {
-         alert("Storage.clearLocal: " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("Storage.clearLocal: " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 }

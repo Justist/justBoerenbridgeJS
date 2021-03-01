@@ -29,8 +29,8 @@ class BidView extends NumberSelectView {
          }
          return updateRoundInfo("bid") && createBidTable();
       } catch (e) {
-         alert("toBids " + e.message + " on line number " + e.lineNumber);
-         return false;
+         console.log("toBids " + e.message + " on line number " + e.lineNumber);
+         throw e; //throw it higher to get more logs
       }
    }
 }
