@@ -14,18 +14,42 @@ async function setPlayerName(page, index, name) {
   await input.evaluate((el) => el.dispatchEvent(new Event("change", { bubbles: true })));
 }
 
-async function startTwoPlayerGame(page) {
+async function openSettings(page) {
+  await page.getByRole("button", { name: "Instellingen" }).click();
+  await expectScreenActive(page, "settingsScreen");
+}
+
+async function setBooleanSetting(page, settingId, value) {
+  const radioId = value ? `${settingId}radioId2` : `${settingId}radioId1`;
+  await page.locator(`#${radioId}`).check();
+}
+
+async function setNumberSetting(page, settingId, value) {
+  const locator = page.locator(`#${settingId}numberId`);
+  await locator.fill(String(value));
+}
+
+async function saveSettings(page) {
+  await page.getByRole("button", { name: "Opslaan en terug naar overzicht" }).click();
+  await expectScreenActive(page, "overviewScreen");
+}
+
+async function startGame(page, names, dealerIndex = 0) {
   await page.getByRole("button", { name: "Nieuw spel" }).first().click();
   await expectScreenActive(page, "newGameScreen");
 
-  await setPlayerName(page, 0, "Alice");
-  await setPlayerName(page, 1, "Bob");
-  await page.locator("#radioDealer-0").click();
+  for (let i = 0; i < names.length; i++) {
+    await setPlayerName(page, i, names[i]);
+  }
 
+  await page.locator(`#radioDealer-${dealerIndex}`).click();
   await expect(page.locator("#newGameButtonTable")).not.toHaveClass(/(^|\s)hidden(\s|$)/);
   await page.getByRole("button", { name: "Start 1e ronde" }).click();
-
   await expectScreenActive(page, "bidScreen");
+}
+
+async function startTwoPlayerGame(page) {
+  await startGame(page, ["Alice", "Bob"], 0);
 }
 
 function cardsInRound(round) {
@@ -39,21 +63,24 @@ function cardsInRound(round) {
 }
 
 test.describe("Boerenbridge regression smoke tests", () => {
-  test("loads overview on first visit", async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+  });
+
+  test("loads overview on first visit", async ({ page }) => {
     await expectScreenActive(page, "overviewScreen");
     await expect(page.getByRole("heading", { name: "Welkom bij Boerenbridge!" })).toBeVisible();
   });
 
   test("supports exact minimum players and reaches bid screen", async ({ page }) => {
-    await page.goto("/");
     await startTwoPlayerGame(page);
     await expect(page.locator("#bidInputTable")).toContainText("Alice");
     await expect(page.locator("#bidInputTable")).toContainText("Bob");
   });
 
   test("persists active game across refresh", async ({ page }) => {
-    await page.goto("/");
     await startTwoPlayerGame(page);
 
     await page.reload();
@@ -64,8 +91,6 @@ test.describe("Boerenbridge regression smoke tests", () => {
   });
 
   test("rules and settings screens do not render the header back button", async ({ page }) => {
-    await page.goto("/");
-
     await page.getByRole("button", { name: "Regels & telling" }).click();
     await expectScreenActive(page, "gameRulesScreen");
     await expect(page.locator("#gameRulesScreen .btn.btn-outline-secondary")).toHaveCount(0);
@@ -78,8 +103,119 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await expect(page.locator("#settingsScreen .btn.btn-outline-secondary")).toHaveCount(0);
   });
 
+  test("setting roundWithoutTrump=false removes middle no-trump round", async ({ page }) => {
+    await openSettings(page);
+    await setBooleanSetting(page, "rwt", false);
+    await saveSettings(page);
+
+    await startTwoPlayerGame(page);
+    const values = await page.evaluate(() => ({
+      maxCards: GameState.maxCardsThisGame,
+      maxRounds: GameState.maxRounds,
+    }));
+
+    expect(values.maxCards).toBe(10);
+    expect(values.maxRounds).toBe(19);
+  });
+
+  test("setting spadeDouble=false hides trump selector on bid screen", async ({ page }) => {
+    await openSettings(page);
+    await setBooleanSetting(page, "sd", false);
+    await saveSettings(page);
+
+    await startTwoPlayerGame(page);
+    await expect(page.locator("#spadeRadioButtonsP")).toHaveClass(/(^|\s)hidden(\s|$)/);
+  });
+
+  test("setting dealerLast=true is stored and used", async ({ page }) => {
+    await openSettings(page);
+    await setBooleanSetting(page, "dl", true);
+    await saveSettings(page);
+
+    await startGame(page, ["Alice", "Bob", "Carol"], 1);
+    const dealerLastValue = await page.evaluate(() => settings.getValue("dealerLast"));
+    expect(dealerLastValue).toBe(true);
+  });
+
+  test("setting minPlayers enforces minimum required players", async ({ page }) => {
+    await openSettings(page);
+    await setNumberSetting(page, "minp", 3);
+    await saveSettings(page);
+
+    await page.getByRole("button", { name: "Nieuw spel" }).first().click();
+    await expectScreenActive(page, "newGameScreen");
+
+    await setPlayerName(page, 0, "Alice");
+    await setPlayerName(page, 1, "Bob");
+    await page.locator("#radioDealer-0").click();
+
+    await expect(page.locator("#newGameButtonTable")).toHaveClass(/(^|\s)hidden(\s|$)/);
+  });
+
+  test("setting maxPlayers limits the number of player rows", async ({ page }) => {
+    await openSettings(page);
+    await setNumberSetting(page, "maxp", 3);
+    await saveSettings(page);
+
+    await page.getByRole("button", { name: "Nieuw spel" }).first().click();
+    await expectScreenActive(page, "newGameScreen");
+
+    await expect(page.locator("#playerRow0")).toHaveCount(1);
+    await expect(page.locator("#playerRow1")).toHaveCount(1);
+    await expect(page.locator("#playerRow2")).toHaveCount(1);
+    await expect(page.locator("#playerRow3")).toHaveCount(0);
+  });
+
+  test("setting maxCardsPossible caps cards and rounds", async ({ page }) => {
+    await openSettings(page);
+    await setNumberSetting(page, "maxc", 5);
+    await saveSettings(page);
+
+    await startTwoPlayerGame(page);
+    const values = await page.evaluate(() => ({
+      maxCards: GameState.maxCardsThisGame,
+      maxRounds: GameState.maxRounds,
+    }));
+
+    expect(values.maxCards).toBe(5);
+    expect(values.maxRounds).toBe(11);
+  });
+
+  test("combined settings apply correctly together", async ({ page }) => {
+    await openSettings(page);
+    await setBooleanSetting(page, "rwt", false);
+    await setBooleanSetting(page, "sd", false);
+    await setBooleanSetting(page, "dl", true);
+    await setNumberSetting(page, "minp", 3);
+    await setNumberSetting(page, "maxp", 4);
+    await setNumberSetting(page, "maxc", 5);
+    await saveSettings(page);
+
+    await startGame(page, ["Alice", "Bob", "Carol"], 1);
+
+    const settingsAndState = await page.evaluate(() => ({
+      roundWithoutTrump: settings.getValue("roundWithoutTrump"),
+      spadeDouble: settings.getValue("spadeDouble"),
+      dealerLast: settings.getValue("dealerLast"),
+      minPlayers: settings.getValue("minPlayers"),
+      maxPlayers: settings.getValue("maxPlayers"),
+      maxCardsPossible: settings.getValue("maxCardsPossible"),
+      maxCardsThisGame: GameState.maxCardsThisGame,
+      maxRounds: GameState.maxRounds,
+    }));
+
+    expect(settingsAndState.roundWithoutTrump).toBe(false);
+    expect(settingsAndState.spadeDouble).toBe(false);
+    expect(settingsAndState.dealerLast).toBe(true);
+    expect(settingsAndState.minPlayers).toBe(3);
+    expect(settingsAndState.maxPlayers).toBe(4);
+    expect(settingsAndState.maxCardsPossible).toBe(5);
+    expect(settingsAndState.maxCardsThisGame).toBe(5);
+    expect(settingsAndState.maxRounds).toBe(9);
+    await expect(page.locator("#spadeRadioButtonsP")).toHaveClass(/(^|\s)hidden(\s|$)/);
+  });
+
   test("full game scoring matches scripted bid/take choices", async ({ page }) => {
-    await page.goto("/");
     await startTwoPlayerGame(page);
 
     let expectedAlice = 0;
@@ -129,7 +265,6 @@ test.describe("Boerenbridge regression smoke tests", () => {
   });
 
   test("full game scoring matches scripted choices with spade-double rounds", async ({ page }) => {
-    await page.goto("/");
     await startTwoPlayerGame(page);
 
     let expectedAlice = 0;
