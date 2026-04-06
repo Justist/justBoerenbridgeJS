@@ -226,12 +226,6 @@ function renderScoreboardScreen() {
             id        : "scoreboardToOtherButtons",
             className : "alignCenter hidden"
          })
-      ]),
-      createNode("div", { className : "scoreboardDangerZone" }, [
-         createActionButton("Opgeven en naar overzicht",
-                            "giveUpToOverview",
-                            "btn btn-outline-danger btn-sm giveUpButton",
-                            "giveUpButton")
       ])
    ]);
 
@@ -543,7 +537,6 @@ function createActionMap() {
       ["clearLocalAndOverview", () => clearLocal() && toOverview()],
       ["clickSpadeRadioButton", clickSpadeRadioButton],
       ["forceReload", () => window.location.reload(true)],
-      ["giveUpToOverview", giveUpToOverview],
       ["goBackOneScreen", goBackOneScreen],
       ["storeBids", storeBids],
       ["storePlayers", storePlayers],
@@ -602,15 +595,6 @@ function bindDelegatedEvents() {
    });
 
    app.dataset.eventsBound = "true";
-
-   const giveUpButton = document.getElementById("giveUpButton");
-   if (giveUpButton && giveUpButton.dataset.boundClick !== "true") {
-      giveUpButton.addEventListener("click", (event) => {
-         event.preventDefault();
-         giveUpToOverview();
-      });
-      giveUpButton.dataset.boundClick = "true";
-   }
 
    return true;
 }

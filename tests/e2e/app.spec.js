@@ -63,31 +63,6 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await expect(page.locator("#bidInputTable")).toContainText("Bob");
   });
 
-  test("give up button asks confirmation and returns to overview", async ({ page }) => {
-    await page.goto("/");
-    await startTwoPlayerGame(page);
-
-    await page.locator("#bidnumber00").click();
-    await page.locator("#bidnumber10").click();
-    await page.getByRole("button", { name: "Naar Halen" }).click();
-
-    await expectScreenActive(page, "takeScreen");
-    await page.locator("#takenumber01").click();
-    await page.locator("#takenumber10").click();
-    await page.getByRole("button", { name: "Naar Score" }).click();
-
-    await expectScreenActive(page, "scoreboardScreen");
-
-    page.once("dialog", async (dialog) => {
-      await dialog.accept();
-    });
-    await page.locator(".giveUpButton").click();
-
-    await expectScreenActive(page, "overviewScreen");
-    const saved = await page.evaluate(() => localStorage.getItem("justBoerenbridge.currentGame"));
-    expect(saved).toBeNull();
-  });
-
   test("rules and settings screens do not render the header back button", async ({ page }) => {
     await page.goto("/");
 
@@ -133,6 +108,64 @@ test.describe("Boerenbridge regression smoke tests", () => {
 
       expectedAlice += -3 * cards;
       expectedBob += 10;
+    }
+
+    await expectScreenActive(page, "scoreboardScreen");
+
+    const totals = await page.evaluate(() => {
+      const table = document.getElementById("scoreDataTable");
+      const headers = Array.from(table.tHead.rows[0].cells).map((cell) => cell.textContent.trim());
+      const bodyRows = Array.from(table.tBodies[0].rows);
+      const totalsRow = bodyRows.find((row) => row.cells[0].textContent.trim() === "");
+
+      return {
+        alice: Number(totalsRow.cells[headers.indexOf("Alice")].textContent),
+        bob: Number(totalsRow.cells[headers.indexOf("Bob")].textContent),
+      };
+    });
+
+    expect(totals.alice).toBe(expectedAlice);
+    expect(totals.bob).toBe(expectedBob);
+  });
+
+  test("full game scoring matches scripted choices with spade-double rounds", async ({ page }) => {
+    await page.goto("/");
+    await startTwoPlayerGame(page);
+
+    let expectedAlice = 0;
+    let expectedBob = 0;
+
+    for (let round = 1; round <= 21; round++) {
+      const cards = cardsInRound(round);
+
+      // Select spade trump whenever the selector is available
+      // (middle no-trump round intentionally has no selector).
+      const spadeSelectorVisible = await page.evaluate(() => {
+        const row = document.getElementById("spadeRadioButtonsP");
+        return row && !row.classList.contains("hidden");
+      });
+      if (spadeSelectorVisible) {
+        await page.locator("#spadeRadioButton").check();
+      }
+
+      await page.locator("#bidnumber00").click();
+      await page.locator("#bidnumber10").click();
+      await page.locator("#bidScreen").getByRole("button", { name: "Naar Halen" }).click();
+
+      await expectScreenActive(page, "takeScreen");
+      await page.locator(`#takenumber0${cards}`).click();
+      await page.locator("#takenumber10").click();
+
+      if (round < 21) {
+        await page.locator("#takeScreen").getByRole("button", { name: "Naar Bieden" }).click();
+        await expectScreenActive(page, "bidScreen");
+      } else {
+        await page.locator("#takeScreen").getByRole("button", { name: "Naar Score" }).click();
+      }
+
+      const multiplier = round === 11 ? 1 : 2;
+      expectedAlice += -3 * cards * multiplier;
+      expectedBob += 10 * multiplier;
     }
 
     await expectScreenActive(page, "scoreboardScreen");
