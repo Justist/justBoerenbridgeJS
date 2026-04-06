@@ -225,16 +225,13 @@ function renderScoreboardScreen() {
          createResponsiveSection(otherButtonsTable, {
             id        : "scoreboardToOtherButtons",
             className : "alignCenter hidden"
-         }),
-         // Mostly for debugging purposes
-         // TODO: determine whether to keep this or not
-         createResponsiveSection(
-            createNode("div", { attrs : { style : "text-align:right;" } }, [
-               createActionButton("Opgeven en naar overzicht",
-                                  "giveUpToOverview",
-                                  "btn btn-outline-danger btn-sm giveUpButton")
-            ])
-         )
+         })
+      ]),
+      createNode("div", { className : "scoreboardDangerZone" }, [
+         createActionButton("Opgeven en naar overzicht",
+                            "giveUpToOverview",
+                            "btn btn-outline-danger btn-sm giveUpButton",
+                            "giveUpButton")
       ])
    ]);
 
@@ -605,6 +602,16 @@ function bindDelegatedEvents() {
    });
 
    app.dataset.eventsBound = "true";
+
+   const giveUpButton = document.getElementById("giveUpButton");
+   if (giveUpButton && giveUpButton.dataset.boundClick !== "true") {
+      giveUpButton.addEventListener("click", (event) => {
+         event.preventDefault();
+         giveUpToOverview();
+      });
+      giveUpButton.dataset.boundClick = "true";
+   }
+
    return true;
 }
 
