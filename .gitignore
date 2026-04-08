@@ -245,3 +245,5 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+/playwright-report/index.html
+/test-results/.last-run.json

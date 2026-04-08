@@ -237,6 +237,33 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await expectHasHiddenClass(page, "#newGameButtonTable", true);
   });
 
+  test("invalid new-game configuration: duplicate names shows alert and blocks start", async ({ page }) => {
+    await page.getByRole("button", { name: "Nieuw spel" }).first().click();
+    await expectScreenActive(page, "newGameScreen");
+
+    await setPlayerName(page, 0, "Alice");
+    await setPlayerName(page, 1, "Alice");
+    await page.locator("#radioDealer-0").click();
+
+    await expectHasHiddenClass(page, "#doublePlayerNamesAlert", false);
+    await expectHasHiddenClass(page, "#newGameButtonTable", true);
+  });
+
+  test("invalid new-game configuration: clearing selected dealer name shows alert and blocks start", async ({ page }) => {
+    await page.getByRole("button", { name: "Nieuw spel" }).first().click();
+    await expectScreenActive(page, "newGameScreen");
+
+    await setPlayerName(page, 0, "Alice");
+    await setPlayerName(page, 1, "Bob");
+    await page.locator("#radioDealer-1").click();
+    await expectHasHiddenClass(page, "#newGameButtonTable", false);
+
+    await setPlayerName(page, 1, "");
+
+    await expectHasHiddenClass(page, "#noValidDealerAlert", false);
+    await expectHasHiddenClass(page, "#newGameButtonTable", true);
+  });
+
   test("setting maxPlayers limits the number of player rows", async ({ page }) => {
     await openSettings(page);
     await setNumberSetting(page, "maxp", 3);
@@ -348,5 +375,3 @@ test.describe("Boerenbridge regression smoke tests", () => {
     expect(totals.bob).toBe(expectedBob);
   });
 });
-
-
