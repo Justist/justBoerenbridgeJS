@@ -44,6 +44,7 @@ function createPlayersTable() {
    try {
       const playerTable = document.getElementById("newGameInputTable");
       clearElement(playerTable);
+      const nameListId = "nameList";
 
       const maxPlayers = settings.getValue("maxPlayers");
       for (let playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
@@ -75,24 +76,24 @@ function createPlayersTable() {
          const nameInput = document.createElement("input");
          nameInput.classList.add("form-control");
          nameInput.id = `nameChoice-${ playerIndex }`;
-         nameInput.setAttribute("list", "nameList");
+         nameInput.setAttribute("list", nameListId);
          nameInput.setAttribute("placeholder", "Kies een speler of typ een naam");
          nameInput.addEventListener("change", (e) => {
             updatePlayers(playerIndex, e.target.value);
          });
          nameCell.appendChild(nameInput);
 
-         // Datalist for suggestions
-         const nameList = document.createElement("datalist");
-         nameList.id = "nameList";
-         for (const playerName of GameState.regularPlayers) {
-            const option = document.createElement("option");
-            option.value = playerName;
-            option.textContent = playerName;
-            nameList.appendChild(option);
-         }
-         nameCell.appendChild(nameList);
       }
+
+      const nameList = document.createElement("datalist");
+      nameList.id = nameListId;
+      for (const playerName of GameState.regularPlayers) {
+         const option = document.createElement("option");
+         option.value = playerName;
+         option.textContent = playerName;
+         nameList.appendChild(option);
+      }
+      playerTable.appendChild(nameList);
 
       if (GameState.debug) {
          toggleElement(document.getElementById("debugSetMaxCardsDiv"), true);

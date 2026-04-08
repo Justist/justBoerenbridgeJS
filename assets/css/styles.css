@@ -708,6 +708,12 @@ select.form-control {
    display: none;
 }
 
+.offscreen {
+   position: absolute !important;
+   top: -9999px !important;
+   left: -9999px !important;
+}
+
 /* Accessibility */
 .sr-only {
    position: absolute;
@@ -835,15 +841,6 @@ select.form-control {
    vertical-align: middle;
 }
 
-/* ========================================
-   VISIBILITY UTILITIES
-   ======================================== */
-
-.hidden {
-   position: absolute !important;
-   top: -9999px !important;
-   left: -9999px !important;
-}
 
 /* ========================================
    BID & INFO LAYOUT

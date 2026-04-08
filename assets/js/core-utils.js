@@ -14,7 +14,8 @@ function clearElement(parent) {
 }
 
 /**
- * Toggle element visibility by adding/removing hidden class
+ * Toggle element visibility by adding/removing hidden class (display: none).
+ * Use the CSS offscreen class when content should stay visually hidden but present.
  */
 function toggleElement(element, show) {
    try {
