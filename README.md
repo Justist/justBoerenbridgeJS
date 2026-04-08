@@ -1,39 +1,42 @@
 # justBoerenbridgeJS
 
-Boerenbridge score app (static frontend, GitHub Pages friendly).
+Boerenbridge score app built with JavaScript.
 
-## Automated Regression Testing
+## What it does
 
-This project includes Playwright end-to-end tests to detect functional regressions in core flows:
+- Renders the app screens dynamically from JavaScript (single-page flow, no page reloads).
+- Supports full game flow: setup, bidding, taking, and score overview.
+- Includes configurable rules/settings (players, cards, trump behavior, dealer behavior).
+- Persists active game and settings in `localStorage` so a refresh can restore state.
 
-- first-load overview rendering
-- new-game setup and minimum-player behavior
-- game state restore after refresh
-- score-screen give-up flow with confirmation
-- rules/settings header button behavior
+## Project structure (high level)
 
-### Install
+- `index.html`: minimal shell.
+- `assets/js/`: split by feature (`core-*`, `game-*`, `ui-*`, bootstrap).
+- `tests/e2e/app.spec.js`: Playwright regression suite.
+
+## Local setup
 
 ```bash
 npm install
-npx playwright install chromium
+npm run test:e2e:install
 ```
 
-### Run tests
+## Run tests
 
 ```bash
 npm run test:e2e
+npm run test:e2e:firefox
+npm run test:e2e:webkit
+npm run test:e2e:ci
 ```
 
-### Run headed (local debugging)
+## Debugging
 
 ```bash
 npm run test:e2e:headed
+npm run test:e2e:ui
 ```
 
-### CI mode
-
-```bash
-npm run test:e2e:ci
-```
+CI runs in GitHub Actions (`.github/workflows/e2e-regression.yml`) on Chromium, Firefox, and WebKit.
 
