@@ -8,9 +8,17 @@ function goBackOneScreen() {
    try {
       switch (currentScreenId) {
          case "bidScreen": {
-            const result = toNewGame(true);
+            if (GameState.currentRound <= 1) {
+               const result = toNewGame(true);
+               if (result) {
+                  saveGameState("newGame");
+               }
+               return result;
+            }
+
+            const result = toScores();
             if (result) {
-               saveGameState("newGame");
+               saveGameState("score");
             }
             return result;
          }

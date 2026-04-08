@@ -90,6 +90,40 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await expect(page.locator("#bidInputTable")).toContainText("Bob");
   });
 
+  test("back from bid screen goes to score screen from round 2 onward", async ({ page }) => {
+    await startTwoPlayerGame(page);
+
+    await page.locator("#bidnumber00").click();
+    await page.locator("#bidnumber10").click();
+    await page.locator("#bidScreen").getByRole("button", { name: "Naar Halen" }).click();
+
+    await expectScreenActive(page, "takeScreen");
+    await page.locator("#takenumber01").click();
+    await page.locator("#takenumber10").click();
+    await page.locator("#takeScreen").getByRole("button", { name: "Naar Bieden" }).click();
+
+    await expectScreenActive(page, "bidScreen");
+    await expect(page.locator("#bidScreenTopInfo")).toContainText("2e ronde");
+
+    await page.locator("#bidScreen").getByRole("button", { name: "Terug" }).click();
+
+    await expectScreenActive(page, "scoreboardScreen");
+    await expect(page.locator("#scoreDataTable")).toContainText("Alice");
+    await expect(page.locator("#scoreDataTable")).toContainText("Bob");
+    await expect(page.locator("#scoreDataTable")).toContainText("-3");
+    await expect(page.locator("#scoreDataTable")).toContainText("10");
+  });
+
+  test("back from bid screen in first round returns to new game screen", async ({ page }) => {
+    await startTwoPlayerGame(page);
+
+    await page.locator("#bidScreen").getByRole("button", { name: "Terug" }).click();
+
+    await expectScreenActive(page, "newGameScreen");
+    await expect(page.locator("#nameChoice-0")).toHaveValue("Alice");
+    await expect(page.locator("#nameChoice-1")).toHaveValue("Bob");
+  });
+
   test("rules and settings screens do not render the header back button", async ({ page }) => {
     await page.getByRole("button", { name: "Regels & telling" }).click();
     await expectScreenActive(page, "gameRulesScreen");
@@ -127,14 +161,17 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await expect(page.locator("#spadeRadioButtonsP")).toHaveClass(/(^|\s)hidden(\s|$)/);
   });
 
-  test("setting dealerLast=true is stored and used", async ({ page }) => {
+  test("setting dealerLast=true is stored and places dealer row last", async ({ page }) => {
     await openSettings(page);
     await setBooleanSetting(page, "dl", true);
     await saveSettings(page);
 
     await startGame(page, ["Alice", "Bob", "Carol"], 1);
-    const dealerLastValue = await page.evaluate(() => settings.getValue("dealerLast"));
-    expect(dealerLastValue).toBe(true);
+    const bidRowOrder = await page.evaluate(() =>
+      Array.from(document.querySelectorAll("#bidInputTable tbody tr")).map((row) => row.id)
+    );
+
+    expect(bidRowOrder).toEqual(["bidPlayer2", "bidPlayer0", "bidPlayer1"]);
   });
 
   test("setting minPlayers enforces minimum required players", async ({ page }) => {

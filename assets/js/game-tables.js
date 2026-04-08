@@ -159,10 +159,16 @@ function createBidTakeTable(bidOrTake) {
       for (let i = 0; i < GameState.players.length; i++) {
          let row;
 
-         // Check if dealer should be last
+         // Keep dealer in the last row by placing post-dealer players before existing rows.
          if (settings.getSetting("dealerLast")?.value === true) {
-            row = i <= GameState.currentDealerIndex ? table.insertRow(-1) : table.insertRow();
-         } else {
+            if (i > GameState.currentDealerIndex) {
+               const insertIndex = i - GameState.currentDealerIndex - 1;
+               row = table.insertRow(insertIndex);
+            } else {
+               row = table.insertRow(table.rows.length);
+            }
+         }
+         else {
             row = table.insertRow();
          }
 
