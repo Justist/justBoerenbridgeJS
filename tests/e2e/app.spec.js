@@ -5,7 +5,13 @@ function screenLocator(page, id) {
 }
 
 async function expectScreenActive(page, id) {
-  await expect(screenLocator(page, id)).not.toHaveClass(/(^|\s)hidden(\s|$)/);
+  const isHidden = await screenLocator(page, id).evaluate((el) => el.classList.contains("hidden"));
+  expect(isHidden).toBe(false);
+}
+
+async function expectHasHiddenClass(page, selector, expectedHidden) {
+  const isHidden = await page.locator(selector).evaluate((el) => el.classList.contains("hidden"));
+  expect(isHidden).toBe(expectedHidden);
 }
 
 async function setPlayerName(page, index, name) {
@@ -43,7 +49,7 @@ async function startGame(page, names, dealerIndex = 0) {
   }
 
   await page.locator(`#radioDealer-${dealerIndex}`).click();
-  await expect(page.locator("#newGameButtonTable")).not.toHaveClass(/(^|\s)hidden(\s|$)/);
+  await expectHasHiddenClass(page, "#newGameButtonTable", false);
   await page.getByRole("button", { name: "Start 1e ronde" }).click();
   await expectScreenActive(page, "bidScreen");
 }
@@ -60,6 +66,48 @@ function cardsInRound(round) {
     return 10;
   }
   return 22 - round;
+}
+
+async function completeRound(page, cards, isLastRound, chooseSpadeTrump = false) {
+  if (chooseSpadeTrump) {
+    const spadeSelectorVisible = await page.evaluate(() => {
+      const row = document.getElementById("spadeRadioButtonsP");
+      return row && !row.classList.contains("hidden");
+    });
+    if (spadeSelectorVisible) {
+      await page.locator("#spadeRadioButton").check();
+    }
+  }
+
+  await page.locator("#bidnumber00").click();
+  await page.locator("#bidnumber10").click();
+  await page.locator("#bidScreen").getByRole("button", { name: "Naar Halen" }).click();
+
+  await expectScreenActive(page, "takeScreen");
+  await page.locator(`#takenumber0${cards}`).click();
+  await page.locator("#takenumber10").click();
+
+  if (isLastRound) {
+    await page.locator("#takeScreen").getByRole("button", { name: "Naar Score" }).click();
+    return;
+  }
+
+  await page.locator("#takeScreen").getByRole("button", { name: "Naar Bieden" }).click();
+  await expectScreenActive(page, "bidScreen");
+}
+
+async function readScoreTotals(page) {
+  return page.evaluate(() => {
+    const table = document.getElementById("scoreDataTable");
+    const headers = Array.from(table.tHead.rows[0].cells).map((cell) => cell.textContent.trim());
+    const bodyRows = Array.from(table.tBodies[0].rows);
+    const totalsRow = bodyRows.find((row) => row.cells[0].textContent.trim() === "");
+
+    return {
+      alice: Number(totalsRow.cells[headers.indexOf("Alice")].textContent),
+      bob: Number(totalsRow.cells[headers.indexOf("Bob")].textContent),
+    };
+  });
 }
 
 test.describe("Boerenbridge regression smoke tests", () => {
@@ -158,7 +206,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await saveSettings(page);
 
     await startTwoPlayerGame(page);
-    await expect(page.locator("#spadeRadioButtonsP")).toHaveClass(/(^|\s)hidden(\s|$)/);
+    await expectHasHiddenClass(page, "#spadeRadioButtonsP", true);
   });
 
   test("setting dealerLast=true is stored and places dealer row last", async ({ page }) => {
@@ -186,7 +234,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
     await setPlayerName(page, 1, "Bob");
     await page.locator("#radioDealer-0").click();
 
-    await expect(page.locator("#newGameButtonTable")).toHaveClass(/(^|\s)hidden(\s|$)/);
+    await expectHasHiddenClass(page, "#newGameButtonTable", true);
   });
 
   test("setting maxPlayers limits the number of player rows", async ({ page }) => {
@@ -249,7 +297,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
     expect(settingsAndState.maxCardsPossible).toBe(5);
     expect(settingsAndState.maxCardsThisGame).toBe(5);
     expect(settingsAndState.maxRounds).toBe(9);
-    await expect(page.locator("#spadeRadioButtonsP")).toHaveClass(/(^|\s)hidden(\s|$)/);
+    await expectHasHiddenClass(page, "#spadeRadioButtonsP", true);
   });
 
   test("full game scoring matches scripted bid/take choices", async ({ page }) => {
@@ -263,21 +311,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
     // - takes: Alice cardsInRound, Bob 0 (sum == cards)
     for (let round = 1; round <= 21; round++) {
       const cards = cardsInRound(round);
-
-      await page.locator("#bidnumber00").click();
-      await page.locator("#bidnumber10").click();
-      await page.locator("#bidScreen").getByRole("button", { name: "Naar Halen" }).click();
-
-      await expectScreenActive(page, "takeScreen");
-      await page.locator(`#takenumber0${cards}`).click();
-      await page.locator("#takenumber10").click();
-
-      if (round < 21) {
-        await page.locator("#takeScreen").getByRole("button", { name: "Naar Bieden" }).click();
-        await expectScreenActive(page, "bidScreen");
-      } else {
-        await page.locator("#takeScreen").getByRole("button", { name: "Naar Score" }).click();
-      }
+      await completeRound(page, cards, round === 21);
 
       expectedAlice += -3 * cards;
       expectedBob += 10;
@@ -285,17 +319,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
 
     await expectScreenActive(page, "scoreboardScreen");
 
-    const totals = await page.evaluate(() => {
-      const table = document.getElementById("scoreDataTable");
-      const headers = Array.from(table.tHead.rows[0].cells).map((cell) => cell.textContent.trim());
-      const bodyRows = Array.from(table.tBodies[0].rows);
-      const totalsRow = bodyRows.find((row) => row.cells[0].textContent.trim() === "");
-
-      return {
-        alice: Number(totalsRow.cells[headers.indexOf("Alice")].textContent),
-        bob: Number(totalsRow.cells[headers.indexOf("Bob")].textContent),
-      };
-    });
+    const totals = await readScoreTotals(page);
 
     expect(totals.alice).toBe(expectedAlice);
     expect(totals.bob).toBe(expectedBob);
@@ -309,31 +333,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
 
     for (let round = 1; round <= 21; round++) {
       const cards = cardsInRound(round);
-
-      // Select spade trump whenever the selector is available
-      // (middle no-trump round intentionally has no selector).
-      const spadeSelectorVisible = await page.evaluate(() => {
-        const row = document.getElementById("spadeRadioButtonsP");
-        return row && !row.classList.contains("hidden");
-      });
-      if (spadeSelectorVisible) {
-        await page.locator("#spadeRadioButton").check();
-      }
-
-      await page.locator("#bidnumber00").click();
-      await page.locator("#bidnumber10").click();
-      await page.locator("#bidScreen").getByRole("button", { name: "Naar Halen" }).click();
-
-      await expectScreenActive(page, "takeScreen");
-      await page.locator(`#takenumber0${cards}`).click();
-      await page.locator("#takenumber10").click();
-
-      if (round < 21) {
-        await page.locator("#takeScreen").getByRole("button", { name: "Naar Bieden" }).click();
-        await expectScreenActive(page, "bidScreen");
-      } else {
-        await page.locator("#takeScreen").getByRole("button", { name: "Naar Score" }).click();
-      }
+      await completeRound(page, cards, round === 21, true);
 
       const multiplier = round === 11 ? 1 : 2;
       expectedAlice += -3 * cards * multiplier;
@@ -342,17 +342,7 @@ test.describe("Boerenbridge regression smoke tests", () => {
 
     await expectScreenActive(page, "scoreboardScreen");
 
-    const totals = await page.evaluate(() => {
-      const table = document.getElementById("scoreDataTable");
-      const headers = Array.from(table.tHead.rows[0].cells).map((cell) => cell.textContent.trim());
-      const bodyRows = Array.from(table.tBodies[0].rows);
-      const totalsRow = bodyRows.find((row) => row.cells[0].textContent.trim() === "");
-
-      return {
-        alice: Number(totalsRow.cells[headers.indexOf("Alice")].textContent),
-        bob: Number(totalsRow.cells[headers.indexOf("Bob")].textContent),
-      };
-    });
+    const totals = await readScoreTotals(page);
 
     expect(totals.alice).toBe(expectedAlice);
     expect(totals.bob).toBe(expectedBob);

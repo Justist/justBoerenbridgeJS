@@ -5,17 +5,21 @@
  * Check if localStorage is available
  */
 function isStorageAvailable(type = "localStorage") {
+   const storage = window[type];
+
    try {
-      const storage = window[type];
       const testKey = "__storage_test__";
       storage.setItem(testKey, testKey);
       storage.removeItem(testKey);
       return true;
    } catch (e) {
-      return e instanceof DOMException && (
-         e.code === 22 || e.code === 1014 ||
-         e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED"
-      ) && storage && storage.length !== 0;
+      if (! (e instanceof DOMException)) {
+         return false;
+      }
+
+      const isQuotaError = e.name === "QuotaExceededError" ||
+                           e.name === "NS_ERROR_DOM_QUOTA_REACHED";
+      return isQuotaError && storage && storage.length !== 0;
    }
 }
 

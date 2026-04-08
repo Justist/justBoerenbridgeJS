@@ -17,7 +17,7 @@ function createNode(tag, options = {}, children = []) {
 
    for (const [key, value] of Object.entries(attrs)) {
       if (value !== undefined && value !== null) {
-         node.setAttribute(key, value);
+         node.setAttribute(key, String(value));
       }
    }
 
@@ -42,7 +42,7 @@ function createScreenShell(id, contentNode, hidden = true) {
    return screen;
 }
 
-function createActionButton(text, action, className = "btn btn-primary", id = null) {
+function createActionButton(text, action, className = "btn btn-primary", id = undefined) {
    return createNode("button", {
       id,
       className,
@@ -54,7 +54,7 @@ function createActionButton(text, action, className = "btn btn-primary", id = nu
    });
 }
 
-function createResponsiveSection(contentNode, { id = null, className = "" } = {}) {
+function createResponsiveSection(contentNode, { id = undefined, className = "" } = {}) {
    const extraClass = className ? ` ${ className }` : "";
    return createNode("div", { id, className : `table-responsive${ extraClass }` }, [contentNode]);
 }
@@ -470,7 +470,7 @@ function renderAppShell() {
    }
 
    clearElement(app);
-   app.append(
+   const screens = [
       renderSettingsScreen(),
       renderGameRulesScreen(),
       renderScoreboardScreen(),
@@ -478,7 +478,13 @@ function renderAppShell() {
       renderOverviewScreen(),
       renderBidScreen(),
       renderNewGameScreen()
-   );
+   ];
+
+   for (const screenNode of screens) {
+      if (screenNode instanceof Node) {
+         app.appendChild(screenNode);
+      }
+   }
 
    return true;
 }

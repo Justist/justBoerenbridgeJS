@@ -29,15 +29,6 @@ function resetGameState() {
    }
 }
 
-function giveUpToOverview() {
-   try {
-      return resetGameState() && toOverview();
-   } catch (e) {
-      alert(`giveUpToOverview: ${ e.message }`);
-      return false;
-   }
-}
-
 /**
  * Update round info display
  */
