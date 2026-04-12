@@ -189,6 +189,8 @@ function renderGameRulesScreen() {
 }
 
 function renderScoreboardScreen() {
+   const currentDateLabel = new Date().toLocaleDateString("nl-NL");
+
    const continueTable = createNode("table", { className : "table" }, [
       createNode("thead", { className : "alignCenter" }, [
          createNode("tr", { className : "alignCenter" }, [
@@ -217,7 +219,7 @@ function renderScoreboardScreen() {
       createNode("p", {
          id        : "dateTimeScoreBoard",
          className : "alignCenter",
-         text      : "Spel van datum"
+         text      : `Spel van ${ currentDateLabel }`
       }),
       createNode("div", { className : "form-group" }, [
          createResponsiveSection(createNode("table", { id : "scoreDataTable", className : "table alignCenter" })),
@@ -488,4 +490,3 @@ function renderAppShell() {
 
    return true;
 }
-
