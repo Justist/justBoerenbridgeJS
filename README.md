@@ -2,6 +2,8 @@
 
 Boerenbridge score app built with JavaScript.
 
+Hosted at: [Github Pages](https://justist.github.io/justBoerenbridgeJS/)
+
 ## What it does
 
 - Renders the app screens dynamically from JavaScript (single-page flow, no page reloads).
